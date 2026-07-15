@@ -69,6 +69,69 @@ const CONTENT = {
         },
       ],
     },
+    {
+      id: 'a1_u2_famiglia',
+      cefr: 'A1',
+      descriptor: 'Puede hablar de su familia usando "avere" y vocabulario básico de parentesco.',
+      title: 'La famiglia',
+      titleEs: 'La familia',
+      dialogue: [
+        { speaker: 'Marco', line: 'Hai fratelli?' },
+        { speaker: 'Giulia', line: 'Sì, ho un fratello e una sorella. E tu?' },
+        { speaker: 'Marco', line: 'Io ho solo una sorella. Come si chiama tua sorella?' },
+        { speaker: 'Giulia', line: 'Si chiama Sofia.' },
+      ],
+      glossary: [
+        { it: 'Hai fratelli?', es: '¿Tienes hermanos?', note: 'Avere = tener (no confundir con essere, ya visto en la Unidad 1).' },
+        { it: 'tua sorella', es: 'tu hermana', note: 'Posesivo antes del sustantivo, como en español.' },
+        { it: 'Come si chiama...?', es: '¿Cómo se llama...?', note: 'Mismo verbo chiamarsi de la Unidad 1, ahora en 3ª persona (si chiama, no ti chiami).' },
+      ],
+      grammar: {
+        title: 'El verbo "avere" (tener) — presente',
+        explanation: 'Avere es irregular y de altísima frecuencia, como essere (Unidad 1) — pero no hay que confundirlos: essere = ser/estar, avere = tener. En italiano, a diferencia del español, la "h" de "ho/hai/ha/hanno" no suena pero se escribe siempre (marca ortográfica, no fonética).',
+        table: [
+          ['io', 'ho'], ['tu', 'hai'], ['lui/lei', 'ha'],
+          ['noi', 'abbiamo'], ['voi', 'avete'], ['loro', 'hanno'],
+        ],
+      },
+      exercises: [
+        {
+          id: 'ex1', type: 'fill',
+          prompt: 'Completa: Io ___ un fratello.',
+          answer: 'ho',
+          explanation: '"io" va con "ho" (avere), no con "sono" (essere) — son verbos distintos.',
+          srsFront: 'Io ___ un fratello. (avere, io)', srsBack: 'ho',
+        },
+        {
+          id: 'ex2', type: 'fill',
+          prompt: 'Completa: Tu ___ una sorella?',
+          answer: 'hai',
+          explanation: '"tu" va con "hai".',
+          srsFront: 'Tu ___ una sorella? (avere, tu)', srsBack: 'hai',
+        },
+        {
+          id: 'ex3', type: 'fill',
+          prompt: 'Completa: Noi ___ una famiglia grande.',
+          answer: 'abbiamo',
+          explanation: '"noi" va con "abbiamo".',
+          srsFront: 'Noi ___ una famiglia grande. (avere, noi)', srsBack: 'abbiamo',
+        },
+        {
+          id: 'ex4', type: 'translate',
+          prompt: 'Traduce al italiano: "hermano"',
+          answer: 'fratello',
+          explanation: '"Fratello" — cognado reconocible del latín frater.',
+          srsFront: '¿Cómo se dice "hermano" en italiano?', srsBack: 'Fratello',
+        },
+        {
+          id: 'ex5', type: 'translate',
+          prompt: 'Traduce al italiano: "¿Tienes hermanos?"',
+          answer: 'hai fratelli',
+          explanation: '"Hai fratelli?" — avere (no essere) para expresar posesión/parentesco.',
+          srsFront: '¿Cómo se dice "¿Tienes hermanos?" en italiano?', srsBack: 'Hai fratelli?',
+        },
+      ],
+    },
   ],
 };
 

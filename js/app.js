@@ -31,24 +31,26 @@ function renderRoute() {
 function renderHome() {
   const progress = SRS.getProgress();
   const due = SRS.dueItems().length;
-  const lesson = CONTENT.lessons[0];
-  const done = progress.completedLessons.includes(lesson.id);
+
+  const lessonCards = CONTENT.lessons.map(lesson => {
+    const done = progress.completedLessons.includes(lesson.id);
+    return `
+    <div class="card">
+      <h3>${done ? '✅ ' : '📘 '}${lesson.titleEs} <span class="cefr-badge">${lesson.cefr}</span></h3>
+      <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
+      <button class="btn ${done ? 'secondary' : ''}" onclick="go('lesson', {id: '${lesson.id}'})">
+        ${done ? 'Repasar la lección' : 'Empezar lección'}
+      </button>
+    </div>`;
+  }).join('');
 
   render(`
     <div class="top-bar">
       <span>🔥 Racha: ${progress.streak} día(s)</span>
-      <span class="cefr-badge">${lesson.cefr}</span>
+      <span class="cefr-badge">A1</span>
     </div>
     <h1>Ciao! 👋</h1>
     <p>Aprendé italiano de verdad: input real, práctica activa y repaso espaciado — no solo rachas.</p>
-
-    <div class="card">
-      <h3>${done ? '✅ ' : '📘 '}${lesson.titleEs}</h3>
-      <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
-      <button class="btn" onclick="go('lesson', {id: '${lesson.id}'})">
-        ${done ? 'Repasar la lección' : 'Empezar lección'}
-      </button>
-    </div>
 
     <div class="card">
       <h3>🔁 Repaso espaciado</h3>
@@ -59,6 +61,8 @@ function renderHome() {
         Repasar ahora ${due > 0 ? '(' + due + ')' : ''}
       </button>
     </div>
+
+    ${lessonCards}
 
     <button class="btn secondary" onclick="go('progress')">Ver mi progreso</button>
   `);
@@ -186,9 +190,20 @@ let reviewIndex = 0;
 let reviewAnswered = false;
 let reviewCorrect = false;
 
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function renderReview() {
   if (reviewQueue === null) {
-    reviewQueue = SRS.dueItems();
+    // Mezclado a propósito: si no, los ítems quedan agrupados por lección (todos los
+    // de essere, luego todos los de avere) y se pierde el efecto de interleaving.
+    reviewQueue = shuffle(SRS.dueItems());
     reviewIndex = 0;
   }
   if (reviewIndex >= reviewQueue.length) {
@@ -275,7 +290,8 @@ function renderProgress() {
     </div>
     <div class="card">
       <h3>Nivel CEFR aproximado</h3>
-      <p><span class="cefr-badge">A1</span> Unidad 1: ${progress.completedLessons.includes('a1_u1_saluti') ? 'completa ✅' : 'en progreso'}</p>
+      <p><span class="cefr-badge">A1</span></p>
+      ${CONTENT.lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${l.titleEs}: ${progress.completedLessons.includes(l.id) ? 'completa ✅' : 'pendiente'}</p>`).join('')}
     </div>
     <div class="card">
       <h3>Repasos pendientes</h3>

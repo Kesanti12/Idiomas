@@ -89,3 +89,41 @@ entrar a un SRS real con intervalos que varían según desempeño.
 - Pantalla de Progreso podría mostrar próximos repasos (fechas), no solo el conteo de hoy.
 - No hay manejo de fallo de `localStorage` (modo incógnito estricto/cuota llena) más allá
   del catch silencioso al leer; escribir sin cuota lanzaría un error no capturado.
+
+### Ciclo 2 — 2026-07-15 ~14:09-14:25 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida (mayor impacto pendiente):** interleaving real — el ciclo 1 dejó una sola
+lección, así que el principio #4 de CLAUDE.md (no negociable) no podía cumplirse todavía
+por falta de contenido con qué mezclar.
+
+**Qué se hizo:**
+1. **Unidad 2 A1 "La famiglia"** (`js/content.js`): diálogo input-comprensible sobre
+   hermanos/familia, glosario mínimo, gramática explícita de "avere" (tener) contrastada
+   explícitamente con "essere" de la Unidad 1 (para prevenir la confusión típica entre
+   ambos verbos irregulares de alta frecuencia), 5 ejercicios de recall activo → 5 ítems
+   SRS nuevos.
+2. **Home multi-lección** (`js/app.js`): antes mostraba solo `CONTENT.lessons[0]`
+   hardcodeado; ahora itera `CONTENT.lessons` y renderiza una card por lección con su
+   propio estado (pendiente/completa). Progreso también generalizado (antes chequeaba el
+   id de la Unidad 1 a mano).
+3. **Interleaving real en el repaso**: `SRS.dueItems()` devolvía los ítems en orden de
+   inserción (todos los de Unidad 1 antes que los de Unidad 2) — no había mezcla efectiva
+   aunque coexistieran en el banco. Se agregó `shuffle()` en `app.js` sobre la cola de
+   repaso al armarla, así los ítems de distintos temas se intercalan de verdad en cada
+   sesión (principio #4).
+4. **Robustez menor**: `SRS.saveState()` ahora envuelve `localStorage.setItem` en
+   try/catch (cuota llena / incógnito estricto ya no rompe el loop de repaso, solo no
+   persiste esa sesión) — quedaba pendiente del ciclo 1.
+5. **Verificado con Playwright**: las dos lecciones se completan de punta a punta, el banco
+   SRS llega a 10 ítems (5+5), Progreso lista ambas lecciones y el conteo correcto, la cola
+   de repaso mezcla ítems de ambas unidades. 0 errores de consola.
+
+**Pendiente para próximos ciclos (por impacto):**
+- Ítems SRS siguen siendo unidireccionales (ES→IT escrito); falta dirección IT→ES.
+- Verificar instalabilidad real (Add to Home Screen / Lighthouse) — aún no se probó.
+- Unidad 3 A1 (números o verbos regulares -are) para seguir ampliando el pool de
+  interleaving y acercarse a cobertura real de A1.
+- Pantalla de Progreso podría mostrar fechas de próximos repasos, no solo el conteo de hoy.
+- El shuffle de la cola de repaso es puramente aleatorio; una mezcla que además intercale
+  por tema/lección de forma más determinística (round-robin) sería más fiel al concepto de
+  interleaving pedagógico que un shuffle uniforme, pero para 2 lecciones no se nota la
+  diferencia — revisar cuando haya 3+ lecciones.

@@ -21,7 +21,12 @@ const SRS = (() => {
   }
 
   function saveState(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      // Cuota llena o modo incógnito estricto: el progreso de esta sesión no persiste,
+      // pero la app sigue funcionando en memoria en vez de romper el loop de repaso.
+    }
   }
 
   let state = loadState();
