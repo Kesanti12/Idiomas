@@ -265,6 +265,70 @@ const CONTENT = {
         },
       ],
     },
+    {
+      id: 'a1_u5_prendere',
+      cefr: 'A1',
+      descriptor: 'Puede pedir algo en un bar/café usando el segundo patrón de conjugación regular (-ere).',
+      title: 'Cosa prendi?',
+      titleEs: '¿Qué tomas?',
+      dialogue: [
+        { speaker: 'Marco', line: 'Cosa prendi?' },
+        { speaker: 'Giulia', line: 'Prendo un caffè. E tu?' },
+        { speaker: 'Marco', line: 'Io prendo un tè.' },
+        { speaker: 'Giulia', line: 'Va bene!' },
+      ],
+      glossary: [
+        { it: 'Cosa prendi?', es: '¿Qué tomas/pedís?', note: 'Se usa así en bares y cafés, no solo literal "tomar".' },
+        { it: 'Va bene', es: 'Está bien / dale', note: null },
+      ],
+      grammar: {
+        title: 'Verbos regulares en -ere (ej. "prendere" = tomar/pedir)',
+        explanation: 'Segundo patrón regular, después de -are (Unidad 4, "parlare"). Comparten "io" (-o) y "tu" (-i), pero difieren en el resto: lui/lei termina en "-e" (no "-a"), voi en "-ete" (no "-ate"), loro en "-ono" (no "-ano"). Reconocer estas dos terminaciones (-are, -ere) ya cubre la mayoría de verbos regulares italianos.',
+        table: [
+          ['io', 'prendo'], ['tu', 'prendi'], ['lui/lei', 'prende'],
+          ['noi', 'prendiamo'], ['voi', 'prendete'], ['loro', 'prendono'],
+        ],
+      },
+      exercises: [
+        {
+          id: 'ex1', type: 'fill',
+          prompt: 'Completa: Io ___ un caffè.',
+          answer: 'prendo',
+          explanation: '"io" + verbos en -ere → también termina en "-o" (igual que en -are).',
+          srsFront: 'Io ___ un caffè. (prendere, io)', srsBack: 'prendo',
+        },
+        {
+          id: 'ex2', type: 'fill',
+          prompt: 'Completa: Tu ___ un tè?',
+          answer: 'prendi',
+          explanation: '"tu" + verbos en -ere → también termina en "-i" (igual que en -are).',
+          srsFront: 'Tu ___ un tè? (prendere, tu)', srsBack: 'prendi',
+        },
+        {
+          id: 'ex3', type: 'fill',
+          prompt: 'Completa: Lei ___ un cappuccino.',
+          answer: 'prende',
+          explanation: '"lui/lei" + verbos en -ere → termina en "-e" (a diferencia de "-a" en -are).',
+          srsFront: 'Lei ___ un cappuccino. (prendere, lei)', srsBack: 'prende',
+        },
+        {
+          id: 'ex4', type: 'translate',
+          prompt: 'Traduce al italiano: "tomar/pedir" (infinitivo)',
+          answer: 'prendere',
+          explanation: '"Prendere" — el segundo patrón regular más común, después de -are.',
+          srsFront: '¿Cómo se dice "tomar/pedir" en italiano?', srsBack: 'Prendere',
+          reverseFront: 'Prendere', reverseBack: 'Tomar/pedir',
+        },
+        {
+          id: 'ex5', type: 'translate',
+          prompt: 'Traduce al italiano: "¿Qué tomas?"',
+          answer: 'cosa prendi',
+          explanation: '"Cosa prendi?" — expresión fija para pedir en un bar/café.',
+          srsFront: '¿Cómo se dice "¿Qué tomas?" en italiano?', srsBack: 'Cosa prendi?',
+          reverseFront: 'Cosa prendi?', reverseBack: '¿Qué tomas?',
+        },
+      ],
+    },
   ],
 };
 

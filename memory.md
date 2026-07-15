@@ -290,3 +290,33 @@ de consola.
 **Pendiente para próximos ciclos (por impacto, si queda tiempo antes de 15:30):**
 - Unidad 5 A1 (verbos -ere/-ire, o números 11-20) si el tiempo restante alcanza.
 - Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
+
+### Ciclo 8 — 2026-07-15 ~15:02-15:04 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida:** Unidad 5 A1 — "Cosa prendi?" (segundo patrón de conjugación regular:
+verbos en -ere, con "prendere").
+
+**Por qué esta:** completa el par de patrones regulares más frecuentes del italiano
+(-are ya visto en la Unidad 4, ahora -ere) con contraste explícito entre ambos en la
+explicación gramatical (comparten -o/-i en io/tu, difieren en lui-lei/voi/loro). Contexto
+natural de bar/café, alta frecuencia de uso real.
+
+**Qué se hizo:**
+- `js/content.js`: diálogo, glosario, tabla de conjugación de "prendere" contrastada
+  explícitamente con "parlare" (Unidad 4), 5 ejercicios (3 fill + 2 translate bidireccional).
+- Sin cambios en `app.js`/`srs.js`.
+
+**Verificado con Playwright**: Home lista las 5 lecciones, las 5 se completan de punta a
+punta, banco SRS llega a 36 ítems (7+7+8+7+7), Progreso muestra las 5 completas. 0 errores
+de consola.
+
+**Cierre de la ventana (15:30):** con ~26 minutos restantes tras este ciclo, el próximo
+disparo del cron debe evaluar la hora y, si ya son las 15:30 o más, cerrar el loop según
+las instrucciones de `TASK.md` (resumen final en este archivo + `ScheduleWakeup stop`/no
+reprogramar) en vez de iniciar una mejora nueva.
+
+**Pendiente para el cierre o la próxima sesión (por impacto):**
+- Unidad 6 A1 (verbos -ire, ej. "dormire") completaría las 3 conjugaciones regulares —
+  buen punto de partida si se retoma el loop más adelante.
+- Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
+- Ítems SRS bidireccionales solo cubren vocabulario suelto (`translate`), no los drills de
+  conjugación (`fill`) — evaluar si vale la pena para verbos de alta frecuencia.
