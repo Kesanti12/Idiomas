@@ -161,3 +161,38 @@ español dentro de la pantalla de Repaso y el sistema lo marcó correcto. 0 erro
 - Recordatorio de despliegue (no de código): para instalar de verdad en un celular hace
   falta servir la PWA sobre HTTPS real (GitHub Pages, Netlify, etc.) — la verificación de
   este ciclo fue sobre localhost, que Chrome trata como contexto seguro solo para desarrollo.
+
+### Ciclo 4 — 2026-07-15 ~14:22-14:38 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida:** Unidad 3 A1 — "L'età e i numeri" (edad y números 0-10).
+
+**Por qué esta y no otra cosa nueva:** en vez de un tema aislado, se eligió deliberadamente
+uno que **reutiliza y refuerza gramática ya enseñada** en vez de sumar contenido inconexo:
+"avere ... anni" (tener X años) es el mismo patrón de avere de la Unidad 2, con transferencia
+directa desde el español ("tener años" vs "avere anni" — misma estructura, a diferencia del
+inglés "to be X years old"). Esto genera currículum en espiral (spiral curriculum): más
+interleaving real entre unidades, no solo contenido nuevo desconectado — y amplía a 3 el
+pool de lecciones para que el shuffle de repaso tenga más con qué mezclar.
+
+**Qué se hizo:**
+1. `js/content.js`: diálogo (Quanti anni hai? / Ho venti anni...), glosario mínimo, tabla de
+   números 0-10 con nota explícita de transferencia positiva español↔italiano, 5 ejercicios
+   (2 fill de avere reforzando Unidad 2, 3 translate con dirección inversa IT→ES incluida
+   como en el ciclo 3).
+2. Sin cambios de código en `app.js`/`srs.js` — el router y el motor SRS ya eran genéricos
+   desde el ciclo 2, así que la nueva lección "simplemente entra" sin tocar lógica.
+
+**Verificado con Playwright**: Home lista las 3 lecciones, se completan las 3 de punta a
+punta, el banco SRS llega a 22 ítems (7+7+8, según la mezcla fill/translate de cada unidad),
+Progreso muestra las 3 lecciones completas y el conteo correcto. 0 errores de consola.
+
+**Pendiente para próximos ciclos (por impacto):**
+- Progreso podría mostrar fechas de próximos repasos, no solo el conteo de hoy pendientes.
+- Con 3 lecciones ya tiene sentido evaluar un shuffle más determinístico (round-robin por
+  lección) en vez de aleatorio uniforme, para garantizar que ninguna unidad quede
+  sub-representada en una sesión de repaso corta.
+- Todo el contenido sigue siendo A1 muy inicial (saludos, familia, edad) — con el tiempo que
+  quede, una Unidad 4 con verbos regulares en -are (ej. "parlare") introduciría el primer
+  patrón de conjugación *regular* (contraste pedagógico útil con las dos irregulares ya
+  vistas, essere/avere).
+- Recordatorio de despliegue sigue igual que en el ciclo 3 (HTTPS real pendiente, fuera del
+  alcance de este loop de código).

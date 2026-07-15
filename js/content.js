@@ -136,6 +136,71 @@ const CONTENT = {
         },
       ],
     },
+    {
+      id: 'a1_u3_eta',
+      cefr: 'A1',
+      descriptor: 'Puede decir y preguntar la edad, y usar los números del 0 al 10.',
+      title: "L'età e i numeri",
+      titleEs: 'La edad y los números',
+      dialogue: [
+        { speaker: 'Marco', line: 'Quanti anni hai?' },
+        { speaker: 'Giulia', line: 'Ho venti anni. E tu?' },
+        { speaker: 'Marco', line: 'Io ho ventidue anni.' },
+        { speaker: 'Giulia', line: 'Sei giovane!' },
+      ],
+      glossary: [
+        { it: 'Quanti anni hai?', es: '¿Cuántos años tienes?', note: 'Literal "¿Cuántos años tienes?" — igual estructura que el español.' },
+        { it: 'giovane', es: 'joven', note: null },
+      ],
+      grammar: {
+        title: '"Avere ... anni" para la edad, y los números 0-10',
+        explanation: 'Igual que en español decimos "tener X años" (no "ser X años"), en italiano se usa avere + número + anni — mismo patrón, transferencia directa desde el español (ya conocés avere de la Unidad 2). A diferencia del español, "anni" siempre va en plural, incluso con "un anno" pasa a plural desde "due anni" en adelante, igual que en español.',
+        table: [
+          ['0', 'zero'], ['1', 'uno'], ['2', 'due'], ['3', 'tre'], ['4', 'quattro'],
+          ['5', 'cinque'], ['6', 'sei'], ['7', 'sette'], ['8', 'otto'], ['9', 'nove'], ['10', 'dieci'],
+        ],
+      },
+      exercises: [
+        {
+          id: 'ex1', type: 'fill',
+          prompt: 'Completa: Io ___ venti anni.',
+          answer: 'ho',
+          explanation: 'Repaso de avere (Unidad 2): "io" siempre va con "ho", también para la edad.',
+          srsFront: 'Io ___ venti anni. (avere, io)', srsBack: 'ho',
+        },
+        {
+          id: 'ex2', type: 'fill',
+          prompt: 'Completa: Tu ___ dieci anni?',
+          answer: 'hai',
+          explanation: '"tu" va con "hai".',
+          srsFront: 'Tu ___ dieci anni? (avere, tu)', srsBack: 'hai',
+        },
+        {
+          id: 'ex3', type: 'translate',
+          prompt: 'Traduce al italiano: "¿Cuántos años tienes?"',
+          answer: 'quanti anni hai',
+          explanation: '"Quanti anni hai?" — misma estructura que en español.',
+          srsFront: '¿Cómo se dice "¿Cuántos años tienes?" en italiano?', srsBack: 'Quanti anni hai?',
+          reverseFront: 'Quanti anni hai?', reverseBack: '¿Cuántos años tienes?',
+        },
+        {
+          id: 'ex4', type: 'translate',
+          prompt: 'Traduce al italiano: "diez"',
+          answer: 'dieci',
+          explanation: '"Dieci" — cognado reconocible del latín decem.',
+          srsFront: '¿Cómo se dice "diez" en italiano?', srsBack: 'Dieci',
+          reverseFront: 'Dieci', reverseBack: 'Diez',
+        },
+        {
+          id: 'ex5', type: 'translate',
+          prompt: 'Traduce al italiano: "cinco"',
+          answer: 'cinque',
+          explanation: '"Cinque" — cognado reconocible del latín quinque.',
+          srsFront: '¿Cómo se dice "cinco" en italiano?', srsBack: 'Cinque',
+          reverseFront: 'Cinque', reverseBack: 'Cinco',
+        },
+      ],
+    },
   ],
 };
 
