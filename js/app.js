@@ -207,11 +207,37 @@ function shuffle(arr) {
   return a;
 }
 
+// Interleaving real: un shuffle uniforme puede dejar, por azar, varios ítems seguidos
+// de la misma lección (o toda una lección sub-representada al final de la cola si hay
+// pocos repasos). Se agrupa por lección, se mezcla adentro de cada grupo, y se intercala
+// round-robin entre lecciones — así cada sesión de repaso mezcla temas de verdad
+// (principio #4 de CLAUDE.md), no solo "a veces le toca".
+function interleaveByLesson(items) {
+  const groups = {};
+  items.forEach(item => {
+    const key = (item.meta && item.meta.lessonId) || 'sin_leccion';
+    (groups[key] = groups[key] || []).push(item);
+  });
+  const lessonKeys = shuffle(Object.keys(groups));
+  lessonKeys.forEach(k => { groups[k] = shuffle(groups[k]); });
+
+  const result = [];
+  let remaining = true;
+  while (remaining) {
+    remaining = false;
+    for (const key of lessonKeys) {
+      if (groups[key].length) {
+        result.push(groups[key].shift());
+        remaining = true;
+      }
+    }
+  }
+  return result;
+}
+
 function renderReview() {
   if (reviewQueue === null) {
-    // Mezclado a propósito: si no, los ítems quedan agrupados por lección (todos los
-    // de essere, luego todos los de avere) y se pierde el efecto de interleaving.
-    reviewQueue = shuffle(SRS.dueItems());
+    reviewQueue = interleaveByLesson(SRS.dueItems());
     reviewIndex = 0;
   }
   if (reviewIndex >= reviewQueue.length) {

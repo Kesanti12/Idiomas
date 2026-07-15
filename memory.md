@@ -264,3 +264,29 @@ lecciones, calendario de próximos repasos, instalabilidad verificada.
 - Unidad 5 A1 (si da el tiempo): verbos en -ere o -ire para completar las 3 conjugaciones
   regulares del italiano, o vocabulario de números 11-20/colores.
 - Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
+
+### Ciclo 7 — 2026-07-15 ~14:52-15:02 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida:** interleaving round-robin por lección en la cola de repaso (pendiente
+desde los ciclos 4 y 5).
+
+**Por qué esta:** el shuffle aleatorio uniforme (ciclo 2) mezclaba ítems de distintas
+lecciones, pero por puro azar podía dejar 3-4 ítems seguidos de la misma lección, o toda
+una lección concentrada en un tramo de la sesión — con 4 lecciones ya era un problema real,
+no solo teórico. El principio #4 de CLAUDE.md pide interleaving deliberado, no aleatoriedad
+que a veces intercala y a veces no.
+
+**Qué se hizo:**
+- `js/app.js`: nueva función `interleaveByLesson(items)` — agrupa los ítems due por
+  `meta.lessonId`, mezcla adentro de cada grupo (para no repetir siempre el mismo orden
+  dentro de una lección), mezcla también el orden de las lecciones entre sí, y arma la cola
+  final tomando una ronda completa (round-robin) por cada lección hasta vaciar todos los
+  grupos. Reemplaza el `shuffle(SRS.dueItems())` que armaba la cola en `renderReview()`.
+
+**Verificado con Playwright**: con las 4 lecciones completas y 29 ítems due, la cola de
+repaso siguió el patrón exacto ronda-1/2/3/4 repetido (racha máxima de la misma lección
+seguida = 1, es decir nunca se repite la misma lección dos veces consecutivas). 0 errores
+de consola.
+
+**Pendiente para próximos ciclos (por impacto, si queda tiempo antes de 15:30):**
+- Unidad 5 A1 (verbos -ere/-ire, o números 11-20) si el tiempo restante alcanza.
+- Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
