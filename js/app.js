@@ -95,7 +95,7 @@ function renderHome() {
       <h3>${done ? '✅ ' : '📘 '}${lesson.title} <span class="cefr-badge">${lesson.cefr}</span></h3>
       <p class="gloss-block">${lesson.titleEs}</p>
       <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
-      <button class="btn ${done ? 'secondary' : ''}" onclick="go('lesson', {id: '${lesson.id}'})">
+      <button class="btn ${done ? 'secondary' : ''}" onclick="startLesson('${lesson.id}')">
         ${done ? gloss('Ripassa la lezione', 'Repasar la lección') : gloss('Inizia la lezione', 'Empezar lección')}
       </button>
     </div>`;
@@ -130,6 +130,16 @@ function renderHome() {
 
 // ---------- LESSON ----------
 let lessonState = null;
+
+// Punto de entrada explícito para (re)empezar una lección desde Home. No alcanza con
+// comparar lessonId en renderLesson: cuando la lección termina, el propio flujo interno
+// pone step='done' y vuelve a llamar a renderRoute() con el mismo id — si renderLesson
+// reseteara ahí, la pantalla de "lección completa" nunca se llegaría a mostrar.
+function startLesson(id) {
+  lessonState = { lessonId: id, step: 'dialogue', exIndex: 0, answered: false };
+  go('lesson', { id }); // actualiza el hash (historial/back)
+  renderLesson(id); // renderiza ya mismo — go() no dispara hashchange si el hash no cambió
+}
 
 function renderLesson(id) {
   const lesson = CONTENT.lessons.find(l => l.id === id);

@@ -461,3 +461,30 @@ correctos. 0 errores de consola en todo el recorrido. Capturas revisadas visualm
 Verificado con Playwright que la nueva consigna se renderiza. Lección aprendida guardada
 arriba para no repetir el olvido del cache-bump en futuras ediciones de `app.js`/
 `content.js`/`css/style.css`.
+
+### Fix — "repetir la lección" no funcionaba
+
+El usuario pidió poder repetir la Unidad 1 ya completada. El botón "Ripassa la lezione"
+en Home ya existía desde el ciclo 2, pero tenía un bug real: `renderLesson(id)` solo
+reseteaba `lessonState` (variable de módulo, no persistida) si `lessonId` cambiaba — al
+repetir la MISMA lección dentro de la misma sesión de página, `lessonState.step` seguía en
+`'done'` de la vez anterior, así que el flujo saltaba directo a la pantalla "lección
+completa" en vez de arrancar del diálogo.
+
+Primer intento (resetear también cuando `step === 'done'`) rompió el flujo normal: al
+completar una lección por primera vez, el propio código interno pone `step='done'` y
+vuelve a llamar a `renderRoute()` con el mismo id — con ese chequeo, eso también gatillaba
+un reset y la pantalla de "lección completa" nunca llegaba a mostrarse.
+
+Fix correcto: función dedicada `startLesson(id)` que resetea `lessonState` a fresco *solo*
+cuando el usuario pide explícitamente (re)empezar desde Home, en vez de inferirlo del
+estado. El botón de Home ahora llama `startLesson(lesson.id)` en vez de `go('lesson', ...)`
+directo. `renderLesson()` interno vuelve a su lógica original (solo resetea si cambia el
+`lessonId`), así que el flujo de completar una lección por primera vez no se toca.
+
+Verificado con Playwright: repetir la Unidad 1 vuelve al diálogo, completarla de nuevo SÍ
+llega a "Lezione completata", y los ítems SRS no se duplican (7 antes y después — `initItem`
+ya era idempotente). Regresión completa de las 6 lecciones sigue en 43 ítems, 0 errores.
+
+`CACHE_NAME` del service worker subido a `italiano-v3` por este cambio (ver nota de arriba
+sobre bumpear el cache en cada edición de `app.js`).
