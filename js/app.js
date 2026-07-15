@@ -51,7 +51,7 @@ function italianWithAudio(lesson, text, extraClass) {
 // Consigna según el tipo de ítem — el problema reportado era que el usuario veía la
 // frase/hueco sin ninguna indicación de qué se esperaba responder.
 const INSTRUCTIONS = {
-  fill: { it: 'Completa lo spazio vuoto.', es: 'Completá el espacio en blanco.' },
+  fill: { it: 'Scrivi solo la parola mancante (non l\'intera frase).', es: 'Escribí solo la palabra que falta (no la frase entera).' },
   translate: { it: 'Traduci in italiano.', es: 'Traducí al italiano.' },
   recognize: { it: 'Cosa significa? Rispondi in spagnolo.', es: '¿Qué significa? Respondé en español.' },
 };

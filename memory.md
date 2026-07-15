@@ -440,3 +440,24 @@ correctos. 0 errores de consola en todo el recorrido. Capturas revisadas visualm
   — si en el futuro el usuario nota que se siente sobrecargada, la opción "Full italiano"
   o volver a mayormente-español queda como ajuste de una sola variable de diseño (los
   helpers `gloss()`/`instructionLine()` ya centralizan el patrón).
+
+### Fix inmediato — mismo día, el usuario reportó dos problemas más sobre lo recién hecho
+
+1. **Service worker sirviendo versión vieja**: el usuario vio una captura sin la
+   instrucción recién agregada — el `service-worker.js` (cache-first, `CACHE_NAME =
+   'italiano-v1'` desde el ciclo 1) seguía sirviendo `app.js`/`content.js`/`style.css`
+   cacheados de antes del cambio. Aprendizaje importante para memoria futura: **cada vez
+   que se toquen archivos listados en `ASSETS` de `service-worker.js`, hay que bumpear
+   `CACHE_NAME`** (ahora `italiano-v2`), si no el cache-first sirve contenido stale
+   indefinidamente sin que haya ningún error visible — se ve como si el cambio no se
+   hubiera aplicado. `skipWaiting()`/`clients.claim()` ya estaban, así que alcanza con
+   bumpear el nombre; el usuario puede necesitar un refresh extra para que el nuevo SW
+   tome control.
+2. **Consigna de "fill" seguía ambigua**: aunque ya decía "Completá el espacio en blanco",
+   no aclaraba si había que escribir toda la frase o solo la palabra faltante. Se cambió a
+   "Escribí solo la palabra que falta (no la frase entera)." / it: "Scrivi solo la parola
+   mancante (non l'intera frase)."
+
+Verificado con Playwright que la nueva consigna se renderiza. Lección aprendida guardada
+arriba para no repetir el olvido del cache-bump en futuras ediciones de `app.js`/
+`content.js`/`css/style.css`.
