@@ -18,6 +18,18 @@ const CONTENT = {
         { speaker: 'Marco', line: 'Io sono Marco. Piacere!' },
         { speaker: 'Giulia', line: 'Piacere mio!' },
       ],
+      // Guía fonética simple (no IPA): mayúsculas = sílaba tónica, lectura pensada
+      // para hispanohablantes. Claves siempre en minúscula (lookup case-insensitive).
+      phonetics: {
+        'ciao! come ti chiami?': 'CHAO! KO-me ti KIA-mi?',
+        'mi chiamo giulia. e tu?': 'mi KIA-mo YU-lia. e tu?',
+        'io sono marco. piacere!': 'IO SO-no MAR-ko. pia-CHE-re!',
+        'piacere mio!': 'pia-CHE-re MI-o!',
+        'come ti chiami?': 'KO-me ti KIA-mi?',
+        'mi chiamo...': 'mi KIA-mo...',
+        'piacere': 'pia-CHE-re',
+        'sono': 'SO-no', 'sei': 'SEI', 'è': 'E', 'siamo': 'SIA-mo', 'siete': 'SIE-te',
+      },
       glossary: [
         { it: 'Come ti chiami?', es: '¿Cómo te llamas?', note: 'Literal: "¿cómo te llamas a ti mismo?" — verbo reflexivo chiamarsi.' },
         { it: 'Mi chiamo...', es: 'Me llamo...', note: null },
@@ -83,6 +95,16 @@ const CONTENT = {
         { speaker: 'Marco', line: 'Io ho solo una sorella. Come si chiama tua sorella?' },
         { speaker: 'Giulia', line: 'Si chiama Sofia.' },
       ],
+      phonetics: {
+        'hai fratelli?': 'AI fra-TEL-li?',
+        'sì, ho un fratello e una sorella. e tu?': 'si, o un fra-TEL-lo e U-na so-REL-la. e tu?',
+        'io ho solo una sorella. come si chiama tua sorella?': 'IO o SO-lo U-na so-REL-la. KO-me si KIA-ma TU-a so-REL-la?',
+        'si chiama sofia.': 'si KIA-ma so-FI-a.',
+        'tua sorella': 'TU-a so-REL-la',
+        'come si chiama...?': 'KO-me si KIA-ma...?',
+        'ho': 'O', 'hai': 'AI', 'ha': 'A', 'abbiamo': 'ab-BIA-mo', 'avete': 'a-VE-te', 'hanno': 'AN-no',
+        'fratello': 'fra-TEL-lo',
+      },
       glossary: [
         { it: 'Hai fratelli?', es: '¿Tienes hermanos?', note: 'Avere = tener (no confundir con essere, ya visto en la Unidad 1).' },
         { it: 'tua sorella', es: 'tu hermana', note: 'Posesivo antes del sustantivo, como en español.' },
@@ -148,6 +170,15 @@ const CONTENT = {
         { speaker: 'Marco', line: 'Io ho ventidue anni.' },
         { speaker: 'Giulia', line: 'Sei giovane!' },
       ],
+      phonetics: {
+        'quanti anni hai?': 'KUAN-ti AN-ni ai?',
+        'ho venti anni. e tu?': 'O VEN-ti AN-ni. e tu?',
+        'io ho ventidue anni.': 'IO o ven-ti-DU-e AN-ni.',
+        'sei giovane!': 'SEI YO-va-ne!',
+        'giovane': 'YO-va-ne',
+        'zero': 'TSE-ro', 'uno': 'U-no', 'due': 'DU-e', 'tre': 'TRE', 'quattro': 'KUAT-tro',
+        'cinque': 'CHIN-kue', 'sei': 'SEI', 'sette': 'SET-te', 'otto': 'OT-to', 'nove': 'NO-ve', 'dieci': 'DIE-chi',
+      },
       glossary: [
         { it: 'Quanti anni hai?', es: '¿Cuántos años tienes?', note: 'Literal "¿Cuántos años tienes?" — igual estructura que el español.' },
         { it: 'giovane', es: 'joven', note: null },
@@ -213,6 +244,16 @@ const CONTENT = {
         { speaker: 'Marco', line: "Sì, parlo inglese e un po' d'italiano." },
         { speaker: 'Giulia', line: 'Bravo!' },
       ],
+      phonetics: {
+        'parli italiano?': 'PAR-li i-ta-LIA-no?',
+        'sì, parlo italiano e spagnolo. tu parli inglese?': 'si, PAR-lo i-ta-LIA-no e spa-ÑO-lo. tu PAR-li in-GLE-se?',
+        "sì, parlo inglese e un po' d'italiano.": 'si, PAR-lo in-GLE-se e un PO di-ta-LIA-no.',
+        'bravo!': 'BRA-vo!',
+        "un po' di": 'un PO di',
+        'parlo': 'PAR-lo', 'parli': 'PAR-li', 'parla': 'PAR-la',
+        'parliamo': 'par-LIA-mo', 'parlate': 'par-LA-te', 'parlano': 'PAR-la-no',
+        'parlare': 'par-LA-re',
+      },
       glossary: [
         { it: "un po' di", es: 'un poco de', note: null },
         { it: 'Bravo!', es: '¡Bien hecho!', note: 'Cognado directo — mismo uso que en español al felicitar.' },
@@ -277,6 +318,15 @@ const CONTENT = {
         { speaker: 'Marco', line: 'Io prendo un tè.' },
         { speaker: 'Giulia', line: 'Va bene!' },
       ],
+      phonetics: {
+        'cosa prendi?': 'KO-sa PREN-di?',
+        'prendo un caffè. e tu?': 'PREN-do un kaf-FE. e tu?',
+        'io prendo un tè.': 'IO PREN-do un TE.',
+        'va bene!': 'va BE-ne!', 'va bene': 'va BE-ne',
+        'prendo': 'PREN-do', 'prendi': 'PREN-di', 'prende': 'PREN-de',
+        'prendiamo': 'pren-DIA-mo', 'prendete': 'pren-DE-te', 'prendono': 'PREN-do-no',
+        'prendere': 'pren-DE-re',
+      },
       glossary: [
         { it: 'Cosa prendi?', es: '¿Qué tomas/pedís?', note: 'Se usa así en bares y cafés, no solo literal "tomar".' },
         { it: 'Va bene', es: 'Está bien / dale', note: null },
@@ -341,6 +391,16 @@ const CONTENT = {
         { speaker: 'Marco', line: 'No, non dormo bene stanotte.' },
         { speaker: 'Giulia', line: 'Peccato!' },
       ],
+      phonetics: {
+        'dormi bene stanotte?': 'DOR-mi BE-ne sta-NOT-te?',
+        'sì, dormo bene. tu dormi bene?': 'si, DOR-mo BE-ne. tu DOR-mi BE-ne?',
+        'no, non dormo bene stanotte.': 'no, non DOR-mo BE-ne sta-NOT-te.',
+        'peccato!': 'pek-KA-to!',
+        'stanotte': 'sta-NOT-te', 'non dormo': 'non DOR-mo',
+        'dormo': 'DOR-mo', 'dormi': 'DOR-mi', 'dorme': 'DOR-me',
+        'dormiamo': 'dor-MIA-mo', 'dormite': 'dor-MI-te', 'dormono': 'DOR-mo-no',
+        'dormire': 'dor-MI-re',
+      },
       glossary: [
         { it: 'stanotte', es: 'esta noche', note: null },
         { it: 'non dormo', es: 'no duermo', note: '"non" antes del verbo niega la oración, como el "no" del español antes del verbo.' },

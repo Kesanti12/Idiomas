@@ -6,6 +6,62 @@ function render(html) {
   root.innerHTML = html;
 }
 
+// ---------- INMERSIÓN: italiano + gloss en español, audio y fonética ----------
+
+// UI en italiano por defecto (botones, títulos, consignas) con una traducción chica
+// en español debajo para que nunca haya ambigüedad sobre qué hacer.
+function gloss(it, es) {
+  return `${it}<span class="gloss">${es}</span>`;
+}
+
+function speakItalian(text) {
+  if (!('speechSynthesis' in window) || !text) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'it-IT';
+  utter.rate = 0.85;
+  window.speechSynthesis.speak(utter);
+}
+
+// data-speak en vez de onclick inline: el diálogo tiene comillas simples ("un po' di")
+// que romperían un onclick="speakItalian('...')" armado a mano.
+function speakerBtn(text) {
+  return `<button type="button" class="speaker-btn" data-speak="${text.replace(/"/g, '&quot;')}" aria-label="Ascolta la pronuncia">🔊</button>`;
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.speaker-btn');
+  if (btn) speakItalian(btn.dataset.speak);
+});
+
+// Fonética simple (no IPA) para hispanohablantes, buscada en el diccionario de la
+// lección. Case-insensitive porque el mismo texto aparece con distinta capitalización
+// en el diálogo, la tabla de gramática y las respuestas de los ejercicios.
+function phoneticFor(lesson, text) {
+  if (!lesson.phonetics || !text) return null;
+  return lesson.phonetics[text.toLowerCase()] || null;
+}
+
+// Bloque reusable: texto en italiano + botón de audio + fonética si está disponible.
+function italianWithAudio(lesson, text, extraClass) {
+  const phon = phoneticFor(lesson, text);
+  return `<span class="it-audio ${extraClass || ''}">${text} ${speakerBtn(text)}${phon ? `<div class="phonetic">${phon}</div>` : ''}</span>`;
+}
+
+// Consigna según el tipo de ítem — el problema reportado era que el usuario veía la
+// frase/hueco sin ninguna indicación de qué se esperaba responder.
+const INSTRUCTIONS = {
+  fill: { it: 'Completa lo spazio vuoto.', es: 'Completá el espacio en blanco.' },
+  translate: { it: 'Traduci in italiano.', es: 'Traducí al italiano.' },
+  recognize: { it: 'Cosa significa? Rispondi in spagnolo.', es: '¿Qué significa? Respondé en español.' },
+};
+
+function instructionLine(kind) {
+  const i = INSTRUCTIONS[kind];
+  if (!i) return '';
+  return `<p class="instruction">${gloss(i.it, i.es)}</p>`;
+}
+
 function go(screen, params) {
   location.hash = screen + (params ? '?' + new URLSearchParams(params).toString() : '');
 }
@@ -36,35 +92,39 @@ function renderHome() {
     const done = progress.completedLessons.includes(lesson.id);
     return `
     <div class="card">
-      <h3>${done ? '✅ ' : '📘 '}${lesson.titleEs} <span class="cefr-badge">${lesson.cefr}</span></h3>
+      <h3>${done ? '✅ ' : '📘 '}${lesson.title} <span class="cefr-badge">${lesson.cefr}</span></h3>
+      <p class="gloss-block">${lesson.titleEs}</p>
       <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
       <button class="btn ${done ? 'secondary' : ''}" onclick="go('lesson', {id: '${lesson.id}'})">
-        ${done ? 'Repasar la lección' : 'Empezar lección'}
+        ${done ? gloss('Ripassa la lezione', 'Repasar la lección') : gloss('Inizia la lezione', 'Empezar lección')}
       </button>
     </div>`;
   }).join('');
 
   render(`
     <div class="top-bar">
-      <span>🔥 Racha: ${progress.streak} día(s)</span>
+      <span>🔥 ${gloss('Serie: ' + progress.streak + ' giorni', 'Racha: ' + progress.streak + ' día(s)')}</span>
       <span class="cefr-badge">A1</span>
     </div>
     <h1>Ciao! 👋</h1>
-    <p>Aprendé italiano de verdad: input real, práctica activa y repaso espaciado — no solo rachas.</p>
+    <p>Impara l'italiano sul serio: input reale, pratica attiva e ripasso spaziato.<br>
+       <span class="gloss-block">Aprendé italiano de verdad: input real, práctica activa y repaso espaciado.</span></p>
 
     <div class="card">
-      <h3>🔁 Repaso espaciado</h3>
+      <h3>🔁 ${gloss('Ripasso spaziato', 'Repaso espaciado')}</h3>
       <p style="color:var(--text-dim); font-size:14px;">
-        ${due > 0 ? `Tenés ${due} ítem(s) listos para repasar hoy.` : 'No hay repasos pendientes hoy. Volvé mañana.'}
+        ${due > 0
+          ? gloss(`Hai ${due} elemento/i pronti da ripassare oggi.`, `Tenés ${due} ítem(s) listos para repasar hoy.`)
+          : gloss('Nessun ripasso in sospeso oggi. Torna domani.', 'No hay repasos pendientes hoy. Volvé mañana.')}
       </p>
       <button class="btn ${due === 0 ? 'secondary' : ''}" ${due === 0 ? 'disabled' : ''} onclick="go('review')">
-        Repasar ahora ${due > 0 ? '(' + due + ')' : ''}
+        ${gloss('Ripassa ora' + (due > 0 ? ' (' + due + ')' : ''), 'Repasar ahora')}
       </button>
     </div>
 
     ${lessonCards}
 
-    <button class="btn secondary" onclick="go('progress')">Ver mi progreso</button>
+    <button class="btn secondary" onclick="go('progress')">${gloss('Il mio progresso', 'Ver mi progreso')}</button>
   `);
 }
 
@@ -85,30 +145,31 @@ function renderLesson(id) {
 
 function renderDialogueStep(lesson) {
   render(`
-    <div class="top-bar"><a class="link" href="#home">← Salir</a><span class="cefr-badge">${lesson.cefr}</span></div>
-    <h2>${lesson.titleEs}</h2>
-    <p style="color:var(--text-dim); font-size:14px;">Leé el diálogo. No hace falta entender cada palabra — el 90%+ es reconocible.</p>
+    <div class="top-bar"><a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a><span class="cefr-badge">${lesson.cefr}</span></div>
+    <h2>${lesson.title}</h2>
+    <p class="gloss-block" style="margin-top:-8px;">${lesson.titleEs}</p>
+    <p style="color:var(--text-dim); font-size:14px;">${gloss('Leggi il dialogo. Tocca 🔊 per ascoltare.', 'Leé el diálogo. Tocá 🔊 para escuchar.')}</p>
     <div class="card">
-      ${lesson.dialogue.map(d => `<div class="dialogue-line"><div class="speaker">${d.speaker}</div><div class="line">${d.line}</div></div>`).join('')}
+      ${lesson.dialogue.map(d => `<div class="dialogue-line"><div class="speaker">${d.speaker}</div><div class="line">${italianWithAudio(lesson, d.line)}</div></div>`).join('')}
     </div>
     <div class="card">
-      <h3 style="font-size:15px;">Vocabulario nuevo</h3>
-      ${lesson.glossary.map(g => `<div class="glossary-item"><b>${g.it}</b> — ${g.es}${g.note ? '<br><i>' + g.note + '</i>' : ''}</div>`).join('')}
+      <h3 style="font-size:15px;">${gloss('Vocabolario nuovo', 'Vocabulario nuevo')}</h3>
+      ${lesson.glossary.map(g => `<div class="glossary-item"><b>${italianWithAudio(lesson, g.it)}</b> — ${g.es}${g.note ? '<br><i>' + g.note + '</i>' : ''}</div>`).join('')}
     </div>
-    <button class="btn" onclick="lessonState.step='grammar'; renderRoute()">Siguiente: gramática</button>
+    <button class="btn" onclick="lessonState.step='grammar'; renderRoute()">${gloss('Avanti: grammatica', 'Siguiente: gramática')}</button>
   `);
 }
 
 function renderGrammarStep(lesson) {
   const g = lesson.grammar;
   render(`
-    <div class="top-bar"><a class="link" href="#home">← Salir</a><span class="cefr-badge">${lesson.cefr}</span></div>
+    <div class="top-bar"><a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a><span class="cefr-badge">${lesson.cefr}</span></div>
     <h2>${g.title}</h2>
     <p>${g.explanation}</p>
     <div class="card">
-      <table>${g.table.map(([p, f]) => `<tr><td>${p}</td><td>${f}</td></tr>`).join('')}</table>
+      <table>${g.table.map(([p, f]) => `<tr><td>${p}</td><td>${italianWithAudio(lesson, f)}</td></tr>`).join('')}</table>
     </div>
-    <button class="btn" onclick="lessonState.step='exercises'; renderRoute()">Siguiente: práctica</button>
+    <button class="btn" onclick="lessonState.step='exercises'; renderRoute()">${gloss('Avanti: pratica', 'Siguiente: práctica')}</button>
   `);
 }
 
@@ -118,14 +179,15 @@ function renderExerciseStep(lesson) {
   const pct = Math.round((lessonState.exIndex / total) * 100);
 
   render(`
-    <div class="top-bar"><a class="link" href="#home">← Salir</a><span>${lessonState.exIndex + 1}/${total}</span></div>
+    <div class="top-bar"><a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a><span>${lessonState.exIndex + 1}/${total}</span></div>
     <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     <div class="card">
+      ${instructionLine(ex.type)}
       <h3>${ex.prompt}</h3>
-      <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" placeholder="Escribí tu respuesta..." ${lessonState.answered ? 'disabled' : ''}>
+      <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" placeholder="Scrivi qui..." ${lessonState.answered ? 'disabled' : ''}>
       <div id="feedback-slot"></div>
     </div>
-    <button class="btn" id="check-btn" onclick="checkExercise('${lesson.id}')">${lessonState.answered ? 'Continuar' : 'Comprobar'}</button>
+    <button class="btn" id="check-btn" onclick="checkExercise('${lesson.id}')">${lessonState.answered ? gloss('Continua', 'Continuar') : gloss('Verifica', 'Comprobar')}</button>
   `);
 
   const input = document.getElementById('answer-input');
@@ -133,14 +195,15 @@ function renderExerciseStep(lesson) {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') checkExercise(lesson.id); });
 
   if (lessonState.answered) {
-    showExerciseFeedback(ex, lessonState.lastCorrect);
+    showExerciseFeedback(ex, lessonState.lastCorrect, lesson);
   }
 }
 
-function showExerciseFeedback(ex, correct) {
+function showExerciseFeedback(ex, correct, lesson) {
   const slot = document.getElementById('feedback-slot');
+  const correctForm = ex.srsBack || ex.answer;
   slot.innerHTML = `<div class="feedback ${correct ? 'correct' : 'incorrect'}">
-    ${correct ? '✅ ¡Correcto!' : '❌ La respuesta era: <b>' + ex.answer + '</b>'}
+    ${correct ? '✅ ' + gloss('Corretto!', '¡Correcto!') : '❌ ' + gloss('La risposta era:', 'La respuesta era:') + ' <b>' + italianWithAudio(lesson, correctForm) + '</b>'}
     <br>${ex.explanation}
   </div>`;
 }
@@ -155,15 +218,17 @@ function checkExercise(lessonId) {
     lessonState.answered = true;
     lessonState.lastCorrect = correct;
 
-    // Cada ejercicio de la lección entra al banco SRS como ítem individual.
-    SRS.initItem(lesson.id + '_' + ex.id, ex.srsFront, ex.srsBack, { lessonId: lesson.id });
+    // Cada ejercicio de la lección entra al banco SRS como ítem individual. "kind" queda
+    // guardado para que la pantalla de Repaso sepa qué consigna mostrar (fill/translate/
+    // recognize) sin tener que adivinarlo del contenido del ítem.
+    SRS.initItem(lesson.id + '_' + ex.id, ex.srsFront, ex.srsBack, { lessonId: lesson.id, kind: ex.type });
     SRS.review(lesson.id + '_' + ex.id, correct ? SRS.RATING.GOOD : SRS.RATING.AGAIN);
 
     // Vocabulario (no drills de conjugación): además de producir ES→IT, se agrega el
     // ítem inverso IT→ES para entrenar comprensión, no solo producción (principio #3).
     if (ex.type === 'translate' && ex.reverseFront && ex.reverseBack) {
       const revId = lesson.id + '_' + ex.id + '_rev';
-      SRS.initItem(revId, ex.reverseFront, ex.reverseBack, { lessonId: lesson.id });
+      SRS.initItem(revId, ex.reverseFront, ex.reverseBack, { lessonId: lesson.id, kind: 'recognize' });
       SRS.review(revId, correct ? SRS.RATING.GOOD : SRS.RATING.AGAIN);
     }
 
@@ -185,9 +250,9 @@ function checkExercise(lessonId) {
 function renderLessonDone(lesson) {
   render(`
     <div class="card" style="text-align:center;">
-      <h2>🎉 ¡Lección completa!</h2>
-      <p>Sumaste 50 XP. Los ${lesson.exercises.length} ítems nuevos ya están programados en tu repaso espaciado.</p>
-      <button class="btn" onclick="go('home')">Volver al inicio</button>
+      <h2>🎉 ${gloss('Lezione completata!', '¡Lección completa!')}</h2>
+      <p>${gloss(`Hai guadagnato 50 XP. I ${lesson.exercises.length} nuovi elementi sono già programmati nel tuo ripasso spaziato.`, `Sumaste 50 XP. Los ${lesson.exercises.length} ítems nuevos ya están programados en tu repaso espaciado.`)}</p>
+      <button class="btn" onclick="go('home')">${gloss('Torna alla home', 'Volver al inicio')}</button>
     </div>
   `);
 }
@@ -235,6 +300,10 @@ function interleaveByLesson(items) {
   return result;
 }
 
+function lessonById(id) {
+  return CONTENT.lessons.find(l => l.id === id) || {};
+}
+
 function renderReview() {
   if (reviewQueue === null) {
     reviewQueue = interleaveByLesson(SRS.dueItems());
@@ -243,24 +312,32 @@ function renderReview() {
   if (reviewIndex >= reviewQueue.length) {
     render(`
       <div class="card" style="text-align:center;">
-        <h2>✅ Repaso terminado</h2>
-        <p>Repasaste ${reviewQueue.length} ítem(s). El sistema ya reprogramó cada uno según cómo te fue.</p>
-        <button class="btn" onclick="reviewQueue=null; go('home')">Volver al inicio</button>
+        <h2>✅ ${gloss('Ripasso completato', 'Repaso terminado')}</h2>
+        <p>${gloss(`Hai ripassato ${reviewQueue.length} elemento/i. Il sistema ha già riprogrammato ognuno in base a come ti è andata.`, `Repasaste ${reviewQueue.length} ítem(s). El sistema ya reprogramó cada uno según cómo te fue.`)}</p>
+        <button class="btn" onclick="reviewQueue=null; go('home')">${gloss('Torna alla home', 'Volver al inicio')}</button>
       </div>
     `);
     return;
   }
 
   const item = reviewQueue[reviewIndex];
+  const lesson = lessonById(item.meta && item.meta.lessonId);
+  const kind = (item.meta && item.meta.kind) || 'translate';
+  // "recognize" muestra una frase en italiano de verdad (pronunciable) — ahí sí tiene
+  // sentido ofrecer audio/fonética antes de responder. En "translate"/"fill" el front
+  // es la consigna en español o una frase con hueco, así que el audio se ofrece recién
+  // sobre la respuesta correcta, una vez revelada.
+  const frontHtml = kind === 'recognize' ? italianWithAudio(lesson, item.front) : item.front;
   render(`
-    <div class="top-bar"><a class="link" href="#home" onclick="reviewQueue=null">← Salir</a><span>${reviewIndex + 1}/${reviewQueue.length}</span></div>
+    <div class="top-bar"><a class="link" href="#home" onclick="reviewQueue=null">← ${gloss('Esci', 'Salir')}</a><span>${reviewIndex + 1}/${reviewQueue.length}</span></div>
     <div class="card">
-      <h3>${item.front}</h3>
-      <input type="text" id="review-input" autocomplete="off" autocapitalize="off" placeholder="Escribí tu respuesta..." ${reviewAnswered ? 'disabled' : ''}>
+      ${instructionLine(kind)}
+      <h3>${frontHtml}</h3>
+      <input type="text" id="review-input" autocomplete="off" autocapitalize="off" placeholder="Scrivi qui..." ${reviewAnswered ? 'disabled' : ''}>
       <div id="review-feedback"></div>
     </div>
     <div id="review-actions">
-      <button class="btn" id="review-check-btn" onclick="checkReview()">Comprobar</button>
+      <button class="btn" id="review-check-btn" onclick="checkReview()">${gloss('Verifica', 'Comprobar')}</button>
     </div>
   `);
 
@@ -268,25 +345,28 @@ function renderReview() {
   input.focus();
   input.addEventListener('keydown', e => { if (e.key === 'Enter') checkReview(); });
 
-  if (reviewAnswered) showReviewFeedback(item);
+  if (reviewAnswered) showReviewFeedback(item, lesson, kind);
 }
 
-function showReviewFeedback(item) {
+function showReviewFeedback(item, lesson, kind) {
   const slot = document.getElementById('review-feedback');
+  // El audio/fonética solo tiene sentido cuando la respuesta correcta está en italiano
+  // (kind !== 'recognize', donde la respuesta es la traducción al español).
+  const backHtml = kind === 'recognize' ? item.back : italianWithAudio(lesson, item.back);
   slot.innerHTML = `<div class="feedback ${reviewCorrect ? 'correct' : 'incorrect'}">
-    ${reviewCorrect ? '✅ ¡Correcto!' : '❌ La respuesta era: <b>' + item.back + '</b>'}
+    ${reviewCorrect ? '✅ ' + gloss('Corretto!', '¡Correcto!') : '❌ ' + gloss('La risposta era:', 'La respuesta era:') + ' <b>' + backHtml + '</b>'}
   </div>`;
 
   const actions = document.getElementById('review-actions');
   if (reviewCorrect) {
     actions.innerHTML = `
       <div class="rating-row">
-        <button class="btn secondary" onclick="rateReview(${SRS.RATING.HARD})">😓 Difícil</button>
-        <button class="btn" onclick="rateReview(${SRS.RATING.GOOD})">🙂 Bien</button>
-        <button class="btn" onclick="rateReview(${SRS.RATING.EASY})">😎 Fácil</button>
+        <button class="btn secondary" onclick="rateReview(${SRS.RATING.HARD})">😓 ${gloss('Difficile', 'Difícil')}</button>
+        <button class="btn" onclick="rateReview(${SRS.RATING.GOOD})">🙂 ${gloss('Bene', 'Bien')}</button>
+        <button class="btn" onclick="rateReview(${SRS.RATING.EASY})">😎 ${gloss('Facile', 'Fácil')}</button>
       </div>`;
   } else {
-    actions.innerHTML = `<button class="btn danger" onclick="rateReview(${SRS.RATING.AGAIN})">Vi la respuesta, seguir</button>`;
+    actions.innerHTML = `<button class="btn danger" onclick="rateReview(${SRS.RATING.AGAIN})">${gloss('Continua', 'Vi la respuesta, seguir')}</button>`;
   }
 }
 
@@ -323,11 +403,11 @@ function upcomingReviewCalendar(maxDates) {
 }
 
 function formatRelativeDate(dateISO, todayISO) {
-  if (dateISO <= todayISO) return 'Hoy';
+  if (dateISO <= todayISO) return gloss('Oggi', 'Hoy');
   const today = new Date(todayISO + 'T00:00:00');
   const target = new Date(dateISO + 'T00:00:00');
   const diffDays = Math.round((target - today) / 86400000);
-  if (diffDays === 1) return 'Mañana';
+  if (diffDays === 1) return gloss('Domani', 'Mañana');
   const [, m, d] = dateISO.split('-');
   return `${d}/${m}`;
 }
@@ -340,26 +420,26 @@ function renderProgress() {
   const calendar = upcomingReviewCalendar(6);
 
   render(`
-    <div class="top-bar"><a class="link" href="#home">← Inicio</a></div>
-    <h2>Tu progreso</h2>
+    <div class="top-bar"><a class="link" href="#home">← ${gloss('Home', 'Inicio')}</a></div>
+    <h2>${gloss('I tuoi progressi', 'Tu progreso')}</h2>
     <div class="stat-row">
-      <div class="stat"><div class="num">${progress.streak}</div><div class="label">Racha (días)</div></div>
-      <div class="stat"><div class="num">${learned}</div><div class="label">Ítems aprendidos</div></div>
+      <div class="stat"><div class="num">${progress.streak}</div><div class="label">${gloss('Serie (giorni)', 'Racha (días)')}</div></div>
+      <div class="stat"><div class="num">${learned}</div><div class="label">${gloss('Elementi imparati', 'Ítems aprendidos')}</div></div>
       <div class="stat"><div class="num">${progress.xp}</div><div class="label">XP</div></div>
     </div>
     <div class="card">
-      <h3>Nivel CEFR aproximado</h3>
+      <h3>${gloss('Livello CEFR approssimativo', 'Nivel CEFR aproximado')}</h3>
       <p><span class="cefr-badge">A1</span></p>
-      ${CONTENT.lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${l.titleEs}: ${progress.completedLessons.includes(l.id) ? 'completa ✅' : 'pendiente'}</p>`).join('')}
+      ${CONTENT.lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${l.title} (${l.titleEs}): ${progress.completedLessons.includes(l.id) ? 'completa ✅' : gloss('in sospeso', 'pendiente')}</p>`).join('')}
     </div>
     <div class="card">
-      <h3>Repasos pendientes</h3>
-      <p>${dueToday > 0 ? dueToday + ' ítem(s) listos hoy.' : 'Estás al día. 🎉'}</p>
+      <h3>${gloss('Ripassi in sospeso', 'Repasos pendientes')}</h3>
+      <p>${dueToday > 0 ? gloss(`${dueToday} elemento/i pronti oggi.`, `${dueToday} ítem(s) listos hoy.`) : gloss('Sei in pari! 🎉', 'Estás al día. 🎉')}</p>
       ${calendar.length > 0 ? `
         <table>
-          ${calendar.map(c => `<tr><td>${c.label}</td><td>${c.count} ítem(s)</td></tr>`).join('')}
+          ${calendar.map(c => `<tr><td>${c.label}</td><td>${c.count} ${gloss('elemento/i', 'ítem(s)')}</td></tr>`).join('')}
         </table>
-      ` : learned > 0 ? '' : '<p style="font-size:14px; color:var(--text-dim);">Todavía no aprendiste ningún ítem.</p>'}
+      ` : learned > 0 ? '' : `<p style="font-size:14px; color:var(--text-dim);">${gloss('Non hai ancora imparato nessun elemento.', 'Todavía no aprendiste ningún ítem.')}</p>`}
     </div>
   `);
 }

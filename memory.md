@@ -384,3 +384,59 @@ recorrido.
 **Cierre del loop:** esta sesión de loop automático (cron de 10 min, ID `8734ee60`) termina
 acá según lo indicado en `TASK.md` — ventana 13:56→15:30 cumplida. No se programa un nuevo
 ciclo de mejora después de este commit.
+
+---
+
+## Sesión interactiva post-loop — 2026-07-15 ~16:30 (feedback directo del usuario)
+
+El usuario probó la app y reportó, con capturas, dos problemas de usabilidad reales en la
+pantalla de Repaso/ejercicios: (1) ningún ítem decía qué se esperaba responder (ni "completá
+el hueco" ni "traducí" ni nada — solo la frase pelada), y (2) pidió que títulos/instrucciones
+pasen a italiano para inmersión, y pronunciación (audio si se podía, si no fonética).
+
+Se preguntó al usuario el nivel de inmersión deseado (para no arriesgar instrucciones 100%
+en italiano que un A1 real no podría entender, empeorando el problema reportado) y el
+formato de pronunciación. Eligió: **"Italiano con apoyo"** (consigna en italiano + gloss
+chico en español debajo, siempre visible) y **"Audio + fonética siempre visible"**.
+
+**Qué se hizo:**
+1. `js/content.js`: diccionario `phonetics: {...}` por lección (claves en minúscula, guía
+   simple no-IPA pensada para hispanohablantes, ej. "Come ti chiami?" → "KO-me ti KIA-mi?")
+   cubriendo diálogos, tablas de conjugación y respuestas de ejercicios de las 6 lecciones.
+2. `js/app.js`:
+   - `speakItalian(text)`: Web Speech API (`SpeechSynthesisUtterance`, `lang: 'it-IT'`) —
+     nativa del navegador, cero dependencias nuevas, funciona offline en la mayoría de OS.
+   - `speakerBtn()` + delegación de eventos (`data-speak` en vez de `onclick` inline, para
+     no romper con comillas simples como en "un po' d'italiano").
+   - `phoneticFor()` / `italianWithAudio()`: helper reusable que muestra el texto + 🔊 +
+     fonética si existe en el diccionario de la lección (fallback gracioso si no existe).
+   - `INSTRUCTIONS` + `instructionLine()`: consigna según el tipo de ítem (`fill` →
+     "Completa lo spazio vuoto." / `translate` → "Traduci in italiano." / `recognize` →
+     "Cosa significa? Rispondi in spagnolo."), con gloss en español. Esto resuelve
+     directamente el bug reportado.
+   - Los ítems SRS ahora guardan `meta.kind` (fill/translate/recognize) para que la
+     pantalla de Repaso sepa qué consigna mostrar sin adivinar.
+   - Prácticamente todo el copy de UI (botones, títulos de pantalla, mensajes) pasó a
+     italiano con `gloss(it, es)` — un helper que renderiza el texto en italiano y una
+     traducción chica gris debajo.
+3. `css/style.css`: estilos para `.gloss`, `.instruction`, `.it-audio`, `.speaker-btn`,
+   `.phonetic`.
+
+**Verificado con Playwright**: las 6 lecciones se completan de punta a punta (43 ítems SRS
+sin cambios), la pantalla de ejercicio muestra la instrucción arriba del prompt, el feedback
+incorrecto muestra la respuesta correcta con audio, la pantalla de Repaso muestra instrucción
++ audio + fonética para ítems `recognize` (el caso exacto reportado por el usuario — "Come ti
+chiami?"/"Prendere" ahora traen consigna + 🔊 + fonética). Se verificó además que el botón de
+audio efectivamente llama a `speechSynthesis.speak()` con el texto y `lang: 'it-IT'`
+correctos. 0 errores de consola en todo el recorrido. Capturas revisadas visualmente.
+
+**Pendiente / decisiones a revisar más adelante:**
+- La fonética se escribió a mano por lección (no hay generador automático) — es preciso
+  pero no escala solo; cada lección nueva necesita su propio diccionario `phonetics`.
+- El audio depende de que el navegador/SO tenga una voz italiana instalada — no se verificó
+  en un dispositivo real (Playwright/Chromium headless no reproduce audio real, solo se
+  confirmó que la llamada a la API se dispara correctamente).
+- Con "Italiano con apoyo" elegido, casi toda la UI quedó bilingüe (más texto en pantalla)
+  — si en el futuro el usuario nota que se siente sobrecargada, la opción "Full italiano"
+  o volver a mayormente-español queda como ajuste de una sola variable de diseño (los
+  helpers `gloss()`/`instructionLine()` ya centralizan el patrón).
