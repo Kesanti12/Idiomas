@@ -282,11 +282,36 @@ function rateReview(rating) {
 }
 
 // ---------- PROGRESS ----------
+
+// Agrupa los ítems introducidos por fecha de repaso y arma las próximas N fechas con
+// ítems pendientes (fechas vencidas se acumulan todas en "Hoy" — ya están due).
+function upcomingReviewCalendar(maxDates) {
+  const today = SRS.todayISO();
+  const counts = {};
+  SRS.allItems().filter(i => i.introduced).forEach(i => {
+    const bucket = i.due <= today ? today : i.due;
+    counts[bucket] = (counts[bucket] || 0) + 1;
+  });
+  const dates = Object.keys(counts).sort();
+  return dates.slice(0, maxDates).map(date => ({ date, count: counts[date], label: formatRelativeDate(date, today) }));
+}
+
+function formatRelativeDate(dateISO, todayISO) {
+  if (dateISO <= todayISO) return 'Hoy';
+  const today = new Date(todayISO + 'T00:00:00');
+  const target = new Date(dateISO + 'T00:00:00');
+  const diffDays = Math.round((target - today) / 86400000);
+  if (diffDays === 1) return 'Mañana';
+  const [, m, d] = dateISO.split('-');
+  return `${d}/${m}`;
+}
+
 function renderProgress() {
   const progress = SRS.getProgress();
   const items = SRS.allItems();
   const learned = items.filter(i => i.introduced).length;
   const dueToday = SRS.dueItems().length;
+  const calendar = upcomingReviewCalendar(6);
 
   render(`
     <div class="top-bar"><a class="link" href="#home">← Inicio</a></div>
@@ -304,6 +329,11 @@ function renderProgress() {
     <div class="card">
       <h3>Repasos pendientes</h3>
       <p>${dueToday > 0 ? dueToday + ' ítem(s) listos hoy.' : 'Estás al día. 🎉'}</p>
+      ${calendar.length > 0 ? `
+        <table>
+          ${calendar.map(c => `<tr><td>${c.label}</td><td>${c.count} ítem(s)</td></tr>`).join('')}
+        </table>
+      ` : learned > 0 ? '' : '<p style="font-size:14px; color:var(--text-dim);">Todavía no aprendiste ningún ítem.</p>'}
     </div>
   `);
 }

@@ -196,3 +196,38 @@ Progreso muestra las 3 lecciones completas y el conteo correcto. 0 errores de co
   vistas, essere/avere).
 - Recordatorio de despliegue sigue igual que en el ciclo 3 (HTTPS real pendiente, fuera del
   alcance de este loop de código).
+
+### Ciclo 5 — 2026-07-15 ~14:32-14:45 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida:** calendario de próximos repasos en la pantalla de Progreso.
+
+**Por qué esta:** releyendo `TASK.md` Fase 3 (criterio de MVP), el punto 5 dice literal
+"Ver su progreso (racha, nivel CEFR aproximado, **próximos repasos pendientes**)". Progreso
+ya mostraba racha, CEFR y el conteo de hoy, pero no el calendario de próximos repasos —
+un requisito de MVP explícitamente nombrado que seguía sin cumplirse del todo. Se priorizó
+por sobre contenido nuevo (Unidad 4) porque es un gap directo contra el criterio de "listo"
+declarado en TASK.md, no una mejora genérica.
+
+**Qué se hizo:**
+- `js/app.js`: nueva función `upcomingReviewCalendar(maxDates)` que agrupa los ítems
+  introducidos por fecha de repaso (las fechas vencidas se acumulan en "Hoy", ya están due)
+  y devuelve las próximas N fechas con su conteo. `formatRelativeDate()` etiqueta "Hoy",
+  "Mañana" o `dd/mm` para el resto. Se renderiza como tabla dentro de la card "Repasos
+  pendientes" en Progreso. Caso sin ítems aprendidos: mensaje explicativo, sin tabla vacía.
+
+**Verificado con Playwright**: Progreso vacío antes de aprender muestra el mensaje
+correcto; tras completar las 3 lecciones, la card de repasos pendientes muestra la fecha
+futura con formato `dd/mm` y el conteo de ítems (los 22 ítems cayeron en la misma fecha
+porque el primer repaso siempre fija stability por rating — comportamiento esperado, no bug).
+0 errores de consola. Screenshot revisado visualmente, se ve legible y coherente con el
+resto de la UI.
+
+**Pendiente para próximos ciclos (por impacto):**
+- Unidad 4 A1 (verbos regulares en -are, ej. "parlare") — primer patrón de conjugación
+  regular, contraste útil con essere/avere ya vistos.
+- Shuffle round-robin por lección en el repaso (ver ciclo 4) — ahora con 3 lecciones ya
+  tiene sentido evaluarlo.
+- Con el criterio explícito de TASK.md Fase 3 ahora cubierto en su totalidad (instalar,
+  lección con input comprensible + recall activo, ítems a un SRS real, ver progreso con
+  racha/CEFR/próximos repasos), el MVP está más sólido que "razonable" — el foco de los
+  ciclos que queden hasta las 15:30 puede ir a más contenido/pulido según lo que dé el tiempo.
+- Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
