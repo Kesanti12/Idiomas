@@ -329,6 +329,71 @@ const CONTENT = {
         },
       ],
     },
+    {
+      id: 'a1_u6_dormire',
+      cefr: 'A1',
+      descriptor: 'Puede hablar de hábitos simples usando el tercer patrón de conjugación regular (-ire).',
+      title: 'Dormi bene?',
+      titleEs: '¿Duermes bien?',
+      dialogue: [
+        { speaker: 'Marco', line: 'Dormi bene stanotte?' },
+        { speaker: 'Giulia', line: 'Sì, dormo bene. Tu dormi bene?' },
+        { speaker: 'Marco', line: 'No, non dormo bene stanotte.' },
+        { speaker: 'Giulia', line: 'Peccato!' },
+      ],
+      glossary: [
+        { it: 'stanotte', es: 'esta noche', note: null },
+        { it: 'non dormo', es: 'no duermo', note: '"non" antes del verbo niega la oración, como el "no" del español antes del verbo.' },
+        { it: 'Peccato!', es: '¡Qué lástima!', note: null },
+      ],
+      grammar: {
+        title: 'Verbos regulares en -ire (ej. "dormire" = dormir)',
+        explanation: 'Tercer y último patrón regular, después de -are (parlare) y -ere (prendere). La buena noticia: -ire comparte casi todas las terminaciones con -ere (io/tu/lui-lei/noi/loro son iguales) — la única diferencia es "voi": "-ete" en -ere (prendete) vs "-ite" en -ire (dormite). Con estos 3 patrones ya podés conjugar la mayoría de verbos regulares del italiano.',
+        table: [
+          ['io', 'dormo'], ['tu', 'dormi'], ['lui/lei', 'dorme'],
+          ['noi', 'dormiamo'], ['voi', 'dormite'], ['loro', 'dormono'],
+        ],
+      },
+      exercises: [
+        {
+          id: 'ex1', type: 'fill',
+          prompt: 'Completa: Io ___ bene.',
+          answer: 'dormo',
+          explanation: '"io" + verbos en -ire → termina en "-o" (igual que -are y -ere).',
+          srsFront: 'Io ___ bene. (dormire, io)', srsBack: 'dormo',
+        },
+        {
+          id: 'ex2', type: 'fill',
+          prompt: 'Completa: Tu ___ bene stanotte?',
+          answer: 'dormi',
+          explanation: '"tu" + verbos en -ire → termina en "-i" (igual que -are y -ere).',
+          srsFront: 'Tu ___ bene stanotte? (dormire, tu)', srsBack: 'dormi',
+        },
+        {
+          id: 'ex3', type: 'fill',
+          prompt: 'Completa: Noi ___ bene.',
+          answer: 'dormiamo',
+          explanation: '"noi" + verbos en -ire → termina en "-iamo" (igual en los 3 patrones regulares).',
+          srsFront: 'Noi ___ bene. (dormire, noi)', srsBack: 'dormiamo',
+        },
+        {
+          id: 'ex4', type: 'translate',
+          prompt: 'Traduce al italiano: "dormir" (infinitivo)',
+          answer: 'dormire',
+          explanation: '"Dormire" — tercer patrón regular, comparte casi todo con -ere salvo "voi".',
+          srsFront: '¿Cómo se dice "dormir" en italiano?', srsBack: 'Dormire',
+          reverseFront: 'Dormire', reverseBack: 'Dormir',
+        },
+        {
+          id: 'ex5', type: 'translate',
+          prompt: 'Traduce al italiano: "esta noche"',
+          answer: 'stanotte',
+          explanation: '"Stanotte" — de "questa notte" (esta noche), contraído.',
+          srsFront: '¿Cómo se dice "esta noche" en italiano?', srsBack: 'Stanotte',
+          reverseFront: 'Stanotte', reverseBack: 'Esta noche',
+        },
+      ],
+    },
   ],
 };
 

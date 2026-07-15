@@ -3,10 +3,13 @@
 > Este archivo es la memoria de continuidad entre iteraciones del loop de mejora.
 > Léelo al empezar cada ciclo. Actualízalo al final de cada ciclo (append, no borres historial viejo).
 
-## Estado actual
-- Fase: **MVP núcleo funcionando** (loop aprender → practicar → repasar espaciado, verificado
-  end-to-end). Unidad 1 A1 completa; falta ampliar contenido e interleaving real.
-- MVP: alcanzado según el criterio de CLAUDE.md — ver Ciclo 1 en el log de iteraciones.
+## Estado actual (al cierre de la sesión del 2026-07-15, ~15:30)
+- Fase: **MVP sólido, sesión de loop cerrada.** 6 lecciones A1, 43 ítems SRS, interleaving
+  round-robin real, instalabilidad verificada, calendario de progreso. Ver "Resumen final
+  de la sesión" al final de este archivo para el detalle completo y el TODO priorizado.
+- MVP: alcanzado y ampliado por encima del criterio mínimo de CLAUDE.md.
+- Próxima sesión: empezar leyendo el "Resumen final" al final de este archivo, no solo
+  este bloque — ahí está el TODO priorizado real.
 
 ## Ciclo 0 — 2026-07-15 02:49 (setup, sesión interactiva previa al loop)
 - Se creó la estructura base del proyecto: `CLAUDE.md`, `memory.md`, `TASK.md`.
@@ -315,8 +318,69 @@ las instrucciones de `TASK.md` (resumen final en este archivo + `ScheduleWakeup 
 reprogramar) en vez de iniciar una mejora nueva.
 
 **Pendiente para el cierre o la próxima sesión (por impacto):**
-- Unidad 6 A1 (verbos -ire, ej. "dormire") completaría las 3 conjugaciones regulares —
-  buen punto de partida si se retoma el loop más adelante.
 - Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
 - Ítems SRS bidireccionales solo cubren vocabulario suelto (`translate`), no los drills de
   conjugación (`fill`) — evaluar si vale la pena para verbos de alta frecuencia.
+
+### Ciclo 9 — 2026-07-15 ~15:12-15:14 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida:** Unidad 6 A1 — "Dormi bene?" (tercer y último patrón de conjugación
+regular: verbos en -ire, con "dormire").
+
+**Por qué esta, con ~18 min restantes:** cierra el trío completo de patrones regulares
+(-are/-ere/-ire) empezado en las Unidades 4 y 5, con alcance acotado a propósito para
+terminar con margen antes de las 15:30. La explicación gramatical señala explícitamente
+que -ire comparte casi todas las terminaciones con -ere (solo cambia "voi": -ete vs -ite),
+así que el usuario cierra el patrón completo de conjugación regular italiana con el mínimo
+de contenido nuevo real. También se introdujo de paso la negación con "non" (glosario), sin
+dedicarle una unidad completa — se retoma como grámatica explícita si hay una unidad futura.
+
+**Qué se hizo:**
+- `js/content.js`: diálogo, glosario (incluye nota sobre "non" como negación), tabla de
+  "dormire" contrastada explícitamente con "prendere" (Unidad 5), 5 ejercicios (3 fill +
+  2 translate bidireccional).
+- Sin cambios en `app.js`/`srs.js`.
+
+**Verificado con Playwright**: Home lista las 6 lecciones, las 6 se completan de punta a
+punta, banco SRS llega a 43 ítems (7+7+8+7+7+7), Progreso muestra las 6 completas. 0
+errores de consola.
+
+---
+
+## Resumen final de la sesión (cierre ~15:30, 2026-07-15)
+
+**MVP: sólido y ampliamente por encima del mínimo razonable.** Recorrido completo desde
+cero: investigación pedagógica → grafo de conocimiento (`/graphify`) → PWA instalable
+(verificada con CDP, no solo asumida) → motor SRS propio inspirado en FSRS → 6 lecciones
+A1 con interleaving round-robin real → calendario de próximos repasos. Loop núcleo
+(aprender → practicar con recall activo → repasar espaciado → ver progreso) funciona de
+punta a punta, verificado con Playwright en cada ciclo, 0 errores de consola en todo el
+recorrido.
+
+**Qué cubre el MVP ahora mismo:**
+- 6 lecciones A1: saludos/essere, familia/avere, edad-números/avere, y las 3 conjugaciones
+  regulares completas (-are parlare, -ere prendere, -ire dormire).
+- 43 ítems en el banco SRS, con dirección bidireccional (ES→IT producción, IT→ES
+  comprensión) para todo el vocabulario suelto.
+- Interleaving real (round-robin por lección, no aleatoriedad simple) en cada sesión de
+  repaso.
+- Progreso con racha, XP, nivel CEFR por lección, y calendario de próximos repasos.
+- Instalabilidad confirmada vía Chrome DevTools Protocol (no solo por inspección del
+  manifest).
+
+**TODO priorizado para la próxima sesión/loop:**
+1. **Desplegar sobre HTTPS real** (GitHub Pages/Netlify/Vercel) — todo lo verificado hasta
+   ahora fue sobre `localhost`; sin esto no se puede instalar de verdad en un celular.
+2. Unidad 7+ A1: negación explícita con "non" (ya insinuada en la Unidad 6), o vocabulario
+   de lugares/direcciones. Seguir en espiral, reforzando gramática ya vista donde se pueda.
+3. Ítems SRS bidireccionales para los drills de conjugación de verbos de alta frecuencia
+   (hoy solo el vocabulario suelto tiene ambas direcciones).
+4. Progresar hacia A2 una vez A1 tenga cobertura más amplia (CLAUDE.md pide progresión
+   completa A1→C2 a largo plazo; hoy todo el contenido es A1).
+5. Considerar exportar/backup del progreso (hoy vive solo en `localStorage` del dispositivo;
+   si el usuario cambia de celular pierde el historial SRS).
+6. Revisar accesibilidad básica (contraste, tamaños táctiles) — no se auditó explícitamente
+   en esta sesión, aunque el diseño mobile-first ya apunta en esa dirección.
+
+**Cierre del loop:** esta sesión de loop automático (cron de 10 min, ID `8734ee60`) termina
+acá según lo indicado en `TASK.md` — ventana 13:56→15:30 cumplida. No se programa un nuevo
+ciclo de mejora después de este commit.
