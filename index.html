@@ -20,6 +20,15 @@
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js').catch(() => {});
     });
+    // Cuando un service worker nuevo toma control (tras actualizar app.js/content.js/
+    // css), recargar una vez automáticamente — si no, el usuario ve la versión vieja
+    // hasta que se le ocurra hacer un hard refresh manual.
+    let refreshedOnce = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshedOnce) return;
+      refreshedOnce = true;
+      window.location.reload();
+    });
   }
 </script>
 </body>

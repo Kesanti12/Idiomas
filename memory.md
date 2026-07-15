@@ -488,3 +488,36 @@ ya era idempotente). Regresión completa de las 6 lecciones sigue en 43 ítems, 
 
 `CACHE_NAME` del service worker subido a `italiano-v3` por este cambio (ver nota de arriba
 sobre bumpear el cache en cada edición de `app.js`).
+
+### Fix de raíz al problema recurrente de cache + dos pedidos más del usuario
+
+El usuario volvió a ver la versión vieja (sin gloss, sin audio) pese al bump de cache y el
+aviso de hacer hard-refresh — el "acordate de recargar fuerte" no es una solución real.
+Se resolvió de raíz en vez de seguir pidiendo hard-refresh manual:
+
+1. **`service-worker.js` reescrito con estrategia mixta**: el app shell (`index.html`,
+   `manifest.json`, `css/style.css`, `js/*.js` — todo lo que cambia seguido durante
+   desarrollo activo) pasa a **network-first** (pide red primero, cae a cache solo si no
+   hay conexión). Los íconos (que casi no cambian) siguen **cache-first**. Esto elimina la
+   clase de bug completa: ya no depende de que alguien se acuerde de bumpear `CACHE_NAME`
+   ni de que el usuario haga hard-refresh — con conexión, siempre se sirve lo último.
+   `CACHE_NAME` → `italiano-v4`.
+2. **Auto-reload en `index.html`**: se agregó un listener de
+   `navigator.serviceWorker.addEventListener('controllerchange', ...)` que recarga la
+   página una sola vez cuando un service worker nuevo toma control (patrón estándar del
+   "Offline Cookbook" de Google) — refuerza el fix anterior para el caso de que el usuario
+   ya tenga la pestaña abierta desde antes de la actualización.
+3. **Botón "Atrás" (pedido explícito)**: antes solo existía "← Salir" (que saca de la
+   lección por completo). Se agregó `backTo(step)` + un link "↩ Indietro / Atrás" en las
+   pantallas de gramática (vuelve al diálogo) y ejercicios (vuelve a gramática), sin perder
+   el progreso ya hecho (`exIndex`/`answered` no se tocan). Nuevo `.top-bar-left` en CSS
+   para agrupar Salir+Atrás sin romper el layout existente.
+4. **Ícono de audio**: no era un bug de código (ya funcionaba, verificado con capturas en
+   el ciclo anterior) — era el mismo problema de cache sirviendo la versión sin la
+   funcionalidad. Se resuelve solo con el fix #1.
+
+Verificado con Playwright: SW controla la página (`navigator.serviceWorker.controller`
+no nulo), un reload normal (no hard-refresh) sirve contenido actualizado, audio+fonética
+visibles en diálogo y tabla de gramática, botón Atrás funciona en ambas direcciones sin
+perder progreso, regresión completa de 6 lecciones/43 ítems sigue en verde, 0 errores de
+consola.

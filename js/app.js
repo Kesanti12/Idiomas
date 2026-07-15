@@ -153,9 +153,24 @@ function renderLesson(id) {
   if (lessonState.step === 'done') return renderLessonDone(lesson);
 }
 
+// Vuelve a la tarjeta anterior dentro de la misma lección (dialogo ↔ gramática ↔
+// ejercicios) sin perder el progreso ya hecho (exIndex/answered quedan como estaban).
+function backTo(step) {
+  lessonState.step = step;
+  renderRoute();
+}
+
+function exitLink() {
+  return `<a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a>`;
+}
+
+function backLink(step) {
+  return `<a class="link" onclick="backTo('${step}')">↩ ${gloss('Indietro', 'Atrás')}</a>`;
+}
+
 function renderDialogueStep(lesson) {
   render(`
-    <div class="top-bar"><a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a><span class="cefr-badge">${lesson.cefr}</span></div>
+    <div class="top-bar"><div class="top-bar-left">${exitLink()}</div><span class="cefr-badge">${lesson.cefr}</span></div>
     <h2>${lesson.title}</h2>
     <p class="gloss-block" style="margin-top:-8px;">${lesson.titleEs}</p>
     <p style="color:var(--text-dim); font-size:14px;">${gloss('Leggi il dialogo. Tocca 🔊 per ascoltare.', 'Leé el diálogo. Tocá 🔊 para escuchar.')}</p>
@@ -173,7 +188,7 @@ function renderDialogueStep(lesson) {
 function renderGrammarStep(lesson) {
   const g = lesson.grammar;
   render(`
-    <div class="top-bar"><a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a><span class="cefr-badge">${lesson.cefr}</span></div>
+    <div class="top-bar"><div class="top-bar-left">${exitLink()}${backLink('dialogue')}</div><span class="cefr-badge">${lesson.cefr}</span></div>
     <h2>${g.title}</h2>
     <p>${g.explanation}</p>
     <div class="card">
@@ -189,7 +204,7 @@ function renderExerciseStep(lesson) {
   const pct = Math.round((lessonState.exIndex / total) * 100);
 
   render(`
-    <div class="top-bar"><a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a><span>${lessonState.exIndex + 1}/${total}</span></div>
+    <div class="top-bar"><div class="top-bar-left">${exitLink()}${backLink('grammar')}</div><span>${lessonState.exIndex + 1}/${total}</span></div>
     <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     <div class="card">
       ${instructionLine(ex.type)}
