@@ -1,15 +1,19 @@
-# Tarea de arranque — corrida automática de las 5:30am
+# Tarea de arranque — corrida en loop hasta las 3:30pm
 
-Esta es la tarea a ejecutar por el agente programado. Lee primero `CLAUDE.md` (identidad y
+Esta es la tarea a ejecutar por el agente en loop. Lee primero `CLAUDE.md` (identidad y
 principios, no negociables) y `memory.md` (estado y progreso) antes de empezar.
 
 ## Ventana de trabajo
-- Empieza: ~5:30am (hora de esta corrida).
-- **Termina: 10:00am en punto.** No sigas iterando después de esa hora aunque el MVP no
+- Empieza: ~13:56 (hora de esta corrida, 2026-07-15).
+- **Termina: 15:30 (3:30pm) en punto.** No sigas iterando después de esa hora aunque el MVP no
   esté "perfecto" — deja el estado como esté, actualiza `memory.md` con un resumen final
   y un TODO claro de qué seguiría, y detente. Usa `ScheduleWakeup` con `stop: true` para
   cerrar el loop en ese momento (o simplemente no programes un nuevo wakeup).
 - Trabaja en ciclos de ~10 minutos. Cada ciclo: 1 mejora concreta, probada, commiteada.
+
+> Nota: hubo un intento anterior (madrugada del mismo día) que dejó `CLAUDE.md`, `memory.md`,
+> `TASK.md`, `manifest.json` e `icons/` creados pero sin ejecutar el loop de verdad
+> (el log de iteraciones en `memory.md` seguía vacío). Esta corrida retoma desde ahí.
 
 ## Fase 0 — Investigación (una sola vez, al arrancar)
 Investiga (WebSearch/WebFetch) y sintetiza, sin quedarte en lo superficial:

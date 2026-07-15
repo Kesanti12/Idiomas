@@ -1,0 +1,503 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "puntos_friccion_hispanohablantes",
+        "label": "Puntos de fricci\u00f3n gramatical para hispanohablantes",
+        "nodes": [
+          "investigacion_falsos_amigos",
+          "investigacion_preposiciones_articuladas",
+          "investigacion_subjuntivo_it_es",
+          "investigacion_verbos_pronominales",
+          "investigacion_consonantes_geminadas"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.9,
+        "source_file": "investigacion.md"
+      },
+      {
+        "id": "principios_diseno_anti_duolingo",
+        "label": "Principios de dise\u00f1o que corrigen las carencias de Duolingo",
+        "nodes": [
+          "investigacion_recall_activo",
+          "investigacion_gramatica_explicita",
+          "investigacion_frecuencia_real",
+          "investigacion_adaptividad"
+        ],
+        "relation": "implement",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.9,
+        "source_file": "investigacion.md"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "FSRS (Free Spaced Repetition Scheduler)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Elegido sobre SM-2 porque necesita ~20-30% menos repasos para la misma retenci\u00f3n y predice recall con \u00b15.3% de error vs \u00b116.2% de SM-2, sin requerir entrenamiento por usuario.",
+      "id": "investigacion_fsrs",
+      "community": 0,
+      "norm_label": "fsrs (free spaced repetition scheduler)"
+    },
+    {
+      "label": "SM-2 (algoritmo cl\u00e1sico de Anki)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_sm2",
+      "community": 0,
+      "norm_label": "sm-2 (algoritmo clasico de anki)"
+    },
+    {
+      "label": "Modelo DSR (Difficulty, Stability, Retrievability)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_dsr_model",
+      "community": 0,
+      "norm_label": "modelo dsr (difficulty, stability, retrievability)"
+    },
+    {
+      "label": "Curva del olvido de Ebbinghaus",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#2-curva-del-olvido-ebbinghaus",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Base te\u00f3rica de todo SRS: se olvida ~50% en la primera hora, ~70% en 24h; cada repaso exitoso alarga el intervalo \u00f3ptimo siguiente.",
+      "id": "investigacion_ebbinghaus_forgetting_curve",
+      "community": 0,
+      "norm_label": "curva del olvido de ebbinghaus"
+    },
+    {
+      "label": "Distributed practice (meta-an\u00e1lisis 254 estudios)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#2-curva-del-olvido-ebbinghaus",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_distributed_practice",
+      "community": 0,
+      "norm_label": "distributed practice (meta-analisis 254 estudios)"
+    },
+    {
+      "label": "Por qu\u00e9 Duolingo se queda corto",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_duolingo_criticism",
+      "community": 3,
+      "norm_label": "por que duolingo se queda corto"
+    },
+    {
+      "label": "Recall activo (producci\u00f3n, no solo reconocimiento)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_recall_activo",
+      "community": 3,
+      "norm_label": "recall activo (produccion, no solo reconocimiento)"
+    },
+    {
+      "label": "Gram\u00e1tica expl\u00edcita (no oculta)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_gramatica_explicita",
+      "community": 3,
+      "norm_label": "gramatica explicita (no oculta)"
+    },
+    {
+      "label": "Vocabulario por frecuencia de uso real (corpus)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_frecuencia_real",
+      "community": 3,
+      "norm_label": "vocabulario por frecuencia de uso real (corpus)"
+    },
+    {
+      "label": "Krashen \u2014 Input Hypothesis (i+1)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#4-input-comprensible-krashen-i1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Input nuevo debe ser 90-95% comprensible; el resto se infiere por contexto. Justifica el principio de adaptividad porque un i+1 fijo no sirve igual a todos los alumnos.",
+      "id": "investigacion_krashen_input_hypothesis",
+      "community": 2,
+      "norm_label": "krashen \u2014 input hypothesis (i+1)"
+    },
+    {
+      "label": "Adaptividad (ritmo/dificultad seg\u00fan desempe\u00f1o)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#4-input-comprensible-krashen-i1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_adaptividad",
+      "community": 2,
+      "norm_label": "adaptividad (ritmo/dificultad segun desempeno)"
+    },
+    {
+      "label": "Falsos amigos espa\u00f1ol-italiano",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_falsos_amigos",
+      "community": 1,
+      "norm_label": "falsos amigos espanol-italiano"
+    },
+    {
+      "label": "Preposiciones articuladas",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_preposiciones_articuladas",
+      "community": 1,
+      "norm_label": "preposiciones articuladas"
+    },
+    {
+      "label": "Subjuntivo italiano vs espa\u00f1ol (divergencia)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_subjuntivo_it_es",
+      "community": 1,
+      "norm_label": "subjuntivo italiano vs espanol (divergencia)"
+    },
+    {
+      "label": "Verbos pronominales / part\u00edculas ci, ne",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_verbos_pronominales",
+      "community": 1,
+      "norm_label": "verbos pronominales / particulas ci, ne"
+    },
+    {
+      "label": "Consonantes dobles (geminadas)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_consonantes_geminadas",
+      "community": 4,
+      "norm_label": "consonantes dobles (geminadas)"
+    },
+    {
+      "label": "Transferencia positiva espa\u00f1ol\u2192italiano",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_transferencia_positiva",
+      "community": 1,
+      "norm_label": "transferencia positiva espanol\u2192italiano"
+    },
+    {
+      "label": "CEFR (A1-C2)",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#6-cefr",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_cefr",
+      "community": 2,
+      "norm_label": "cefr (a1-c2)"
+    },
+    {
+      "label": "Unidad 1 A1 \u2014 presentarse + essere",
+      "file_type": "concept",
+      "source_file": "investigacion.md",
+      "source_location": "#decisiones-curriculares-derivadas-para-a1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "investigacion_unidad1_a1",
+      "community": 2,
+      "norm_label": "unidad 1 a1 \u2014 presentarse + essere"
+    }
+  ],
+  "links": [
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "investigacion.md",
+      "source_location": "#2-curva-del-olvido-ebbinghaus",
+      "weight": 1.0,
+      "source": "investigacion_distributed_practice",
+      "target": "investigacion_fsrs"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "weight": 1.0,
+      "source": "investigacion_fsrs",
+      "target": "investigacion_dsr_model"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "weight": 1.0,
+      "source": "investigacion_fsrs",
+      "target": "investigacion_ebbinghaus_forgetting_curve"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "weight": 1.0,
+      "source": "investigacion_fsrs",
+      "target": "investigacion_sm2"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#decisiones-curriculares-derivadas-para-a1",
+      "weight": 1.0,
+      "source": "investigacion_unidad1_a1",
+      "target": "investigacion_fsrs"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#1-srs-fsrs-vs-sm-2",
+      "weight": 1.0,
+      "source": "investigacion_sm2",
+      "target": "investigacion_ebbinghaus_forgetting_curve"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#2-curva-del-olvido-ebbinghaus",
+      "weight": 1.0,
+      "source": "investigacion_ebbinghaus_forgetting_curve",
+      "target": "investigacion_distributed_practice"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "weight": 1.0,
+      "source": "investigacion_duolingo_criticism",
+      "target": "investigacion_frecuencia_real"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "weight": 1.0,
+      "source": "investigacion_duolingo_criticism",
+      "target": "investigacion_gramatica_explicita"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#3-por-qu\u00e9-duolingo-se-queda-corto",
+      "weight": 1.0,
+      "source": "investigacion_duolingo_criticism",
+      "target": "investigacion_recall_activo"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#decisiones-curriculares-derivadas-para-a1",
+      "weight": 1.0,
+      "source": "investigacion_unidad1_a1",
+      "target": "investigacion_recall_activo"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#4-input-comprensible-krashen-i1",
+      "weight": 1.0,
+      "source": "investigacion_krashen_input_hypothesis",
+      "target": "investigacion_adaptividad"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#decisiones-curriculares-derivadas-para-a1",
+      "weight": 1.0,
+      "source": "investigacion_krashen_input_hypothesis",
+      "target": "investigacion_unidad1_a1"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "weight": 1.0,
+      "source": "investigacion_falsos_amigos",
+      "target": "investigacion_transferencia_positiva"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3,
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "weight": 1.0,
+      "source": "investigacion_preposiciones_articuladas",
+      "target": "investigacion_transferencia_positiva"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3,
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "weight": 1.0,
+      "source": "investigacion_subjuntivo_it_es",
+      "target": "investigacion_transferencia_positiva"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3,
+      "source_file": "investigacion.md",
+      "source_location": "#5-italiano-para-hispanohablantes",
+      "weight": 1.0,
+      "source": "investigacion_verbos_pronominales",
+      "target": "investigacion_transferencia_positiva"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "investigacion.md",
+      "source_location": "#decisiones-curriculares-derivadas-para-a1",
+      "weight": 1.0,
+      "source": "investigacion_cefr",
+      "target": "investigacion_unidad1_a1"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "puntos_friccion_hispanohablantes",
+      "label": "Puntos de fricci\u00f3n gramatical para hispanohablantes",
+      "nodes": [
+        "investigacion_falsos_amigos",
+        "investigacion_preposiciones_articuladas",
+        "investigacion_subjuntivo_it_es",
+        "investigacion_verbos_pronominales",
+        "investigacion_consonantes_geminadas"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "investigacion.md"
+    },
+    {
+      "id": "principios_diseno_anti_duolingo",
+      "label": "Principios de dise\u00f1o que corrigen las carencias de Duolingo",
+      "nodes": [
+        "investigacion_recall_activo",
+        "investigacion_gramatica_explicita",
+        "investigacion_frecuencia_real",
+        "investigacion_adaptividad"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "investigacion.md"
+    }
+  ],
+  "built_at_commit": "14babe9504a032fea7fbe415ad69fa3896801963"
+}
