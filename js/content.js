@@ -59,6 +59,7 @@ const CONTENT = {
           answer: 'piacere',
           explanation: '"Piacere" se usa solo, como en español.',
           srsFront: '¿Cómo se dice "Mucho gusto" en italiano?', srsBack: 'Piacere',
+          reverseFront: 'Piacere', reverseBack: 'Mucho gusto',
         },
         {
           id: 'ex5', type: 'translate',
@@ -66,6 +67,7 @@ const CONTENT = {
           answer: 'come ti chiami',
           explanation: '"Come ti chiami?" — chiamarsi es reflexivo (como en español "llamarse").',
           srsFront: '¿Cómo se dice "¿Cómo te llamas?" en italiano?', srsBack: 'Come ti chiami?',
+          reverseFront: 'Come ti chiami?', reverseBack: '¿Cómo te llamas?',
         },
       ],
     },
@@ -122,6 +124,7 @@ const CONTENT = {
           answer: 'fratello',
           explanation: '"Fratello" — cognado reconocible del latín frater.',
           srsFront: '¿Cómo se dice "hermano" en italiano?', srsBack: 'Fratello',
+          reverseFront: 'Fratello', reverseBack: 'Hermano',
         },
         {
           id: 'ex5', type: 'translate',
@@ -129,6 +132,7 @@ const CONTENT = {
           answer: 'hai fratelli',
           explanation: '"Hai fratelli?" — avere (no essere) para expresar posesión/parentesco.',
           srsFront: '¿Cómo se dice "¿Tienes hermanos?" en italiano?', srsBack: 'Hai fratelli?',
+          reverseFront: 'Hai fratelli?', reverseBack: '¿Tienes hermanos?',
         },
       ],
     },

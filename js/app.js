@@ -159,6 +159,14 @@ function checkExercise(lessonId) {
     SRS.initItem(lesson.id + '_' + ex.id, ex.srsFront, ex.srsBack, { lessonId: lesson.id });
     SRS.review(lesson.id + '_' + ex.id, correct ? SRS.RATING.GOOD : SRS.RATING.AGAIN);
 
+    // Vocabulario (no drills de conjugación): además de producir ES→IT, se agrega el
+    // ítem inverso IT→ES para entrenar comprensión, no solo producción (principio #3).
+    if (ex.type === 'translate' && ex.reverseFront && ex.reverseBack) {
+      const revId = lesson.id + '_' + ex.id + '_rev';
+      SRS.initItem(revId, ex.reverseFront, ex.reverseBack, { lessonId: lesson.id });
+      SRS.review(revId, correct ? SRS.RATING.GOOD : SRS.RATING.AGAIN);
+    }
+
     renderExerciseStep(lesson);
   } else {
     if (lessonState.exIndex + 1 < lesson.exercises.length) {

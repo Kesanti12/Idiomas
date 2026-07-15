@@ -127,3 +127,37 @@ por falta de contenido con qué mezclar.
   por tema/lección de forma más determinística (round-robin) sería más fiel al concepto de
   interleaving pedagógico que un shuffle uniforme, pero para 2 lecciones no se nota la
   diferencia — revisar cuando haya 3+ lecciones.
+
+### Ciclo 3 — 2026-07-15 ~14:13-14:30 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejoras elegidas (dos, ambas de alto impacto y bajo riesgo):**
+
+1. **Verificación real de instalabilidad** (arquitectura, CLAUDE.md: "debe pasar el
+   criterio de instalabilidad"). No había lighthouse/npm disponibles en el entorno, así que
+   se usó Chrome DevTools Protocol directo vía Playwright (`Page.getInstallabilityErrors`
+   — el mismo chequeo interno que usa Lighthouse) sobre `http://localhost:8123`:
+   `installabilityErrors: []`, manifest sin errores de parseo, service worker `active`.
+   **Confirmado: la PWA es instalable tal cual está.** (Nota: en producción hace falta
+   HTTPS real — localhost cuenta como contexto seguro para este chequeo pero no reemplaza
+   el despliegue final.)
+2. **Dirección inversa IT→ES para vocabulario**: hasta ahora todo ítem SRS iba ES→IT
+   (producción). Los ejercicios tipo `translate` (vocabulario suelto, no drills de
+   conjugación) ahora registran también un ítem inverso IT→ES vía el nuevo campo
+   `reverseFront`/`reverseBack` en `content.js` — ver el italiano, recordar el significado
+   en español (comprensión, no solo producción; principio #3). Los drills de conjugación
+   (`fill`) no se duplican: ya cubren las 3 personas relevantes, duplicarlos no añade señal.
+   El banco SRS pasó de 10 a 14 ítems tras completar ambas lecciones (3 fill + 2×2
+   translate por lección × 2 lecciones).
+
+**Verificado con Playwright**: banco llega a 14 ítems, los 4 reversos existen con
+front/back correctos, uno de ellos (`Hai fratelli?` → `¿Tienes hermanos?`) se respondió en
+español dentro de la pantalla de Repaso y el sistema lo marcó correcto. 0 errores de consola.
+
+**Pendiente para próximos ciclos (por impacto):**
+- Unidad 3 A1 (números o verbos regulares -are) para seguir ampliando el pool de
+  interleaving.
+- Pantalla de Progreso podría mostrar fechas de próximos repasos, no solo el conteo de hoy.
+- El shuffle de repaso sigue siendo aleatorio uniforme (ver nota del ciclo 2) — no urgente
+  con solo 2 lecciones.
+- Recordatorio de despliegue (no de código): para instalar de verdad en un celular hace
+  falta servir la PWA sobre HTTPS real (GitHub Pages, Netlify, etc.) — la verificación de
+  este ciclo fue sobre localhost, que Chrome trata como contexto seguro solo para desarrollo.
