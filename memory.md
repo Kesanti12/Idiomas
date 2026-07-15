@@ -231,3 +231,36 @@ resto de la UI.
   racha/CEFR/próximos repasos), el MVP está más sólido que "razonable" — el foco de los
   ciclos que queden hasta las 15:30 puede ir a más contenido/pulido según lo que dé el tiempo.
 - Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).
+
+### Ciclo 6 — 2026-07-15 ~14:42-14:55 (cron de 10 min, dentro de la ventana hasta 15:30)
+**Mejora elegida:** Unidad 4 A1 — "Che lingue parli?" (primer verbo regular en -are: "parlare").
+
+**Por qué esta:** las 3 lecciones anteriores enseñaron dos verbos irregulares (essere,
+avere) que hay que memorizar forma por forma. Faltaba el contraste pedagógico con un
+patrón *regular* — "parlare" (-are) generaliza a cientos de verbos italianos con la misma
+terminación, así que el usuario aprende una regla reusable, no un tercer verbo aislado más
+para memorizar. Alto apalancamiento pedagógico con poco contenido nuevo.
+
+**Qué se hizo:**
+- `js/content.js`: diálogo (Parli italiano? / Sì, parlo italiano e spagnolo...), glosario
+  mínimo (incluye "Bravo!", cognado directo con el español), tabla de conjugación regular
+  de -are explícitamente contrastada con las irregulares ya vistas, 5 ejercicios (3 fill de
+  conjugación + 2 translate con dirección inversa IT→ES).
+- Sin cambios en `app.js`/`srs.js` — la arquitectura genérica desde el ciclo 2 absorbe
+  lecciones nuevas sin tocar lógica.
+
+**Verificado con Playwright**: Home lista las 4 lecciones, las 4 se completan de punta a
+punta, banco SRS llega a 29 ítems (7+7+8+7), Progreso muestra las 4 completas. 0 errores
+de consola.
+
+**Estado del proyecto a esta altura:** MVP sólido y con margen sobre el criterio mínimo —
+4 lecciones A1 (saludos/essere, familia/avere, edad/números, primer verbo regular -are),
+29 ítems SRS con dirección bidireccional en vocabulario, interleaving real (shuffle) entre
+lecciones, calendario de próximos repasos, instalabilidad verificada.
+
+**Pendiente para próximos ciclos (por impacto, si queda tiempo antes de 15:30):**
+- Shuffle round-robin por lección en el repaso (pendiente desde el ciclo 4/5) — con 4
+  lecciones ya es más notorio si el shuffle aleatorio deja alguna sub-representada.
+- Unidad 5 A1 (si da el tiempo): verbos en -ere o -ire para completar las 3 conjugaciones
+  regulares del italiano, o vocabulario de números 11-20/colores.
+- Recordatorio de despliegue sigue pendiente (HTTPS real, fuera de este loop de código).

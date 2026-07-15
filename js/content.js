@@ -201,6 +201,70 @@ const CONTENT = {
         },
       ],
     },
+    {
+      id: 'a1_u4_parlare',
+      cefr: 'A1',
+      descriptor: 'Puede decir qué idiomas habla usando el patrón regular de los verbos en -are.',
+      title: 'Che lingue parli?',
+      titleEs: '¿Qué idiomas hablas?',
+      dialogue: [
+        { speaker: 'Marco', line: 'Parli italiano?' },
+        { speaker: 'Giulia', line: 'Sì, parlo italiano e spagnolo. Tu parli inglese?' },
+        { speaker: 'Marco', line: "Sì, parlo inglese e un po' d'italiano." },
+        { speaker: 'Giulia', line: 'Bravo!' },
+      ],
+      glossary: [
+        { it: "un po' di", es: 'un poco de', note: null },
+        { it: 'Bravo!', es: '¡Bien hecho!', note: 'Cognado directo — mismo uso que en español al felicitar.' },
+      ],
+      grammar: {
+        title: 'Verbos regulares en -are (ej. "parlare" = hablar)',
+        explanation: 'A diferencia de essere y avere (irregulares, Unidades 1 y 2 — hay que memorizar cada forma), "parlare" sigue un patrón regular que se repite en cientos de verbos italianos (mangiare=comer, guardare=mirar, ascoltare=escuchar...). Aprender esta terminación una sola vez multiplica el vocabulario que ya podés conjugar.',
+        table: [
+          ['io', 'parlo'], ['tu', 'parli'], ['lui/lei', 'parla'],
+          ['noi', 'parliamo'], ['voi', 'parlate'], ['loro', 'parlano'],
+        ],
+      },
+      exercises: [
+        {
+          id: 'ex1', type: 'fill',
+          prompt: 'Completa: Io ___ italiano.',
+          answer: 'parlo',
+          explanation: '"io" + verbos en -are → termina en "-o" (parlo).',
+          srsFront: 'Io ___ italiano. (parlare, io)', srsBack: 'parlo',
+        },
+        {
+          id: 'ex2', type: 'fill',
+          prompt: 'Completa: Tu ___ inglese?',
+          answer: 'parli',
+          explanation: '"tu" + verbos en -are → termina en "-i" (parli).',
+          srsFront: 'Tu ___ inglese? (parlare, tu)', srsBack: 'parli',
+        },
+        {
+          id: 'ex3', type: 'fill',
+          prompt: 'Completa: Noi ___ spagnolo.',
+          answer: 'parliamo',
+          explanation: '"noi" + verbos en -are → termina en "-iamo" (parliamo).',
+          srsFront: 'Noi ___ spagnolo. (parlare, noi)', srsBack: 'parliamo',
+        },
+        {
+          id: 'ex4', type: 'translate',
+          prompt: 'Traduce al italiano: "hablar" (infinitivo)',
+          answer: 'parlare',
+          explanation: '"Parlare" — cognado reconocible; el patrón -are es el más común entre los verbos italianos.',
+          srsFront: '¿Cómo se dice "hablar" en italiano?', srsBack: 'Parlare',
+          reverseFront: 'Parlare', reverseBack: 'Hablar',
+        },
+        {
+          id: 'ex5', type: 'translate',
+          prompt: 'Traduce al italiano: "¿Hablas italiano?"',
+          answer: 'parli italiano',
+          explanation: '"Parli italiano?" — "tu" siempre con "parli".',
+          srsFront: '¿Cómo se dice "¿Hablas italiano?" en italiano?', srsBack: 'Parli italiano?',
+          reverseFront: 'Parli italiano?', reverseBack: '¿Hablas italiano?',
+        },
+      ],
+    },
   ],
 };
 
