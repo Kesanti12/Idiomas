@@ -6,32 +6,181 @@ function render(html) {
   root.innerHTML = html;
 }
 
-// ---------- INMERSIÓN: italiano + gloss en español, audio y fonética ----------
+// ---------- CURSO ACTIVO (idioma que se está aprendiendo) ----------
 
-// UI en italiano por defecto (botones, títulos, consignas) con una traducción chica
-// en español debajo para que nunca haya ambigüedad sobre qué hacer.
-function gloss(it, es) {
-  return `${it}<span class="gloss">${es}</span>`;
+const COURSE_STORAGE_KEY = 'idiomas_course_v1';
+let selectedCourseCode = null;
+
+function currentCourse() {
+  return COURSES[selectedCourseCode];
 }
 
-function speakItalian(text) {
+function selectCourse(code) {
+  selectedCourseCode = code;
+  try { localStorage.setItem(COURSE_STORAGE_KEY, code); } catch (e) { /* incógnito estricto: se re-preguntará la próxima vez */ }
+  SRS.setCourse(code);
+  lessonState = null;
+  reviewQueue = null;
+  go('home');
+  renderRoute();
+}
+
+// Vuelve a la pantalla de elegir idioma sin perder el progreso de ningún curso —
+// cada uno vive en su propia clave de localStorage (ver SRS.setCourse).
+function openLanguagePicker() {
+  go('chooseLanguage');
+  renderRoute();
+}
+
+function renderChooseLanguage() {
+  const cards = Object.values(COURSES).map(c => `
+    <button class="btn lang-card" onclick="selectCourse('${c.code}')">
+      <span class="lang-flag">${c.flag}</span> ${c.name}
+    </button>
+  `).join('');
+
+  render(`
+    <div style="text-align:center; margin-top:30px;">
+      <h1>👋</h1>
+      <h2>¿Qué idioma querés aprender?</h2>
+      <p style="color:var(--text-dim); font-size:14px;">Elegí un curso para empezar. Podés cambiarlo después sin perder tu progreso.</p>
+    </div>
+    <div class="lang-picker">${cards}</div>
+  `);
+}
+
+// ---------- INMERSIÓN: idioma del curso + gloss en español, audio y fonética ----------
+
+// UI en el idioma del curso por defecto (botones, títulos, consignas) con una
+// traducción chica en español debajo para que nunca haya ambigüedad sobre qué hacer.
+function gloss(target, es) {
+  return `${target}<span class="gloss">${es}</span>`;
+}
+
+// Diccionario de textos fijos de la UI, por curso. Cada entrada es [texto-en-el-idioma,
+// traducción-al-español] o una función que devuelve ese par (para las que llevan datos
+// dinámicos, ej. contadores). ui(key, ...args) arma el bloque con gloss() listo para
+// insertar; uiRaw(key, ...args) devuelve solo el texto en el idioma (para atributos
+// como placeholder, donde no puede ir HTML).
+const UI = {
+  it: {
+    greeting: ['Ciao! 👋', 'Ciao! 👋'],
+    tagline: ["Impara l'italiano sul serio: input reale, pratica attiva e ripasso spaziato.", 'Aprendé italiano de verdad: input real, práctica activa y repaso espaciado.'],
+    streak: n => [`Serie: ${n} giorni`, `Racha: ${n} día(s)`],
+    reviewCardTitle: ['Ripasso spaziato', 'Repaso espaciado'],
+    dueMsg: n => n > 0
+      ? [`Hai ${n} elemento/i pronti da ripassare oggi.`, `Tenés ${n} ítem(s) listos para repasar hoy.`]
+      : ['Nessun ripasso in sospeso oggi. Torna domani.', 'No hay repasos pendientes hoy. Volvé mañana.'],
+    reviewBtn: n => [`Ripassa ora${n > 0 ? ' (' + n + ')' : ''}`, 'Repasar ahora'],
+    lessonDoneBtn: ['Ripassa la lezione', 'Repasar la lección'],
+    lessonStartBtn: ['Inizia la lezione', 'Empezar lección'],
+    myProgress: ['Il mio progresso', 'Ver mi progreso'],
+    exit: ['Esci', 'Salir'],
+    back: ['Indietro', 'Atrás'],
+    dialogueHint: ['Leggi il dialogo. Tocca 🔊 per ascoltare.', 'Leé el diálogo. Tocá 🔊 para escuchar.'],
+    newVocab: ['Vocabolario nuovo', 'Vocabulario nuevo'],
+    nextGrammar: ['Avanti: grammatica', 'Siguiente: gramática'],
+    nextPractice: ['Avanti: pratica', 'Siguiente: práctica'],
+    writeHere: 'Scrivi qui...',
+    continueBtn: ['Continua', 'Continuar'],
+    checkBtn: ['Verifica', 'Comprobar'],
+    correct: ['Corretto!', '¡Correcto!'],
+    answerWas: ['La risposta era:', 'La respuesta era:'],
+    lessonCompleteTitle: ['Lezione completata!', '¡Lección completa!'],
+    lessonCompleteMsg: n => [`Hai guadagnato 50 XP. I ${n} nuovi elementi sono già programmati nel tuo ripasso spaziato.`, `Sumaste 50 XP. Los ${n} ítems nuevos ya están programados en tu repaso espaciado.`],
+    backHome: ['Torna alla home', 'Volver al inicio'],
+    reviewDoneTitle: ['Ripasso completato', 'Repaso terminado'],
+    reviewDoneMsg: n => [`Hai ripassato ${n} elemento/i. Il sistema ha già riprogrammato ognuno in base a come ti è andata.`, `Repasaste ${n} ítem(s). El sistema ya reprogramó cada uno según cómo te fue.`],
+    hard: ['Difficile', 'Difícil'], good: ['Bene', 'Bien'], easy: ['Facile', 'Fácil'],
+    sawAnswerContinue: ['Continua', 'Vi la respuesta, seguir'],
+    home: ['Home', 'Inicio'],
+    progressTitle: ['I tuoi progressi', 'Tu progreso'],
+    streakLabel: ['Serie (giorni)', 'Racha (días)'],
+    learnedLabel: ['Elementi imparati', 'Ítems aprendidos'],
+    cefrTitle: ['Livello CEFR approssimativo', 'Nivel CEFR aproximado'],
+    pending: ['in sospeso', 'pendiente'],
+    pendingReviewsTitle: ['Ripassi in sospeso', 'Repasos pendientes'],
+    dueTodayCount: n => [`${n} elemento/i pronti oggi.`, `${n} ítem(s) listos hoy.`],
+    allCaughtUp: ['Sei in pari! 🎉', 'Estás al día. 🎉'],
+    today: ['Oggi', 'Hoy'], tomorrow: ['Domani', 'Mañana'],
+    itemsUnit: ['elemento/i', 'ítem(s)'],
+    noItemsYet: ['Non hai ancora imparato nessun elemento.', 'Todavía no aprendiste ningún ítem.'],
+  },
+  pt: {
+    greeting: ['Oi! 👋', '¡Hola! 👋'],
+    tagline: ['Aprenda português de verdade: input real, prática ativa e revisão espaçada.', 'Aprendé portugués de verdad: input real, práctica activa y repaso espaciado.'],
+    streak: n => [`Sequência: ${n} dias`, `Racha: ${n} día(s)`],
+    reviewCardTitle: ['Revisão espaçada', 'Repaso espaciado'],
+    dueMsg: n => n > 0
+      ? [`Você tem ${n} item(ns) pronto(s) para revisar hoje.`, `Tenés ${n} ítem(s) listos para repasar hoy.`]
+      : ['Nenhuma revisão pendente hoje. Volte amanhã.', 'No hay repasos pendientes hoy. Volvé mañana.'],
+    reviewBtn: n => [`Revisar agora${n > 0 ? ' (' + n + ')' : ''}`, 'Repasar ahora'],
+    lessonDoneBtn: ['Revisar a lição', 'Repasar la lección'],
+    lessonStartBtn: ['Começar a lição', 'Empezar lección'],
+    myProgress: ['Meu progresso', 'Ver mi progreso'],
+    exit: ['Sair', 'Salir'],
+    back: ['Voltar', 'Atrás'],
+    dialogueHint: ['Leia o diálogo. Toque 🔊 para ouvir.', 'Leé el diálogo. Tocá 🔊 para escuchar.'],
+    newVocab: ['Vocabulário novo', 'Vocabulario nuevo'],
+    nextGrammar: ['Avançar: gramática', 'Siguiente: gramática'],
+    nextPractice: ['Avançar: prática', 'Siguiente: práctica'],
+    writeHere: 'Escreva aqui...',
+    continueBtn: ['Continuar', 'Continuar'],
+    checkBtn: ['Verificar', 'Comprobar'],
+    correct: ['Correto!', '¡Correcto!'],
+    answerWas: ['A resposta era:', 'La respuesta era:'],
+    lessonCompleteTitle: ['Lição completa!', '¡Lección completa!'],
+    lessonCompleteMsg: n => [`Você ganhou 50 XP. Os ${n} novos itens já estão programados na sua revisão espaçada.`, `Sumaste 50 XP. Los ${n} ítems nuevos ya están programados en tu repaso espaciado.`],
+    backHome: ['Voltar ao início', 'Volver al inicio'],
+    reviewDoneTitle: ['Revisão concluída', 'Repaso terminado'],
+    reviewDoneMsg: n => [`Você revisou ${n} item(ns). O sistema já reprogramou cada um de acordo com o seu desempenho.`, `Repasaste ${n} ítem(s). El sistema ya reprogramó cada uno según cómo te fue.`],
+    hard: ['Difícil', 'Difícil'], good: ['Bom', 'Bien'], easy: ['Fácil', 'Fácil'],
+    sawAnswerContinue: ['Continuar', 'Vi la respuesta, seguir'],
+    home: ['Início', 'Inicio'],
+    progressTitle: ['Seu progresso', 'Tu progreso'],
+    streakLabel: ['Sequência (dias)', 'Racha (días)'],
+    learnedLabel: ['Itens aprendidos', 'Ítems aprendidos'],
+    cefrTitle: ['Nível CEFR aproximado', 'Nivel CEFR aproximado'],
+    pending: ['pendente', 'pendiente'],
+    pendingReviewsTitle: ['Revisões pendentes', 'Repasos pendientes'],
+    dueTodayCount: n => [`${n} item(ns) pronto(s) hoje.`, `${n} ítem(s) listos hoy.`],
+    allCaughtUp: ['Você está em dia! 🎉', 'Estás al día. 🎉'],
+    today: ['Hoje', 'Hoy'], tomorrow: ['Amanhã', 'Mañana'],
+    itemsUnit: ['item(ns)', 'ítem(s)'],
+    noItemsYet: ['Você ainda não aprendeu nenhum item.', 'Todavía no aprendiste ningún ítem.'],
+  },
+};
+
+function ui(key, ...args) {
+  const entry = UI[selectedCourseCode][key];
+  const pair = typeof entry === 'function' ? entry(...args) : entry;
+  return gloss(pair[0], pair[1]);
+}
+
+function uiRaw(key, ...args) {
+  const entry = UI[selectedCourseCode][key];
+  const pair = typeof entry === 'function' ? entry(...args) : entry;
+  return typeof pair === 'string' ? pair : pair[0];
+}
+
+function speakText(text, lang) {
   if (!('speechSynthesis' in window) || !text) return;
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'it-IT';
+  utter.lang = lang || 'it-IT';
   utter.rate = 0.85;
   window.speechSynthesis.speak(utter);
 }
 
-// data-speak en vez de onclick inline: el diálogo tiene comillas simples ("un po' di")
-// que romperían un onclick="speakItalian('...')" armado a mano.
-function speakerBtn(text) {
-  return `<button type="button" class="speaker-btn" data-speak="${text.replace(/"/g, '&quot;')}" aria-label="Ascolta la pronuncia">🔊</button>`;
+// data-speak/data-lang en vez de onclick inline: el diálogo tiene comillas simples
+// ("un po' di") que romperían un onclick="speakText('...')" armado a mano.
+function speakerBtn(text, lang) {
+  return `<button type="button" class="speaker-btn" data-speak="${text.replace(/"/g, '&quot;')}" data-lang="${lang}" aria-label="Ascolta la pronuncia">🔊</button>`;
 }
 
 document.addEventListener('click', e => {
   const btn = e.target.closest('.speaker-btn');
-  if (btn) speakItalian(btn.dataset.speak);
+  if (btn) speakText(btn.dataset.speak, btn.dataset.lang);
 });
 
 // Fonética simple (no IPA) para hispanohablantes, buscada en el diccionario de la
@@ -42,24 +191,31 @@ function phoneticFor(lesson, text) {
   return lesson.phonetics[text.toLowerCase()] || null;
 }
 
-// Bloque reusable: texto en italiano + botón de audio + fonética si está disponible.
-function italianWithAudio(lesson, text, extraClass) {
+// Bloque reusable: texto en el idioma del curso + botón de audio + fonética si existe.
+function wordWithAudio(lesson, text, extraClass) {
   const phon = phoneticFor(lesson, text);
-  return `<span class="it-audio ${extraClass || ''}">${text} ${speakerBtn(text)}${phon ? `<div class="phonetic">${phon}</div>` : ''}</span>`;
+  return `<span class="it-audio ${extraClass || ''}">${text} ${speakerBtn(text, currentCourse().speechLang)}${phon ? `<div class="phonetic">${phon}</div>` : ''}</span>`;
 }
 
-// Consigna según el tipo de ítem — el problema reportado era que el usuario veía la
-// frase/hueco sin ninguna indicación de qué se esperaba responder.
+// Consigna según el tipo de ítem, por curso — el problema reportado originalmente era
+// que el usuario veía la frase/hueco sin ninguna indicación de qué se esperaba responder.
 const INSTRUCTIONS = {
-  fill: { it: 'Scrivi solo la parola mancante (non l\'intera frase).', es: 'Escribí solo la palabra que falta (no la frase entera).' },
-  translate: { it: 'Traduci in italiano.', es: 'Traducí al italiano.' },
-  recognize: { it: 'Cosa significa? Rispondi in spagnolo.', es: '¿Qué significa? Respondé en español.' },
+  it: {
+    fill: { target: 'Scrivi solo la parola mancante (non l\'intera frase).', es: 'Escribí solo la palabra que falta (no la frase entera).' },
+    translate: { target: 'Traduci in italiano.', es: 'Traducí al italiano.' },
+    recognize: { target: 'Cosa significa? Rispondi in spagnolo.', es: '¿Qué significa? Respondé en español.' },
+  },
+  pt: {
+    fill: { target: 'Escreva apenas a palavra que falta (não a frase inteira).', es: 'Escribí solo la palabra que falta (no la frase entera).' },
+    translate: { target: 'Traduza para o português.', es: 'Traducí al portugués.' },
+    recognize: { target: 'O que significa? Responda em espanhol.', es: '¿Qué significa? Respondé en español.' },
+  },
 };
 
 function instructionLine(kind) {
-  const i = INSTRUCTIONS[kind];
+  const i = INSTRUCTIONS[selectedCourseCode][kind];
   if (!i) return '';
-  return `<p class="instruction">${gloss(i.it, i.es)}</p>`;
+  return `<p class="instruction">${gloss(i.target, i.es)}</p>`;
 }
 
 function go(screen, params) {
@@ -73,10 +229,21 @@ function currentRoute() {
 }
 
 window.addEventListener('hashchange', renderRoute);
-window.addEventListener('DOMContentLoaded', renderRoute);
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = localStorage.getItem(COURSE_STORAGE_KEY);
+    if (saved && COURSES[saved]) {
+      selectedCourseCode = saved;
+      SRS.setCourse(saved);
+    }
+  } catch (e) { /* incógnito estricto: se pedirá elegir idioma esta sesión */ }
+  renderRoute();
+});
 
 function renderRoute() {
+  if (!selectedCourseCode) return renderChooseLanguage();
   const { screen, params } = currentRoute();
+  if (screen === 'chooseLanguage') return renderChooseLanguage();
   if (screen === 'lesson') return renderLesson(params.id);
   if (screen === 'review') return renderReview();
   if (screen === 'progress') return renderProgress();
@@ -85,10 +252,11 @@ function renderRoute() {
 
 // ---------- HOME ----------
 function renderHome() {
+  const course = currentCourse();
   const progress = SRS.getProgress();
   const due = SRS.dueItems().length;
 
-  const lessonCards = CONTENT.lessons.map(lesson => {
+  const lessonCards = course.lessons.map(lesson => {
     const done = progress.completedLessons.includes(lesson.id);
     return `
     <div class="card">
@@ -96,35 +264,30 @@ function renderHome() {
       <p class="gloss-block">${lesson.titleEs}</p>
       <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
       <button class="btn ${done ? 'secondary' : ''}" onclick="startLesson('${lesson.id}')">
-        ${done ? gloss('Ripassa la lezione', 'Repasar la lección') : gloss('Inizia la lezione', 'Empezar lección')}
+        ${done ? ui('lessonDoneBtn') : ui('lessonStartBtn')}
       </button>
     </div>`;
   }).join('');
 
   render(`
     <div class="top-bar">
-      <span>🔥 ${gloss('Serie: ' + progress.streak + ' giorni', 'Racha: ' + progress.streak + ' día(s)')}</span>
-      <span class="cefr-badge">A1</span>
+      <span>🔥 ${ui('streak', progress.streak)}</span>
+      <span class="lang-switch" onclick="openLanguagePicker()" title="Cambiar idioma">${course.flag} 🌐</span>
     </div>
-    <h1>Ciao! 👋</h1>
-    <p>Impara l'italiano sul serio: input reale, pratica attiva e ripasso spaziato.<br>
-       <span class="gloss-block">Aprendé italiano de verdad: input real, práctica activa y repaso espaciado.</span></p>
+    <h1>${uiRaw('greeting')}</h1>
+    <p>${ui('tagline')}</p>
 
     <div class="card">
-      <h3>🔁 ${gloss('Ripasso spaziato', 'Repaso espaciado')}</h3>
-      <p style="color:var(--text-dim); font-size:14px;">
-        ${due > 0
-          ? gloss(`Hai ${due} elemento/i pronti da ripassare oggi.`, `Tenés ${due} ítem(s) listos para repasar hoy.`)
-          : gloss('Nessun ripasso in sospeso oggi. Torna domani.', 'No hay repasos pendientes hoy. Volvé mañana.')}
-      </p>
+      <h3>🔁 ${ui('reviewCardTitle')}</h3>
+      <p style="color:var(--text-dim); font-size:14px;">${ui('dueMsg', due)}</p>
       <button class="btn ${due === 0 ? 'secondary' : ''}" ${due === 0 ? 'disabled' : ''} onclick="go('review')">
-        ${gloss('Ripassa ora' + (due > 0 ? ' (' + due + ')' : ''), 'Repasar ahora')}
+        ${ui('reviewBtn', due)}
       </button>
     </div>
 
     ${lessonCards}
 
-    <button class="btn secondary" onclick="go('progress')">${gloss('Il mio progresso', 'Ver mi progreso')}</button>
+    <button class="btn secondary" onclick="go('progress')">${ui('myProgress')}</button>
   `);
 }
 
@@ -142,7 +305,7 @@ function startLesson(id) {
 }
 
 function renderLesson(id) {
-  const lesson = CONTENT.lessons.find(l => l.id === id);
+  const lesson = currentCourse().lessons.find(l => l.id === id);
   if (!lesson) return renderHome();
   if (!lessonState || lessonState.lessonId !== id) {
     lessonState = { lessonId: id, step: 'dialogue', exIndex: 0, answered: false };
@@ -161,11 +324,11 @@ function backTo(step) {
 }
 
 function exitLink() {
-  return `<a class="link" href="#home">← ${gloss('Esci', 'Salir')}</a>`;
+  return `<a class="link" href="#home">← ${ui('exit')}</a>`;
 }
 
 function backLink(step) {
-  return `<a class="link" onclick="backTo('${step}')">↩ ${gloss('Indietro', 'Atrás')}</a>`;
+  return `<a class="link" onclick="backTo('${step}')">↩ ${ui('back')}</a>`;
 }
 
 function renderDialogueStep(lesson) {
@@ -173,15 +336,15 @@ function renderDialogueStep(lesson) {
     <div class="top-bar"><div class="top-bar-left">${exitLink()}</div><span class="cefr-badge">${lesson.cefr}</span></div>
     <h2>${lesson.title}</h2>
     <p class="gloss-block" style="margin-top:-8px;">${lesson.titleEs}</p>
-    <p style="color:var(--text-dim); font-size:14px;">${gloss('Leggi il dialogo. Tocca 🔊 per ascoltare.', 'Leé el diálogo. Tocá 🔊 para escuchar.')}</p>
+    <p style="color:var(--text-dim); font-size:14px;">${ui('dialogueHint')}</p>
     <div class="card">
-      ${lesson.dialogue.map(d => `<div class="dialogue-line"><div class="speaker">${d.speaker}</div><div class="line">${italianWithAudio(lesson, d.line)}</div></div>`).join('')}
+      ${lesson.dialogue.map(d => `<div class="dialogue-line"><div class="speaker">${d.speaker}</div><div class="line">${wordWithAudio(lesson, d.line)}</div></div>`).join('')}
     </div>
     <div class="card">
-      <h3 style="font-size:15px;">${gloss('Vocabolario nuovo', 'Vocabulario nuevo')}</h3>
-      ${lesson.glossary.map(g => `<div class="glossary-item"><b>${italianWithAudio(lesson, g.it)}</b> — ${g.es}${g.note ? '<br><i>' + g.note + '</i>' : ''}</div>`).join('')}
+      <h3 style="font-size:15px;">${ui('newVocab')}</h3>
+      ${lesson.glossary.map(g => `<div class="glossary-item"><b>${wordWithAudio(lesson, g.target)}</b> — ${g.es}${g.note ? '<br><i>' + g.note + '</i>' : ''}</div>`).join('')}
     </div>
-    <button class="btn" onclick="lessonState.step='grammar'; renderRoute()">${gloss('Avanti: grammatica', 'Siguiente: gramática')}</button>
+    <button class="btn" onclick="lessonState.step='grammar'; renderRoute()">${ui('nextGrammar')}</button>
   `);
 }
 
@@ -192,9 +355,9 @@ function renderGrammarStep(lesson) {
     <h2>${g.title}</h2>
     <p>${g.explanation}</p>
     <div class="card">
-      <table>${g.table.map(([p, f]) => `<tr><td>${p}</td><td>${italianWithAudio(lesson, f)}</td></tr>`).join('')}</table>
+      <table>${g.table.map(([p, f]) => `<tr><td>${p}</td><td>${wordWithAudio(lesson, f)}</td></tr>`).join('')}</table>
     </div>
-    <button class="btn" onclick="lessonState.step='exercises'; renderRoute()">${gloss('Avanti: pratica', 'Siguiente: práctica')}</button>
+    <button class="btn" onclick="lessonState.step='exercises'; renderRoute()">${ui('nextPractice')}</button>
   `);
 }
 
@@ -209,10 +372,10 @@ function renderExerciseStep(lesson) {
     <div class="card">
       ${instructionLine(ex.type)}
       <h3>${ex.prompt}</h3>
-      <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" placeholder="Scrivi qui..." ${lessonState.answered ? 'disabled' : ''}>
+      <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${lessonState.answered ? 'disabled' : ''}>
       <div id="feedback-slot"></div>
     </div>
-    <button class="btn" id="check-btn" onclick="checkExercise('${lesson.id}')">${lessonState.answered ? gloss('Continua', 'Continuar') : gloss('Verifica', 'Comprobar')}</button>
+    <button class="btn" id="check-btn" onclick="checkExercise('${lesson.id}')">${lessonState.answered ? ui('continueBtn') : ui('checkBtn')}</button>
   `);
 
   const input = document.getElementById('answer-input');
@@ -228,13 +391,13 @@ function showExerciseFeedback(ex, correct, lesson) {
   const slot = document.getElementById('feedback-slot');
   const correctForm = ex.srsBack || ex.answer;
   slot.innerHTML = `<div class="feedback ${correct ? 'correct' : 'incorrect'}">
-    ${correct ? '✅ ' + gloss('Corretto!', '¡Correcto!') : '❌ ' + gloss('La risposta era:', 'La respuesta era:') + ' <b>' + italianWithAudio(lesson, correctForm) + '</b>'}
+    ${correct ? '✅ ' + ui('correct') : '❌ ' + ui('answerWas') + ' <b>' + wordWithAudio(lesson, correctForm) + '</b>'}
     <br>${ex.explanation}
   </div>`;
 }
 
 function checkExercise(lessonId) {
-  const lesson = CONTENT.lessons.find(l => l.id === lessonId);
+  const lesson = currentCourse().lessons.find(l => l.id === lessonId);
   const ex = lesson.exercises[lessonState.exIndex];
 
   if (!lessonState.answered) {
@@ -249,8 +412,8 @@ function checkExercise(lessonId) {
     SRS.initItem(lesson.id + '_' + ex.id, ex.srsFront, ex.srsBack, { lessonId: lesson.id, kind: ex.type });
     SRS.review(lesson.id + '_' + ex.id, correct ? SRS.RATING.GOOD : SRS.RATING.AGAIN);
 
-    // Vocabulario (no drills de conjugación): además de producir ES→IT, se agrega el
-    // ítem inverso IT→ES para entrenar comprensión, no solo producción (principio #3).
+    // Vocabulario (no drills de conjugación): además de producir ES→idioma, se agrega
+    // el ítem inverso idioma→ES para entrenar comprensión, no solo producción (principio #3).
     if (ex.type === 'translate' && ex.reverseFront && ex.reverseBack) {
       const revId = lesson.id + '_' + ex.id + '_rev';
       SRS.initItem(revId, ex.reverseFront, ex.reverseBack, { lessonId: lesson.id, kind: 'recognize' });
@@ -275,9 +438,9 @@ function checkExercise(lessonId) {
 function renderLessonDone(lesson) {
   render(`
     <div class="card" style="text-align:center;">
-      <h2>🎉 ${gloss('Lezione completata!', '¡Lección completa!')}</h2>
-      <p>${gloss(`Hai guadagnato 50 XP. I ${lesson.exercises.length} nuovi elementi sono già programmati nel tuo ripasso spaziato.`, `Sumaste 50 XP. Los ${lesson.exercises.length} ítems nuevos ya están programados en tu repaso espaciado.`)}</p>
-      <button class="btn" onclick="go('home')">${gloss('Torna alla home', 'Volver al inicio')}</button>
+      <h2>🎉 ${ui('lessonCompleteTitle')}</h2>
+      <p>${ui('lessonCompleteMsg', lesson.exercises.length)}</p>
+      <button class="btn" onclick="go('home')">${ui('backHome')}</button>
     </div>
   `);
 }
@@ -326,7 +489,7 @@ function interleaveByLesson(items) {
 }
 
 function lessonById(id) {
-  return CONTENT.lessons.find(l => l.id === id) || {};
+  return currentCourse().lessons.find(l => l.id === id) || {};
 }
 
 function renderReview() {
@@ -337,9 +500,9 @@ function renderReview() {
   if (reviewIndex >= reviewQueue.length) {
     render(`
       <div class="card" style="text-align:center;">
-        <h2>✅ ${gloss('Ripasso completato', 'Repaso terminado')}</h2>
-        <p>${gloss(`Hai ripassato ${reviewQueue.length} elemento/i. Il sistema ha già riprogrammato ognuno in base a come ti è andata.`, `Repasaste ${reviewQueue.length} ítem(s). El sistema ya reprogramó cada uno según cómo te fue.`)}</p>
-        <button class="btn" onclick="reviewQueue=null; go('home')">${gloss('Torna alla home', 'Volver al inicio')}</button>
+        <h2>✅ ${ui('reviewDoneTitle')}</h2>
+        <p>${ui('reviewDoneMsg', reviewQueue.length)}</p>
+        <button class="btn" onclick="reviewQueue=null; go('home')">${ui('backHome')}</button>
       </div>
     `);
     return;
@@ -348,21 +511,21 @@ function renderReview() {
   const item = reviewQueue[reviewIndex];
   const lesson = lessonById(item.meta && item.meta.lessonId);
   const kind = (item.meta && item.meta.kind) || 'translate';
-  // "recognize" muestra una frase en italiano de verdad (pronunciable) — ahí sí tiene
-  // sentido ofrecer audio/fonética antes de responder. En "translate"/"fill" el front
-  // es la consigna en español o una frase con hueco, así que el audio se ofrece recién
-  // sobre la respuesta correcta, una vez revelada.
-  const frontHtml = kind === 'recognize' ? italianWithAudio(lesson, item.front) : item.front;
+  // "recognize" muestra una frase de verdad en el idioma del curso (pronunciable) — ahí
+  // sí tiene sentido ofrecer audio/fonética antes de responder. En "translate"/"fill" el
+  // front es la consigna en español o una frase con hueco, así que el audio se ofrece
+  // recién sobre la respuesta correcta, una vez revelada.
+  const frontHtml = kind === 'recognize' ? wordWithAudio(lesson, item.front) : item.front;
   render(`
-    <div class="top-bar"><a class="link" href="#home" onclick="reviewQueue=null">← ${gloss('Esci', 'Salir')}</a><span>${reviewIndex + 1}/${reviewQueue.length}</span></div>
+    <div class="top-bar"><a class="link" href="#home" onclick="reviewQueue=null">← ${ui('exit')}</a><span>${reviewIndex + 1}/${reviewQueue.length}</span></div>
     <div class="card">
       ${instructionLine(kind)}
       <h3>${frontHtml}</h3>
-      <input type="text" id="review-input" autocomplete="off" autocapitalize="off" placeholder="Scrivi qui..." ${reviewAnswered ? 'disabled' : ''}>
+      <input type="text" id="review-input" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${reviewAnswered ? 'disabled' : ''}>
       <div id="review-feedback"></div>
     </div>
     <div id="review-actions">
-      <button class="btn" id="review-check-btn" onclick="checkReview()">${gloss('Verifica', 'Comprobar')}</button>
+      <button class="btn" id="review-check-btn" onclick="checkReview()">${ui('checkBtn')}</button>
     </div>
   `);
 
@@ -375,23 +538,23 @@ function renderReview() {
 
 function showReviewFeedback(item, lesson, kind) {
   const slot = document.getElementById('review-feedback');
-  // El audio/fonética solo tiene sentido cuando la respuesta correcta está en italiano
-  // (kind !== 'recognize', donde la respuesta es la traducción al español).
-  const backHtml = kind === 'recognize' ? item.back : italianWithAudio(lesson, item.back);
+  // El audio/fonética solo tiene sentido cuando la respuesta correcta está en el idioma
+  // del curso (kind !== 'recognize', donde la respuesta es la traducción al español).
+  const backHtml = kind === 'recognize' ? item.back : wordWithAudio(lesson, item.back);
   slot.innerHTML = `<div class="feedback ${reviewCorrect ? 'correct' : 'incorrect'}">
-    ${reviewCorrect ? '✅ ' + gloss('Corretto!', '¡Correcto!') : '❌ ' + gloss('La risposta era:', 'La respuesta era:') + ' <b>' + backHtml + '</b>'}
+    ${reviewCorrect ? '✅ ' + ui('correct') : '❌ ' + ui('answerWas') + ' <b>' + backHtml + '</b>'}
   </div>`;
 
   const actions = document.getElementById('review-actions');
   if (reviewCorrect) {
     actions.innerHTML = `
       <div class="rating-row">
-        <button class="btn secondary" onclick="rateReview(${SRS.RATING.HARD})">😓 ${gloss('Difficile', 'Difícil')}</button>
-        <button class="btn" onclick="rateReview(${SRS.RATING.GOOD})">🙂 ${gloss('Bene', 'Bien')}</button>
-        <button class="btn" onclick="rateReview(${SRS.RATING.EASY})">😎 ${gloss('Facile', 'Fácil')}</button>
+        <button class="btn secondary" onclick="rateReview(${SRS.RATING.HARD})">😓 ${ui('hard')}</button>
+        <button class="btn" onclick="rateReview(${SRS.RATING.GOOD})">🙂 ${ui('good')}</button>
+        <button class="btn" onclick="rateReview(${SRS.RATING.EASY})">😎 ${ui('easy')}</button>
       </div>`;
   } else {
-    actions.innerHTML = `<button class="btn danger" onclick="rateReview(${SRS.RATING.AGAIN})">${gloss('Continua', 'Vi la respuesta, seguir')}</button>`;
+    actions.innerHTML = `<button class="btn danger" onclick="rateReview(${SRS.RATING.AGAIN})">${ui('sawAnswerContinue')}</button>`;
   }
 }
 
@@ -428,11 +591,11 @@ function upcomingReviewCalendar(maxDates) {
 }
 
 function formatRelativeDate(dateISO, todayISO) {
-  if (dateISO <= todayISO) return gloss('Oggi', 'Hoy');
+  if (dateISO <= todayISO) return ui('today');
   const today = new Date(todayISO + 'T00:00:00');
   const target = new Date(dateISO + 'T00:00:00');
   const diffDays = Math.round((target - today) / 86400000);
-  if (diffDays === 1) return gloss('Domani', 'Mañana');
+  if (diffDays === 1) return ui('tomorrow');
   const [, m, d] = dateISO.split('-');
   return `${d}/${m}`;
 }
@@ -445,26 +608,26 @@ function renderProgress() {
   const calendar = upcomingReviewCalendar(6);
 
   render(`
-    <div class="top-bar"><a class="link" href="#home">← ${gloss('Home', 'Inicio')}</a></div>
-    <h2>${gloss('I tuoi progressi', 'Tu progreso')}</h2>
+    <div class="top-bar"><a class="link" href="#home">← ${ui('home')}</a></div>
+    <h2>${ui('progressTitle')}</h2>
     <div class="stat-row">
-      <div class="stat"><div class="num">${progress.streak}</div><div class="label">${gloss('Serie (giorni)', 'Racha (días)')}</div></div>
-      <div class="stat"><div class="num">${learned}</div><div class="label">${gloss('Elementi imparati', 'Ítems aprendidos')}</div></div>
+      <div class="stat"><div class="num">${progress.streak}</div><div class="label">${ui('streakLabel')}</div></div>
+      <div class="stat"><div class="num">${learned}</div><div class="label">${ui('learnedLabel')}</div></div>
       <div class="stat"><div class="num">${progress.xp}</div><div class="label">XP</div></div>
     </div>
     <div class="card">
-      <h3>${gloss('Livello CEFR approssimativo', 'Nivel CEFR aproximado')}</h3>
+      <h3>${ui('cefrTitle')}</h3>
       <p><span class="cefr-badge">A1</span></p>
-      ${CONTENT.lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${l.title} (${l.titleEs}): ${progress.completedLessons.includes(l.id) ? 'completa ✅' : gloss('in sospeso', 'pendiente')}</p>`).join('')}
+      ${currentCourse().lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${l.title} (${l.titleEs}): ${progress.completedLessons.includes(l.id) ? 'completa ✅' : ui('pending')}</p>`).join('')}
     </div>
     <div class="card">
-      <h3>${gloss('Ripassi in sospeso', 'Repasos pendientes')}</h3>
-      <p>${dueToday > 0 ? gloss(`${dueToday} elemento/i pronti oggi.`, `${dueToday} ítem(s) listos hoy.`) : gloss('Sei in pari! 🎉', 'Estás al día. 🎉')}</p>
+      <h3>${ui('pendingReviewsTitle')}</h3>
+      <p>${dueToday > 0 ? ui('dueTodayCount', dueToday) : ui('allCaughtUp')}</p>
       ${calendar.length > 0 ? `
         <table>
-          ${calendar.map(c => `<tr><td>${c.label}</td><td>${c.count} ${gloss('elemento/i', 'ítem(s)')}</td></tr>`).join('')}
+          ${calendar.map(c => `<tr><td>${c.label}</td><td>${c.count} ${ui('itemsUnit')}</td></tr>`).join('')}
         </table>
-      ` : learned > 0 ? '' : `<p style="font-size:14px; color:var(--text-dim);">${gloss('Non hai ancora imparato nessun elemento.', 'Todavía no aprendiste ningún ítem.')}</p>`}
+      ` : learned > 0 ? '' : `<p style="font-size:14px; color:var(--text-dim);">${ui('noItemsYet')}</p>`}
     </div>
   `);
 }

@@ -117,3 +117,13 @@ a.link { color: var(--green); text-decoration: none; font-size: 14px; }
 }
 .speaker-btn:active { transform: scale(0.9); }
 .phonetic { width: 100%; font-size: 12px; color: var(--text-dim); font-style: italic; }
+
+/* Selección de idioma */
+.lang-picker { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+.lang-card {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 18px; padding: 20px;
+}
+.lang-flag { font-size: 26px; }
+.lang-switch { cursor: pointer; font-size: 14px; }
+.lang-switch:active { opacity: 0.7; }

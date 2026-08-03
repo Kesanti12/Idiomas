@@ -1,11 +1,20 @@
 /*
- * Contenido curricular. Cada lección declara su nivel CEFR y descriptor.
- * Input comprensible: el diálogo usa ~90%+ vocabulario cognado/reconocible;
- * el glosario marca solo lo nuevo, en contexto (principio Krashen i+1).
+ * Contenido curricular, organizado por curso (idioma a aprender). Cada lección declara
+ * su nivel CEFR y descriptor. Input comprensible: el diálogo usa ~90%+ vocabulario
+ * cognado/reconocible; el glosario marca solo lo nuevo, en contexto (principio Krashen i+1).
+ *
+ * `glossary[].target` (antes `it`) es siempre el texto en el idioma que se está
+ * aprendiendo — el nombre del campo es genérico a propósito porque ahora hay más de
+ * un curso (antes solo existía italiano, de ahí que muchos ids/variables digan "it").
  */
 
-const CONTENT = {
-  lessons: [
+const COURSES = {
+  it: {
+    code: 'it',
+    name: 'Italiano',
+    flag: '🇮🇹',
+    speechLang: 'it-IT',
+    lessons: [
     {
       id: 'a1_u1_saluti',
       cefr: 'A1',
@@ -31,9 +40,9 @@ const CONTENT = {
         'sono': 'SO-no', 'sei': 'SEI', 'è': 'E', 'siamo': 'SIA-mo', 'siete': 'SIE-te',
       },
       glossary: [
-        { it: 'Come ti chiami?', es: '¿Cómo te llamas?', note: 'Literal: "¿cómo te llamas a ti mismo?" — verbo reflexivo chiamarsi.' },
-        { it: 'Mi chiamo...', es: 'Me llamo...', note: null },
-        { it: 'Piacere', es: 'Mucho gusto', note: 'Se usa igual que en español al presentarse; no hace falta traducir literal.' },
+        { target: 'Come ti chiami?', es: '¿Cómo te llamas?', note: 'Literal: "¿cómo te llamas a ti mismo?" — verbo reflexivo chiamarsi.' },
+        { target: 'Mi chiamo...', es: 'Me llamo...', note: null },
+        { target: 'Piacere', es: 'Mucho gusto', note: 'Se usa igual que en español al presentarse; no hace falta traducir literal.' },
       ],
       grammar: {
         title: 'El verbo "essere" (ser/estar) — presente',
@@ -106,9 +115,9 @@ const CONTENT = {
         'fratello': 'fra-TEL-lo',
       },
       glossary: [
-        { it: 'Hai fratelli?', es: '¿Tienes hermanos?', note: 'Avere = tener (no confundir con essere, ya visto en la Unidad 1).' },
-        { it: 'tua sorella', es: 'tu hermana', note: 'Posesivo antes del sustantivo, como en español.' },
-        { it: 'Come si chiama...?', es: '¿Cómo se llama...?', note: 'Mismo verbo chiamarsi de la Unidad 1, ahora en 3ª persona (si chiama, no ti chiami).' },
+        { target: 'Hai fratelli?', es: '¿Tienes hermanos?', note: 'Avere = tener (no confundir con essere, ya visto en la Unidad 1).' },
+        { target: 'tua sorella', es: 'tu hermana', note: 'Posesivo antes del sustantivo, como en español.' },
+        { target: 'Come si chiama...?', es: '¿Cómo se llama...?', note: 'Mismo verbo chiamarsi de la Unidad 1, ahora en 3ª persona (si chiama, no ti chiami).' },
       ],
       grammar: {
         title: 'El verbo "avere" (tener) — presente',
@@ -180,8 +189,8 @@ const CONTENT = {
         'cinque': 'CHIN-kue', 'sei': 'SEI', 'sette': 'SET-te', 'otto': 'OT-to', 'nove': 'NO-ve', 'dieci': 'DIE-chi',
       },
       glossary: [
-        { it: 'Quanti anni hai?', es: '¿Cuántos años tienes?', note: 'Literal "¿Cuántos años tienes?" — igual estructura que el español.' },
-        { it: 'giovane', es: 'joven', note: null },
+        { target: 'Quanti anni hai?', es: '¿Cuántos años tienes?', note: 'Literal "¿Cuántos años tienes?" — igual estructura que el español.' },
+        { target: 'giovane', es: 'joven', note: null },
       ],
       grammar: {
         title: '"Avere ... anni" para la edad, y los números 0-10',
@@ -255,8 +264,8 @@ const CONTENT = {
         'parlare': 'par-LA-re',
       },
       glossary: [
-        { it: "un po' di", es: 'un poco de', note: null },
-        { it: 'Bravo!', es: '¡Bien hecho!', note: 'Cognado directo — mismo uso que en español al felicitar.' },
+        { target: "un po' di", es: 'un poco de', note: null },
+        { target: 'Bravo!', es: '¡Bien hecho!', note: 'Cognado directo — mismo uso que en español al felicitar.' },
       ],
       grammar: {
         title: 'Verbos regulares en -are (ej. "parlare" = hablar)',
@@ -328,8 +337,8 @@ const CONTENT = {
         'prendere': 'pren-DE-re',
       },
       glossary: [
-        { it: 'Cosa prendi?', es: '¿Qué tomas/pedís?', note: 'Se usa así en bares y cafés, no solo literal "tomar".' },
-        { it: 'Va bene', es: 'Está bien / dale', note: null },
+        { target: 'Cosa prendi?', es: '¿Qué tomas/pedís?', note: 'Se usa así en bares y cafés, no solo literal "tomar".' },
+        { target: 'Va bene', es: 'Está bien / dale', note: null },
       ],
       grammar: {
         title: 'Verbos regulares en -ere (ej. "prendere" = tomar/pedir)',
@@ -402,9 +411,9 @@ const CONTENT = {
         'dormire': 'dor-MI-re',
       },
       glossary: [
-        { it: 'stanotte', es: 'esta noche', note: null },
-        { it: 'non dormo', es: 'no duermo', note: '"non" antes del verbo niega la oración, como el "no" del español antes del verbo.' },
-        { it: 'Peccato!', es: '¡Qué lástima!', note: null },
+        { target: 'stanotte', es: 'esta noche', note: null },
+        { target: 'non dormo', es: 'no duermo', note: '"non" antes del verbo niega la oración, como el "no" del español antes del verbo.' },
+        { target: 'Peccato!', es: '¡Qué lástima!', note: null },
       ],
       grammar: {
         title: 'Verbos regulares en -ire (ej. "dormire" = dormir)',
@@ -454,7 +463,167 @@ const CONTENT = {
         },
       ],
     },
-  ],
+    ],
+  },
+
+  pt: {
+    code: 'pt',
+    name: 'Português',
+    flag: '🇧🇷',
+    speechLang: 'pt-BR',
+    lessons: [
+      {
+        id: 'pt_a1_u1_cumprimentos',
+        cefr: 'A1',
+        descriptor: 'Pode se apresentar e perguntar/responder dados pessoais básicos.',
+        title: 'Cumprimentos e apresentações',
+        titleEs: 'Saludos y presentaciones',
+        dialogue: [
+          { speaker: 'João', line: 'Oi! Como você se chama?' },
+          { speaker: 'Maria', line: 'Meu nome é Maria. E você?' },
+          { speaker: 'João', line: 'Eu me chamo João. Prazer!' },
+          { speaker: 'Maria', line: 'Prazer em te conhecer!' },
+        ],
+        phonetics: {
+          'oi! como você se chama?': 'OI! KO-mu vo-SE si SHA-ma?',
+          'meu nome é maria. e você?': 'meu NO-mi E ma-RI-a. i vo-SE?',
+          'eu me chamo joão. prazer!': 'eu mi SHA-mu jo-ÃUN. pra-ZER!',
+          'prazer em te conhecer!': 'pra-ZER en tchi ko-nye-SER!',
+          'como você se chama?': 'KO-mu vo-SE si SHA-ma?',
+          'meu nome é...': 'meu NO-mi E...',
+          'prazer': 'pra-ZER',
+          'sou': 'SO', 'é': 'E', 'somos': 'SO-mus', 'são': 'SÃUN',
+        },
+        glossary: [
+          { target: 'Como você se chama?', es: '¿Cómo te llamas?', note: 'Literal "¿como você se chama a si mesmo?" — verbo reflexivo chamar-se, igual de directo que en español "llamarse".' },
+          { target: 'Meu nome é...', es: 'Mi nombre es... / Me llamo...', note: null },
+          { target: 'Prazer', es: 'Mucho gusto', note: 'Cognado de "placer"; se usa solo al presentarse, igual que en español.' },
+        ],
+        grammar: {
+          title: 'El verbo "ser" — presente',
+          explanation: 'A diferencia del italiano (que no distingue ser/estar), el portugués sí tiene dos verbos separados — igual que el español: "ser" (identidad, características permanentes) y "estar" (estados, ubicación). La conjugación de "ser" es prácticamente un calco del español: soy→sou, es→é, somos→somos, son→são. Transferencia directa, muy poco que memorizar de cero.',
+          table: [
+            ['eu', 'sou'], ['você', 'é'], ['ele/ela', 'é'],
+            ['nós', 'somos'], ['vocês', 'são'], ['eles/elas', 'são'],
+          ],
+        },
+        exercises: [
+          {
+            id: 'ex1', type: 'fill',
+            prompt: 'Completa: Eu ___ João.',
+            answer: 'sou',
+            explanation: '"eu" siempre va con "sou" — igual que "yo soy" en español.',
+            srsFront: 'Eu ___ João. (ser, eu)', srsBack: 'sou',
+          },
+          {
+            id: 'ex2', type: 'fill',
+            prompt: 'Completa: Você ___ Maria?',
+            answer: 'é',
+            explanation: '"você" va con "é" (3ª persona, aunque "você" signifique "tú" en el trato).',
+            srsFront: 'Você ___ Maria? (ser, você)', srsBack: 'é',
+          },
+          {
+            id: 'ex3', type: 'fill',
+            prompt: 'Completa: Nós ___ estudantes.',
+            answer: 'somos',
+            explanation: '"nós" va con "somos" — idéntico al español.',
+            srsFront: 'Nós ___ estudantes. (ser, nós)', srsBack: 'somos',
+          },
+          {
+            id: 'ex4', type: 'translate',
+            prompt: 'Traduce al portugués: "Mucho gusto"',
+            answer: 'prazer',
+            explanation: '"Prazer" se usa solo, como en español.',
+            srsFront: '¿Cómo se dice "Mucho gusto" en portugués?', srsBack: 'Prazer',
+            reverseFront: 'Prazer', reverseBack: 'Mucho gusto',
+          },
+          {
+            id: 'ex5', type: 'translate',
+            prompt: 'Traduce al portugués: "¿Cómo te llamas?"',
+            answer: 'como você se chama',
+            explanation: '"Como você se chama?" — chamar-se es reflexivo (como en español "llamarse").',
+            srsFront: '¿Cómo se dice "¿Cómo te llamas?" en portugués?', srsBack: 'Como você se chama?',
+            reverseFront: 'Como você se chama?', reverseBack: '¿Cómo te llamas?',
+          },
+        ],
+      },
+      {
+        id: 'pt_a1_u2_familia',
+        cefr: 'A1',
+        descriptor: 'Pode falar da sua família usando "ter" e vocabulário básico de parentesco.',
+        title: 'A família',
+        titleEs: 'La familia',
+        dialogue: [
+          { speaker: 'João', line: 'Você tem irmãos?' },
+          { speaker: 'Maria', line: 'Sim, tenho um irmão e uma irmã. E você?' },
+          { speaker: 'João', line: 'Eu tenho só uma irmã. Como se chama sua irmã?' },
+          { speaker: 'Maria', line: 'Ela se chama Sofia.' },
+        ],
+        phonetics: {
+          'você tem irmãos?': 'vo-SE ten ir-MÃUNS?',
+          'sim, tenho um irmão e uma irmã. e você?': 'sin, TE-nyu un ir-MÃUN i U-ma ir-MÃ. i vo-SE?',
+          'eu tenho só uma irmã. como se chama sua irmã?': 'eu TE-nyu SO U-ma ir-MÃ. KO-mu si SHA-ma SU-a ir-MÃ?',
+          'ela se chama sofia.': 'E-la si SHA-ma so-FI-a.',
+          'sua irmã': 'SU-a ir-MÃ',
+          'como se chama...?': 'KO-mu si SHA-ma...?',
+          'tenho': 'TE-nyu', 'tem': 'TEN', 'temos': 'TE-mus', 'têm': 'TEIN',
+          'irmão': 'ir-MÃUN',
+        },
+        glossary: [
+          { target: 'Você tem irmãos?', es: '¿Tienes hermanos?', note: 'Ter = tener (no confundir con ser, ya visto en la Unidad 1) — igual distinción que en español.' },
+          { target: 'sua irmã', es: 'tu hermana', note: 'Posesivo antes del sustantivo, como en español.' },
+          { target: 'Como se chama...?', es: '¿Cómo se llama...?', note: 'Mismo verbo chamar-se de la Unidad 1, ahora en 3ª persona.' },
+        ],
+        grammar: {
+          title: 'El verbo "ter" (tener) — presente',
+          explanation: 'Ter es irregular y de altísima frecuencia, como ser (Unidad 1) — no hay que confundirlos: ser = ser/identidad, ter = tener. A diferencia del español "tener" (tengo/tienes/tiene), portugués usa tenho/tem/tem — nota que "você tem" y "ele/ela tem" comparten la misma forma "tem".',
+          table: [
+            ['eu', 'tenho'], ['você', 'tem'], ['ele/ela', 'tem'],
+            ['nós', 'temos'], ['vocês', 'têm'], ['eles/elas', 'têm'],
+          ],
+        },
+        exercises: [
+          {
+            id: 'ex1', type: 'fill',
+            prompt: 'Completa: Eu ___ um irmão.',
+            answer: 'tenho',
+            explanation: '"eu" va con "tenho" (ter), no con "sou" (ser) — son verbos distintos.',
+            srsFront: 'Eu ___ um irmão. (ter, eu)', srsBack: 'tenho',
+          },
+          {
+            id: 'ex2', type: 'fill',
+            prompt: 'Completa: Você ___ uma irmã?',
+            answer: 'tem',
+            explanation: '"você" va con "tem".',
+            srsFront: 'Você ___ uma irmã? (ter, você)', srsBack: 'tem',
+          },
+          {
+            id: 'ex3', type: 'fill',
+            prompt: 'Completa: Nós ___ uma família grande.',
+            answer: 'temos',
+            explanation: '"nós" va con "temos".',
+            srsFront: 'Nós ___ uma família grande. (ter, nós)', srsBack: 'temos',
+          },
+          {
+            id: 'ex4', type: 'translate',
+            prompt: 'Traduce al portugués: "hermano"',
+            answer: 'irmão',
+            explanation: '"Irmão" — cognado reconocible del latín germanus, mismo origen que "hermano".',
+            srsFront: '¿Cómo se dice "hermano" en portugués?', srsBack: 'Irmão',
+            reverseFront: 'Irmão', reverseBack: 'Hermano',
+          },
+          {
+            id: 'ex5', type: 'translate',
+            prompt: 'Traduce al portugués: "¿Tienes hermanos?"',
+            answer: 'você tem irmãos',
+            explanation: '"Você tem irmãos?" — ter (no ser) para expresar posesión/parentesco.',
+            srsFront: '¿Cómo se dice "¿Tienes hermanos?" en portugués?', srsBack: 'Você tem irmãos?',
+            reverseFront: 'Você tem irmãos?', reverseBack: '¿Tienes hermanos?',
+          },
+        ],
+      },
+    ],
+  },
 };
 
 function normalizeAnswer(s) {

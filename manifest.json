@@ -1,7 +1,7 @@
 {
-  "name": "Italiano — Aprende de verdad",
-  "short_name": "Italiano",
-  "description": "Aprende italiano de A1 a C2 con repetición espaciada real, input comprensible y práctica activa.",
+  "name": "Idiomas — Aprende de verdad",
+  "short_name": "Idiomas",
+  "description": "Aprende italiano o portugués de A1 a C2 con repetición espaciada real, input comprensible y práctica activa.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

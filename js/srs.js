@@ -6,30 +6,50 @@
  *
  * R(t) = (1 + t / (9 * S))^-1   — retrievability estimada a t días del último repaso.
  * Con retención objetivo 90%, el próximo intervalo óptimo ≈ S (estabilidad en días).
+ *
+ * Multi-curso: cada idioma tiene su propio banco de ítems y progreso, en su propia
+ * clave de localStorage — llamar SRS.setCourse(code) antes de usar el resto de la API.
  */
 
 const SRS = (() => {
-  const STORAGE_KEY = 'italiano_srs_v1';
   const RATING = { AGAIN: 1, HARD: 2, GOOD: 3, EASY: 4 };
 
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) { /* localStorage corrupto o bloqueado: arrancamos de cero */ }
+  let currentCourse = null;
+  let state = null;
+
+  // 'it' conserva la clave histórica (de cuando la app era solo italiano) para no
+  // perder el progreso de quien ya la venía usando.
+  function storageKeyFor(course) {
+    return course === 'it' ? 'italiano_srs_v1' : `idiomas_srs_v1_${course}`;
+  }
+
+  function emptyState() {
     return { items: {}, progress: { streak: 0, lastActiveDate: null, completedLessons: [], xp: 0 } };
   }
 
-  function saveState(state) {
+  function loadState(course) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const raw = localStorage.getItem(storageKeyFor(course));
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* localStorage corrupto o bloqueado: arrancamos de cero */ }
+    return emptyState();
+  }
+
+  function saveState() {
+    if (!currentCourse) return;
+    try {
+      localStorage.setItem(storageKeyFor(currentCourse), JSON.stringify(state));
     } catch (e) {
       // Cuota llena o modo incógnito estricto: el progreso de esta sesión no persiste,
       // pero la app sigue funcionando en memoria en vez de romper el loop de repaso.
     }
   }
 
-  let state = loadState();
+  function setCourse(course) {
+    if (currentCourse === course) return;
+    currentCourse = course;
+    state = loadState(course);
+  }
 
   function todayISO() {
     return new Date().toISOString().slice(0, 10);
@@ -60,7 +80,7 @@ const SRS = (() => {
       introduced: false,      // true tras la primera práctica real (no la introducción de la lección)
     };
     state.items[id] = item;
-    saveState(state);
+    saveState();
     return item;
   }
 
@@ -101,7 +121,7 @@ const SRS = (() => {
     item.reps += 1;
     item.lastReview = today;
     item.introduced = true;
-    saveState(state);
+    saveState();
     return item;
   }
 
@@ -123,7 +143,7 @@ const SRS = (() => {
       state.progress.completedLessons.push(lessonId);
     }
     bumpStreak();
-    saveState(state);
+    saveState();
   }
 
   function bumpStreak() {
@@ -141,7 +161,7 @@ const SRS = (() => {
 
   function addXP(amount) {
     state.progress.xp += amount;
-    saveState(state);
+    saveState();
   }
 
   function getProgress() {
@@ -149,7 +169,7 @@ const SRS = (() => {
   }
 
   return {
-    RATING, initItem, review, dueItems, newItemsCount, allItems,
+    RATING, setCourse, initItem, review, dueItems, newItemsCount, allItems,
     markLessonComplete, bumpStreak, addXP, getProgress, todayISO,
   };
 })();

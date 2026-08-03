@@ -521,3 +521,83 @@ no nulo), un reload normal (no hard-refresh) sirve contenido actualizado, audio+
 visibles en diálogo y tabla de gramática, botón Atrás funciona en ambas direcciones sin
 perder progreso, regresión completa de 6 lecciones/43 ítems sigue en verde, 0 errores de
 consola.
+
+---
+
+## Multi-idioma: se agrega Portugués + selector al iniciar
+
+Pedido del usuario: "añade portugués a la aplicación, quiero que al iniciar pueda escoger
+que idioma quiero aprender". Esto cambió la arquitectura de fondo — la app pasó de ser
+"la app de italiano" a "la app de idiomas, con cursos". Cambios:
+
+**1. `js/content.js` reestructurado**: `CONTENT.lessons` (flat, solo italiano) →
+`COURSES = { it: {code, name, flag, speechLang, lessons}, pt: {...} }`. Las 6 lecciones de
+italiano se movieron sin cambios de contenido bajo `COURSES.it.lessons`. Se agregaron
+**2 lecciones de portugués** (`COURSES.pt.lessons`), mismo formato exacto que las
+italianas (dialogue/phonetics/glossary/grammar/exercises con srsFront/srsBack/reverseFront/
+reverseBack):
+  - Unidad 1 "Cumprimentos e apresentações" — verbo "ser" (a diferencia del italiano, que
+    no distingue ser/estar, el portugués sí — igual que el español: soy→sou, es→é,
+    somos→somos, son→são. Transferencia casi directa, se explicita en la gramática).
+  - Unidad 2 "A família" — verbo "ter" (tener), mismo patrón pedagógico que "avere" en
+    italiano: contraste explícito con "ser" para no confundirlos.
+  - Se renombró el campo `glossary[].it` → `glossary[].target` (nombre genérico: antes
+    tenía sentido porque solo existía italiano, ahora sería confuso con el código "it").
+  - Fonética simple (mismo estilo "no IPA" que italiano) escrita a mano para el portugués
+    brasileño, incluyendo el rasgo distintivo de palatalización (te→tchi, di→dji) y vocales
+    nasales (ão→ÃUN) — con la misma salvedad de que es una guía aproximada, no IPA.
+
+**2. `js/srs.js` multi-curso**: nueva `SRS.setCourse(code)` que carga/guarda el estado en
+una clave de localStorage separada por curso — `italiano_srs_v1` para 'it' (se conserva el
+nombre histórico para no perder progreso de quien ya usaba la app) e
+`idiomas_srs_v1_<code>` para los demás. Cada idioma tiene su propia racha, XP, ítems y
+lecciones completadas, totalmente independientes. Todas las funciones internas pasaron de
+recibir `state` como parámetro a usar la variable de closure (ya la tenían, se limpió la
+redundancia).
+
+**3. Pantalla de selección de idioma (`js/app.js`)**: nueva `renderChooseLanguage()` — se
+muestra automáticamente si no hay curso guardado en localStorage (`idiomas_course_v1`).
+`selectCourse(code)` guarda la preferencia, llama a `SRS.setCourse(code)`, resetea el
+estado de lección/repaso en memoria (para no arrastrar el de un curso a otro) y va a Home.
+Un ícono 🌐 en el top-bar de Home (`openLanguagePicker()`) permite cambiar de idioma en
+cualquier momento sin perder el progreso de ningún curso — cada uno vive en su propia
+clave de storage, así que cambiar y volver no borra nada.
+
+**4. Toda la UI traducida a diccionario bilingüe por curso**: se creó `UI = { it: {...},
+pt: {...} }` con ~35 strings de interfaz (saludos, botones, mensajes, etiquetas) más
+`INSTRUCTIONS` (consignas fill/translate/recognize) también por curso — antes estaban
+hardcodeadas en italiano. Helper `ui(key, ...args)` arma el bloque con gloss(target, es)
+listo para insertar; `uiRaw(key)` para atributos sin HTML (placeholder). `wordWithAudio()`
+(antes `italianWithAudio()`) ahora usa `currentCourse().speechLang` para el botón de audio,
+así que cada curso habla con la voz/idioma correcto (it-IT vs pt-BR).
+
+**5. `manifest.json` e `index.html`**: nombre/título pasaron de "Italiano — Aprende de
+verdad" a "Idiomas — Aprende de verdad" (ya no aplica solo a un idioma). **Pendiente**: los
+íconos (`icons/*.png`) siguen con la estética de bandera italiana (verde/blanco/rojo) —
+no se regeneraron en este cambio; sería lo próximo para que la marca no favorezca
+visualmente a un solo curso.
+
+**6. `service-worker.js`**: `CACHE_NAME` → `italiano-v5` (cambiaron `app.js`, `content.js`,
+`srs.js`, `manifest.json`, `index.html`).
+
+**Verificado con Playwright**:
+- Estado fresco (sin curso guardado) → aparece el picker con Italiano y Português.
+- Elegir Italiano → Home en italiano, se completa la Unidad 1 → 7 ítems en
+  `italiano_srs_v1`.
+- Cambiar de idioma (ícono 🌐) → picker de nuevo → elegir Português → Home en portugués,
+  vocabulario/gramática/ejercicios en portugués con audio (`lang=pt-BR`) y fonética
+  correctos → se completa la Unidad 1 → 7 ítems en `idiomas_srs_v1_pt`, **el banco
+  italiano queda en 7 sin tocarse**.
+- Volver a Italiano → la Unidad 1 sigue marcada completa, el audio vuelve a `lang=it-IT`.
+- Regresión completa de las 6 lecciones de italiano (43 ítems, repaso, progreso) sigue en
+  verde después del refactor grande de `app.js`.
+- 0 errores de consola en todo el recorrido.
+
+**Pendiente para próximos ciclos (por impacto):**
+- Portugués solo tiene 2 lecciones vs. las 6 del italiano — ampliar para emparejar
+  cobertura (edad/números, primer verbo regular -ar como "falar", etc.), siguiendo el
+  mismo patrón de currículo en espiral ya usado en italiano.
+- Íconos de la PWA siguen con estética de bandera italiana — regenerar con algo neutral
+  (o un ícono por idioma) para que la marca no favorezca a un curso sobre otro.
+- El campo `speechLang` de cada curso asume una sola variante (pt-BR, no pt-PT) — está
+  bien documentado en el código pero no es configurable desde la UI.
