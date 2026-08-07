@@ -1277,3 +1277,53 @@ insistir más de una vez por ciclo (para no gastar el ciclo de 5 min en reintent
   placeholder liviano (sin assets pesados, PWA debe cargar rápido) en vez de una imagen.
 - Confirmar de nuevo si el screenshot headless funciona en el próximo ciclo antes de asumir
   que sigue roto.
+
+### Ciclo 2 — 2026-08-07 ~15:03-15:08
+**Mejora elegida:** header de Home con "stat chips" tipo Duolingo (racha 🔥 y XP ⚡ como
+píldoras con color propio) en vez del texto plano gris que había.
+
+**Por qué esta:** era la mejora #1 de la lista pendiente del ciclo 1 y la de menor riesgo
+estructural (toca `renderHome` en `js/app.js`, no la lista completa de lecciones). Duolingo
+muestra siempre racha/XP/vidas como chips prominentes arriba — hoy la app ya trackea
+`progress.xp` en `srs.js` pero nunca lo mostraba en ninguna pantalla.
+
+**Qué se hizo:**
+- `js/app.js` (`renderHome`): el `.top-bar` ahora tiene `.stat-chips` con dos píldoras
+  (`.streak-chip` con 🔥 y el número de racha, `.xp-chip` con ⚡ y `progress.xp`) más el
+  selector de idioma (`.lang-switch`) como una tercera píldora clickeable a la derecha.
+- `css/style.css`: nueva variable `--orange:#ff9600`; `.stat-chip` (píldora con
+  `border-radius:999px`, borde + `box-shadow` inferior sutil, mismo lenguaje visual que
+  `.card`/`.btn`); `.stat-chip.streak-chip` y `.stat-chip.xp-chip` con su propio color de
+  acento (naranja/ámbar) y fondo casi blanco; `.stat-chip.lang-switch` con `:active` de
+  escala en vez de sombra (es un selector, no una acción primaria).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v20`.
+
+**Bug encontrado y corregido en este mismo ciclo (antes de commitear):** el `title` del
+chip de racha usaba `uiSpeak('streakLabel')`, pero `uiSpeak()` devuelve **HTML** (texto +
+botón de audio `<span>`), no texto plano — al insertarlo dentro de un atributo `title="..."`
+rompía el HTML (el dump mostraba el markup del botón de audio literalmente como texto en
+el atributo). Se cambió a `uiRaw('streakLabel')`, que sí devuelve string plano. Confirmado
+con Edge headless antes y después del fix (ver método abajo) — el `grep` de errores de JS
+seguía en 0 en ambos casos porque no era un error de sintaxis, sino HTML mal formado dentro
+de un atributo, algo que solo se ve inspeccionando el DOM renderizado.
+
+**Verificación:** arnés temporal `_test_home.html` (creado y borrado en este ciclo, mismo
+patrón que las sesiones de portugués: precarga `idiomas_course_v1='it'` en `localStorage` y
+redirige a `index.html`, todo servido desde el mismo origen `python -m http.server`) +
+Edge headless `--dump-dom`. 0 errores de JS en el log de stderr. El DOM confirma los 3 chips
+renderizados con las clases correctas y el contenido esperado (`🔥 0`, `⚡ 0`, `🇮🇹 🌐`, con
+`progress.xp`/`streak` en 0 porque es una cuenta nueva sin lecciones completadas). El flag
+`--screenshot` no se reintentó este ciclo (documentado como roto en el entorno en el ciclo
+1) — se prioriza no gastar tiempo del ciclo de 5 min reintentando algo ya confirmado como
+limitación de infraestructura, no del código.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto, sin cambios respecto al
+ciclo 1 salvo tachar lo hecho):**
+- ~~Header/top-bar con racha/XP~~ ✅ hecho este ciclo.
+- Tarjetas de lección en Home como un "path" serpenteante con nodos circulares — sigue
+  siendo el cambio más grande y el que más acerca visualmente a la referencia del usuario;
+  toca estructura de `renderHome`, no solo CSS.
+- Animación de feedback correcto/incorrecto (shake al fallar, check animado al acertar).
+- Mascota/personaje — evaluar emoji grande como placeholder liviano.
+- Si en algún ciclo se prueba `--screenshot` de nuevo y funciona, documentarlo (podría ser
+  un problema transitorio de recursos del sistema, no permanente).
