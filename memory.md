@@ -1013,3 +1013,47 @@ la tabla exista.
 - Colores, o ampliar el vocabulario de lugares (Unidad 9) con más ejemplos si el tiempo
   alcanza.
 - Ítems SRS bidireccionales en drills `fill` — sigue pendiente, no resuelto en este loop.
+
+**Confirmación (hecha en el ciclo 9):** se revisaron a mano las 13 tablas de gramática de
+`content.js` (6 italianas + 8 portuguesas de antes de este cambio) — todas con el orden
+`[pronombre/número/afirmativo, forma_target]` correcto. El bug del ciclo 8 fue aislado a la
+Unidad 9 de portugués y ya está corregido.
+
+### Ciclo 9 — 2026-08-07 ~14:22-14:30
+**Mejora elegida:** Unidad 10 A1 de portugués — "De que cor é?" (colores y concordancia de
+género en adjetivos).
+
+**Por qué esta:** siguiente pendiente de la lista (colores), pero elegida sobre todo por
+su valor gramatical: los colores en portugués son el ejemplo más simple y frecuente para
+enseñar concordancia de género en adjetivos (branco/branca, vermelho/vermelha vs.
+verde/azul invariables) — mismo patrón que el español, así que la transferencia es casi
+directa, pero vale explicitarlo (principio #5 de CLAUDE.md) para que el usuario generalice
+la regla en vez de memorizar cada color suelto. Se agregó también una nota sobre "preto"
+vs. "negro" (el segundo existe pero no es la palabra de uso cotidiano para el color de un
+objeto en portugués brasileño) para prevenir un falso amigo de transferencia directa.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u10_cores` (dialogue sobre el color de una casa y
+  un auto, phonetics, glossary, tabla de 6 colores con el orden de columnas `[ES, PT]`
+  correcto desde el vamos —aplicando la lección del ciclo 8—, 5 ejercicios: 2 fill
+  practicando la concordancia de género según el sustantivo + 3 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v14`.
+
+**Verificación:** balance de brackets en Python (0/0/0) + Edge headless (mismo método,
+arnés temporal creado y borrado en este ciclo) — 0 errores de JS, tabla de gramática
+confirmada con `data-speak` en portugués en la columna correcta (ej. "branco/branca", no
+"blanco/blanca") antes de commitear, aplicando directamente la lección del ciclo 8.
+
+**Estado a esta altura:** portugués tiene **10 lecciones** — supera ampliamente el
+objetivo inicial de "emparejar" a italiano (6), y ya cubre más terreno gramatical
+explícito (negación, concordancia de género en adjetivos) que el curso de italiano en
+este mismo repositorio.
+
+**Pendiente para el próximo ciclo del loop (por impacto, quedan ~14 min antes de 14:44):**
+- Ítems SRS bidireccionales en drills `fill` de conjugación — sigue sin resolverse en
+  ningún ciclo de este loop; sería el pendiente de más impacto si alcanza el tiempo.
+- Si no alcanza para eso, una lección más corta (ej. días de la semana, o repasar/ampliar
+  colores con más ejemplos) es preferible a dejar algo a medio terminar cuando falte poco
+  para las 14:44.
+- Verificación end-to-end completa con Playwright real (clicks/inputs, no solo dump-dom)
+  sigue pendiente para una sesión futura con node disponible.
