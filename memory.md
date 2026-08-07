@@ -857,3 +857,63 @@ italiano** — la sesión cumplió y superó el objetivo inicial de "emparejar c
   de sintaxis, no por comportamiento real en la app.
 - Si queda tiempo: números 11-20 o vocabulario de lugares/direcciones para portugués,
   siguiendo el mismo patrón de espiral curricular.
+
+### Ciclo 6 — 2026-08-07 ~14:08-14:16 (sin agregar contenido — cierre del gap de verificación)
+**Mejora elegida:** resolver el gap más repetido en los pendientes de los ciclos 1-5 —
+"no hay Playwright/node en este entorno, todo el contenido se verificó solo por balance de
+sintaxis" — en vez de sumar una octava lección sin haber confirmado que las 5 anteriores
+de este loop funcionan de verdad en un navegador.
+
+**Hallazgo importante: sí hay forma de verificar en este entorno**, solo que no es
+Playwright/node (no instalados aquí) sino **Microsoft Edge headless**, que sí está en el
+sistema (`/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`). Método
+reutilizable para próximos ciclos/sesiones sin node disponible:
+1. Servir el proyecto con `python -m http.server 8123` (Python 3.11 está en
+   `/c/Users/kesan/AppData/Local/Programs/Python/Python311/python`, no en PATH de Git
+   Bash — hay que usar la ruta completa).
+2. Crear un HTML de arnés temporal (ej. `_test_pt.html`, **nunca commitear, borrar al
+   terminar**) que carga `content.js`/`srs.js`/`app.js` en el mismo orden que
+   `index.html`, pre-setea `localStorage.setItem('idiomas_course_v1', 'pt')` antes de
+   cargarlos (evita el picker de idioma), y opcionalmente llama a `startLesson(id)` +
+   fuerza `lessonState.step` para saltar directo a la pantalla que se quiere inspeccionar.
+3. `msedge.exe --headless=new --disable-gpu --virtual-time-budget=4000
+   --run-all-compositor-stages-before-draw --enable-logging=stderr --v=1 --dump-dom
+   <url>` — el headless SÍ ejecuta el JS real (no es solo parseo estático), así que
+   `--dump-dom` devuelve el DOM ya renderizado por `app.js`, y el log de stderr sirve para
+   grepear `SyntaxError|ReferenceError|TypeError|Uncaught`.
+
+**Qué se verificó con este método (0 errores de JS en todos los casos):**
+- Home con curso 'pt' preseleccionado: las **7 lecciones** de portugués (ciclos 1-5 de
+  este loop) aparecen con título, badge CEFR, gloss en español, botón de audio con
+  `data-lang="pt-BR"` correcto, y fonética donde corresponde. Confirma que
+  `js/content.js` no tiene errores de sintaxis reales (más allá del balance de brackets
+  chequeado en ciclos previos) y que el pipeline completo `content.js→srs.js→app.js`
+  bootea sin romperse con el nuevo contenido.
+- Pantalla de diálogo de la Unidad 7 (negación): `startLesson('pt_a1_u7_negacao')`
+  renderiza el diálogo João/Maria completo, con "não"/"novela"/"obrigada" presentes.
+- Pantalla de gramática de la Unidad 7: la tabla de pares afirmativo→negativo (formato
+  no estándar, primera vez que `grammar.table` no es pronombre→forma) se renderiza sin
+  romper `renderGrammarStep()` — confirma que el renderer genérico (`g.table.map(([p,f])
+  => ...)`, `app.js:388`) efectivamente no asume estructura de conjugación, como se había
+  inferido leyendo el código en el ciclo 5, ahora confirmado en ejecución real.
+
+**No se hizo en este ciclo (limitación del método, a diferencia de Playwright):**
+sin interacción real de clicks/inputs, no se pudo probar el flujo completo de ejercicios
+(escribir respuesta → feedback → ítem entrando al banco SRS) ni el ciclo de repaso — el
+arnés solo fuerza `lessonState.step` directamente, no simula la interacción real del
+usuario. Para esa cobertura completa sigue haciendo falta Playwright/node en una sesión
+futura.
+
+**Qué se hizo (archivos):** ninguno permanente — `_test_pt.html` se creó y se borró en
+este mismo ciclo, no quedó rastro en el repo (`git status` limpio). No hay commit de
+código para este ciclo porque no hubo cambios de código, solo verificación; sí se
+commitea esta entrada de `memory.md`.
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Con la verificación de humo ya cubierta para las 7 lecciones existentes, retomar
+  contenido: números 11-20, vocabulario de lugares/direcciones, o adelantar A2 si el
+  tiempo restante del loop (vence 14:44) alcanza.
+- El método de Edge headless queda documentado acá para reusar en sesiones futuras sin
+  node — no reemplaza a Playwright para flujos con interacción real, pero cubre
+  "¿el JS tiene errores de sintaxis/runtime reales, y el DOM se arma como se espera?"
+  mucho mejor que el check de balance de brackets solo.
