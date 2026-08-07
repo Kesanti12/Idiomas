@@ -301,8 +301,11 @@ function renderHome() {
 
   render(`
     <div class="top-bar">
-      <span>🔥 ${uiSpeak('streak', progress.streak)}</span>
-      <span class="lang-switch" onclick="openLanguagePicker()" title="Cambiar idioma">${course.flag} 🌐</span>
+      <div class="stat-chips">
+        <span class="stat-chip streak-chip" title="${uiRaw('streakLabel')}">🔥 ${progress.streak}</span>
+        <span class="stat-chip xp-chip" title="XP">⚡ ${progress.xp}</span>
+      </div>
+      <span class="stat-chip lang-switch" onclick="openLanguagePicker()" title="Cambiar idioma">${course.flag} 🌐</span>
     </div>
     <h1>${uiRaw('greeting')} ${speakerBtn(uiRaw('greeting'), course.speechLang)}</h1>
     <p>${uiSpeak('tagline')}</p>
