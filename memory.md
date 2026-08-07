@@ -1094,3 +1094,40 @@ negación, lugares/preposiciones, colores/concordancia de género, y días de la
   ("mejorá específicamente portugués, no hace falta mucho para superar a Duolingo") — 11
   lecciones nuevas, un bug de UX real encontrado y corregido antes de llegar a producción,
   y un método de verificación end-to-end documentado y reutilizable sin depender de node.
+
+### Ciclo 11 — 2026-08-07 ~14:31-14:38
+**Mejora elegida:** Unidad 12 A1 de portugués — "Bom dia!" (saludos según el momento del
+día: bom dia/boa tarde/boa noite).
+
+**Por qué esta:** con ~13 minutos restantes antes del corte de las 14:44, se mantuvo el
+criterio del ciclo 10 (lección acotada y de bajo riesgo, sin tocar `srs.js`/`app.js`, para
+no dejar nada a medio verificar si el tiempo se corta). Se eligió este tema porque reusa
+directamente la concordancia de género recién enseñada en la Unidad 10 (colores:
+branco/branca) aplicándola a los saludos de más alta frecuencia real del idioma — currículo
+en espiral una vez más, y una pieza de vocabulario que un usuario A1 necesita literalmente
+desde el primer intercambio con un hablante nativo.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u12_saudacoes2` (dialogue corto de saludo/despedida,
+  phonetics, glossary con "Tudo bem?" como el saludo informal más usado en Brasil, tabla de
+  5 expresiones con concordancia bom/boa explicada explícitamente, 5 ejercicios: 2 fill
+  practicando bom vs. boa según el género + 3 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v16`.
+
+**Verificación:** balance de brackets en Python (0/0/0) + Edge headless (arnés temporal
+creado y borrado en este ciclo) — 0 errores de JS, tabla de gramática con audio/fonética
+correctos en la columna target.
+
+**Estado a esta altura:** portugués tiene **12 lecciones**, el doble de las 6 de italiano.
+
+**Si este fue el último ciclo (loop vence 14:44):** el cron `339163eb` se autodestruye en
+su próxima ejecución si ya pasó la hora, según la lógica embebida en su propio prompt (no
+requiere acción manual). Resumen de la sesión completa de este loop (13:43→14:44, foco
+portugués): **12 lecciones nuevas de portugués** (saludos, familia, edad/números 0-20, las
+3 conjugaciones regulares completas, negación, lugares/preposiciones, colores/concordancia
+de género, días de la semana, saludos por momento del día), **1 bug de UX real encontrado
+y corregido antes de producción** (columnas de audio invertidas en una tabla de gramática,
+ciclo 8), y **un método de verificación end-to-end sin node/Playwright documentado y
+reusable** (Edge headless + `--dump-dom`, ciclo 6). Portugués pasó de 2 a 12 lecciones —
+duplicó la cobertura de italiano y cubre más terreno gramatical explícito (negación,
+concordancia de género) que el curso más viejo del repositorio.
