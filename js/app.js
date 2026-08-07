@@ -411,7 +411,7 @@ function renderExerciseStep(lesson) {
     <div class="card">
       ${instructionLine(ex.type)}
       <h3>${ex.prompt} ${speakerBtn(ex.prompt, currentCourse().speechLang)}</h3>
-      <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${lessonState.answered ? 'disabled' : ''}>
+      <input type="text" id="answer-input" class="${lessonState.answered ? (lessonState.lastCorrect ? 'input-correct' : 'input-incorrect') : ''}" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${lessonState.answered ? 'disabled' : ''}>
       <div id="feedback-slot"></div>
     </div>
     <button class="btn" id="check-btn" onclick="checkExercise('${lesson.id}')">${lessonState.answered ? ui('continueBtn') : ui('checkBtn')}</button>
@@ -560,7 +560,7 @@ function renderReview() {
     <div class="card">
       ${instructionLine(kind)}
       <h3>${frontHtml}</h3>
-      <input type="text" id="review-input" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${reviewAnswered ? 'disabled' : ''}>
+      <input type="text" id="review-input" class="${reviewAnswered ? (reviewCorrect ? 'input-correct' : 'input-incorrect') : ''}" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${reviewAnswered ? 'disabled' : ''}>
       <div id="review-feedback"></div>
     </div>
     <div id="review-actions">
