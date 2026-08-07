@@ -1215,3 +1215,65 @@ bidireccionalidad de ítems SRS en los drills `fill` de conjugación (nunca abor
 loop, requiere tocar `srs.js`/`app.js` con margen de tiempo completo) y verificación
 end-to-end con Playwright real (interacción de clicks/inputs, no solo `--dump-dom`) para
 las 14 lecciones nuevas.
+
+## Sesión de loop de UX/estética (2026-08-07, ~14:57→~15:27-15:30, cron `70ae7c9b` cada 5 min)
+
+**Objetivo de esta sesión:** el usuario pidió mejorar específicamente la UX y la estética
+para que la app se parezca más a Duolingo (mandó 2 capturas de referencia: pantalla de ruta
+de lecciones con nodos circulares tipo "isla" sobre un camino, y mockups con contador de
+XP/racha, botones grandes redondeados en verde brillante, feedback visual claro). No tocar
+`srs.js` salvo estricta necesidad — el foco es 100% visual/UX, no contenido ni algoritmo.
+
+### Ciclo 1 — 2026-08-07 ~14:57-15:01
+**Mejora elegida:** cambio de paleta y componentes base de tema oscuro (navy `#0d1b2a`) a
+tema claro estilo Duolingo.
+
+**Por qué esta primero:** era el gap más grande entre la app actual y las referencias — un
+tema oscuro completo no se parece en nada a Duolingo (fondo blanco/gris muy claro, verde
+brillante como color de marca). Antes de tocar estructura (path serpenteante con nodos,
+mascota) hacía falta la base de color/tipografía/sombra correcta, porque todo lo demás se
+construye encima.
+
+**Qué se hizo:**
+- `css/style.css`: reescritura completa de `:root` y componentes. Paleta nueva: verde
+  `#58cc02`/`#4aa800` (Duolingo real), azul `#1cb0f6` (antes usado solo para acentos, ahora
+  para links y badge CEFR), rojo `#ff4b4b`, fondo `#f7f7f7`, tarjetas blancas `#ffffff` con
+  borde `2px solid #e5e5e5` y `box-shadow: 0 4px 0 var(--border)` (efecto de profundidad
+  tipo Duolingo). Botones (`.btn`): más grandes, `border-radius:16px`, texto en mayúsculas
+  y negrita, `box-shadow: 0 4px 0` del color oscuro correspondiente que **desaparece y el
+  botón baja 4px en `:active`** (efecto "3D press" característico de Duolingo). Mismo
+  patrón aplicado a `.btn.secondary`, `.btn.danger`, `.stat`, `.cefr-badge`.
+- `manifest.json`: `background_color` a `#f7f7f7` y `theme_color` a `#58cc02` (antes navy
+  oscuro y verde bandera italiana) para que coincidan con el tema nuevo.
+- `index.html`: `<meta name="theme-color">` actualizado igual a `#58cc02`.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v19`.
+
+**No se tocó:** estructura HTML/DOM en `js/app.js` (la lista de lecciones sigue siendo
+tarjetas verticales, no un path con nodos todavía — eso queda para un ciclo futuro si el
+tiempo alcanza) ni `js/srs.js`.
+
+**Verificación:** `python -m http.server 8791` + Edge headless. **El flag `--screenshot`
+falló de forma consistente en este entorno** (crash del proceso de render/GPU incluso con
+`--disable-gpu --disable-software-rasterizer --no-sandbox`, probado 3 veces) — limitación
+del entorno, no del código. Se usó en su lugar el método ya documentado en el ciclo 6 de la
+sesión anterior: `--headless=new --dump-dom` sobre el `index.html` servido — **0 errores de
+JS** en el log de stderr (`SyntaxError|ReferenceError|TypeError|Uncaught` sin matches), y el
+DOM renderizado confirma que las clases nuevas (`.btn`, `.lang-card`, `.lang-picker`) se
+aplican correctamente sobre la pantalla de selección de idioma (primera pantalla que ve un
+usuario nuevo sin curso elegido en `localStorage`). La verificación visual de color/sombra
+real (screenshot) queda pendiente de un entorno que soporte el render headless con GPU —
+para los próximos ciclos de esta sesión, documentar el mismo intento y si sigue fallando no
+insistir más de una vez por ciclo (para no gastar el ciclo de 5 min en reintentos).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Header/top-bar tipo Duolingo real: racha con ícono de fuego más prominente, contador de
+  XP visible, quizás corazones/vidas — hoy `.top-bar` es texto chico gris.
+- Tarjetas de lección en Home como un "path" serpenteante con nodos circulares (hoy son
+  tarjetas verticales apiladas) — cambio más grande, toca `js/app.js` (`renderHome`), no
+  solo CSS.
+- Animación de feedback correcto/incorrecto (shake al fallar, check animado al acertar) —
+  hoy `.feedback` es solo un cambio de color estático.
+- Mascota/personaje ilustrado — no hay ninguno hoy; evaluar si usar un emoji grande como
+  placeholder liviano (sin assets pesados, PWA debe cargar rápido) en vez de una imagen.
+- Confirmar de nuevo si el screenshot headless funciona en el próximo ciclo antes de asumir
+  que sigue roto.
