@@ -1,25 +1,30 @@
-const CACHE_NAME = 'italiano-v24';
+const CACHE_NAME = 'italiano-v25';
 
 // App shell (HTML/CSS/JS): cambia seguido durante desarrollo activo. Network-first evita
 // el problema recurrente de servir una versión vieja cacheada sin ningún error visible —
 // si hay conexión, siempre se pide la versión fresca primero; el cache es solo el
 // fallback para cuando no hay red.
+// Rutas relativas (sin "/" inicial) a propósito: cache.addAll()/fetch() las resuelve
+// contra la URL del propio service-worker.js, no del dominio — así funciona igual si la
+// app vive en la raíz del dominio o en una subcarpeta (ej. GitHub Pages de proyecto,
+// usuario.github.io/idiomas/). Con "/index.html" absoluto se rompía en subcarpeta: pedía
+// usuario.github.io/index.html (404) en vez de usuario.github.io/idiomas/index.html.
 const APP_SHELL = [
-  '/index.html',
-  '/manifest.json',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/srs.js',
-  '/js/content.js',
+  'index.html',
+  'manifest.json',
+  'css/style.css',
+  'js/app.js',
+  'js/srs.js',
+  'js/content.js',
 ];
 
 // Estáticos: casi no cambian, cache-first está bien (no vale la pena red cada vez).
 const STATIC_ASSETS = [
-  '/',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-maskable-512.png',
-  '/icons/apple-touch-icon.png',
+  './',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'icons/icon-maskable-512.png',
+  'icons/apple-touch-icon.png',
 ];
 
 self.addEventListener('install', event => {
