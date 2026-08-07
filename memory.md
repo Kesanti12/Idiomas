@@ -641,3 +641,52 @@ NO envía la respuesta. Regresión completa de italiano (43 ítems, repaso, prog
 en verde. 0 errores de consola.
 
 `service-worker.js` → `CACHE_NAME` a `italiano-v6` (cambiaron `app.js` y `style.css`).
+
+## Loop automático — 2026-08-07 13:43→14:44 (cron 5 min, ID `339163eb`, foco: portugués)
+
+Pedido del usuario: loop de 1 hora mejorando específicamente el curso de **portugués**
+(más lecciones, mejor SRS, input comprensible, producción activa), sin perder el objetivo
+de superar a Duolingo. Cron session-only cada 5 min con auto-corte a las 14:44 (el propio
+prompt del cron se revisa la hora y se autodestruye con `CronDelete` al llegar la hora).
+
+### Ciclo 1 — 2026-08-07 ~13:44-13:52
+**Mejora elegida:** Unidad 3 A1 de portugués — "A idade e os números" (edad y números
+0-10), mismo patrón que la Unidad 3 de italiano.
+
+**Por qué esta:** era el pendiente de mayor impacto ya identificado en la sesión anterior
+("Portugués solo tiene 2 lecciones vs. las 6 del italiano"). Currículo en espiral: reusa
+el verbo "ter" recién enseñado en la Unidad 2 con el patrón "ter ... anos" (igual que
+"avere ... anni" en italiano y "tener años" en español — transferencia directa), en vez de
+introducir vocabulario aislado. También amplía a 3 el pool de lecciones de portugués para
+que el interleaving round-robin (ya implementado en `app.js`, genérico por curso) tenga
+más con qué mezclar — antes con 2 lecciones el round-robin era poco notorio.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u3_idade` (dialogue, phonetics estilo "no IPA" para
+  hispanohablantes, glossary, tabla de números 0-10, grammar explicando "ter...anos" con
+  nota de transferencia y del plural "anos" desde 2 en adelante, 5 ejercicios: 2 fill
+  reforzando "ter", 3 translate bidireccional ES↔PT incluyendo el cognado exacto
+  "cinco"=="cinco").
+- Sin cambios en `app.js`/`srs.js` — arquitectura genérica multi-curso desde la sesión
+  anterior absorbe la lección nueva sin tocar lógica.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v7` (cambió `content.js`; lección
+  aprendida en sesiones previas: bumpear siempre que cambie algo en `ASSETS`, si no el
+  service worker network-first igual sirve la red primero así que el riesgo es menor que
+  antes del fix de raíz, pero se bumpea de todas formas por consistencia).
+
+**Verificación (sin Playwright disponible en este entorno no interactivo — no hay
+node/npx en PATH):** se hizo un check de balance de llaves/corchetes/paréntesis en Python
+respetando strings literales sobre todo `content.js` tras el edit (balance final y mínimo
+en 0 para los tres tipos de delimitador) — confirma que la estructura del objeto `COURSES`
+sigue siendo sintácticamente válida. Se verificaron a mano los 3 IDs de lección de
+portugués (únicos: `pt_a1_u1_cumprimentos`, `pt_a1_u2_familia`, `pt_a1_u3_idade`). **No se
+pudo hacer verificación end-to-end en navegador esta vez** — pendiente confirmarlo con
+Playwright en la próxima sesión interactiva que tenga node disponible.
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Unidad 4 de portugués: primer verbo regular en -ar (ej. "falar"), mismo rol pedagógico
+  que "parlare" tuvo para italiano (contraste irregular ter/ser vs. patrón regular).
+- Ítems SRS de portugués con dirección inversa en los drills `fill` de conjugación — hoy
+  igual que en italiano, solo `translate` tiene bidireccionalidad.
+- Confirmar si hay algún entorno con node/Playwright accesible para retomar la
+  verificación end-to-end automática en los próximos ciclos del loop.
