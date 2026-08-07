@@ -1429,3 +1429,49 @@ código de producción y no lo es).
 - Si queda tiempo hacia el final de la sesión (cerca de 15:27), preferir un pendiente chico y
   ya probado (como este ciclo) antes que arrancar el conector del camino a último momento sin
   margen para verificarlo.
+
+### Ciclo 5 — 2026-08-07 ~15:17-15:22
+**Mejora elegida:** mascota placeholder (🐺, un lobo) con globo de diálogo mostrando el
+tagline, reemplazando el `<p>` plano debajo del saludo en Home.
+
+**Por qué esta:** el pendiente #1 (conector visual del camino) requiere calcular geometría
+exacta (ángulo/distancia entre centros de nodos consecutivos, que dependen de la altura
+variable de cada etiqueta con texto largo) — un cambio arriesgado de verificar sin
+`--screenshot` funcionando en este entorno (solo `--dump-dom`, que no permite confirmar
+alineación visual en píxeles). Se prefirió la mascota: un pendiente más chico, de bajo
+riesgo estructural, y totalmente verificable con `--dump-dom` (basta confirmar que el emoji
+y el texto están presentes en el DOM). Además cierra otro elemento explícito de las
+referencias del usuario (personaje ilustrado) que ninguna capa de contenido tenía todavía.
+
+**Qué se hizo:**
+- `js/app.js` (`renderHome`): el `<p>${uiSpeak('tagline')}</p>` se reemplazó por
+  `.mascot-row` → un emoji grande (`.mascot-emoji`) + un globo de diálogo (`.mascot-bubble`)
+  con el mismo texto de tagline adentro.
+- `css/style.css`: `.mascot-row` (flex, alineado abajo), `.mascot-emoji` (46px), y
+  `.mascot-bubble` con el mismo lenguaje visual de tarjeta (borde + sombra inferior) más una
+  flecha de globo de diálogo apuntando a la mascota, hecha con dos triángulos CSS
+  superpuestos (`::before`/`::after`, sin SVG ni imágenes).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v23`.
+
+**Decisión de diseño (por qué un lobo y no un búho):** Duolingo usa un búho verde como
+mascota central de su identidad de marca — clonarlo literalmente iría en contra de la
+instrucción explícita de `CLAUDE.md` ("No eres un clon de Duolingo"). Se eligió un lobo
+🐺 en su lugar: referencia cultural italiana/romana (la Loba Capitolina) que además da pie a
+mascotas distintas por curso en el futuro (ej. un mascote específico para portugués) sin
+depender de un ícono ya asociado a un competidor.
+
+**Verificación:** arnés temporal `_test_home5.html` (con `<meta charset="UTF-8">` esta vez,
+aplicando la lección del ciclo 4) que redirige a `index.html` real tras precargar
+`idiomas_course_v1='it'` + Edge headless `--dump-dom`. 0 errores de JS; se confirmó en el
+DOM `class="mascot-row"`, el emoji 🐺 dentro de `.mascot-emoji`, y el texto del tagline en
+italiano dentro de `.mascot-bubble`. `--screenshot` no se reintentó (sigue documentado como
+roto en este entorno desde el ciclo 1).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Línea/conector visual entre los nodos del camino de lecciones — el pendiente más grande
+  que queda, pero de riesgo alto de verificar sin screenshots; si se aborda, dejar el cálculo
+  de geometría lo más simple posible (ej. conectores verticales cortos entre offsets iguales
+  en vez de diagonales exactas) para poder confirmarlo solo con `--dump-dom`.
+- Revisar el caso límite de viewport angosto (<320px) para el zigzag del camino.
+- Si este resulta ser el último o anteúltimo ciclo de la sesión (se acerca 15:27), priorizar
+  cerrar con un resumen prolijo de memory.md antes que arrancar algo nuevo sin margen.
