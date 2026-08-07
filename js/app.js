@@ -314,7 +314,10 @@ function renderHome() {
       <span class="stat-chip lang-switch" onclick="openLanguagePicker()" title="Cambiar idioma">${course.flag} 🌐</span>
     </div>
     <h1>${uiRaw('greeting')} ${speakerBtn(uiRaw('greeting'), course.speechLang)}</h1>
-    <p>${uiSpeak('tagline')}</p>
+    <div class="mascot-row">
+      <span class="mascot-emoji" aria-hidden="true">🐺</span>
+      <div class="mascot-bubble">${uiSpeak('tagline')}</div>
+    </div>
 
     <div class="card">
       <h3>🔁 ${uiSpeak('reviewCardTitle')}</h3>

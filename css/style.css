@@ -144,6 +144,21 @@ td:first-child { color: var(--text-dim); }
 
 .cefr-badge { display: inline-block; background: var(--blue); color: white; font-size: 12px; font-weight: 800; padding: 4px 9px; border-radius: 8px; box-shadow: 0 2px 0 var(--blue-dark); }
 
+/* Mascota (placeholder liviano con emoji, sin assets pesados) + globo de diálogo. */
+.mascot-row { display: flex; align-items: flex-end; gap: 10px; margin: 6px 0 22px; }
+.mascot-emoji { font-size: 46px; line-height: 1; flex-shrink: 0; }
+.mascot-bubble {
+  position: relative; flex: 1; background: var(--card); border: 2px solid var(--border);
+  border-radius: 16px; padding: 10px 14px; font-size: 14px; color: var(--text-dim);
+  box-shadow: 0 3px 0 var(--border);
+}
+.mascot-bubble::before, .mascot-bubble::after {
+  content: ''; position: absolute; bottom: 12px; width: 0; height: 0;
+  border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+}
+.mascot-bubble::before { left: -10px; border-right: 10px solid var(--border); }
+.mascot-bubble::after { left: -7px; border-right: 8px solid var(--card); }
+
 /* Camino de lecciones tipo Duolingo: nodos circulares en zigzag en vez de lista vertical. */
 .lesson-path { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 26px 0 18px; }
 .path-node { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; }
