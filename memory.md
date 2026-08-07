@@ -767,3 +767,43 @@ que estaba italiano tras su ciclo 8 (julio), a falta de la Unidad 6 con el terce
   igual desde el ciclo 2.
 - Verificación end-to-end en navegador (Playwright) — pendiente desde el ciclo 1, sin
   entorno con node disponible todavía.
+
+### Ciclo 4 — 2026-08-07 ~13:58-14:05
+**Mejora elegida:** Unidad 6 A1 de portugués — "O que você assiste à noite?" (tercer
+verbo regular: "assistir", patrón -ir).
+
+**Por qué esta:** cierra el trío completo de patrones regulares del portugués (-ar/-er/-ir)
+en paralelo exacto con -are/-ere/-ire de italiano — mismo rol que tuvo "dormire" para
+italiano. **Con esta unidad, portugués alcanza 6 lecciones y empareja por primera vez la
+cobertura de italiano (6 y 6)**, cerrando la brecha identificada al inicio de esta sesión
+de loop ("Portugués solo tiene 2 lecciones vs. las 6 del italiano").
+
+**Decisión de contenido:** se evitó "dormir" (el paralelo temático más obvio con "dormire")
+porque en portugués es un verbo con cambio de raíz (durmo, no *dormo*) — no serviría como
+ejemplo de conjugación *regular*. Se eligió "assistir" (ver/mirar series o películas,
+totalmente regular) para mantener el foco pedagógico en el patrón, no en el vocabulario.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u6_assistir` (dialogue sobre hábitos de ocio,
+  phonetics, glossary, tabla de conjugación -ir contrastada explícitamente con -ar/-er en
+  la gramática, nota aclarando que "assistir" en portugués significa "ver/mirar" y no
+  "asistir a un lugar" pese al cognado engañoso con el español, 5 ejercicios: 3 fill + 2
+  translate bidireccional).
+- Sin cambios en `app.js`/`srs.js`.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v10`.
+
+**Verificación:** mismo método que ciclos 1-3 (balance de llaves/corchetes/paréntesis en
+Python) — balance final y mínimo en 0. Los 6 IDs de lección de portugués son únicos
+(`pt_a1_u1_cumprimentos` … `pt_a1_u6_assistir`). Verificación end-to-end en navegador
+sigue pendiente (sin node/Playwright en este entorno no interactivo).
+
+**Pendiente para el próximo ciclo del loop (por impacto, ahora que hay paridad 6 vs 6):**
+- Con la brecha de cantidad cerrada, el siguiente foco de mayor impacto para portugués deja
+  de ser "más lecciones" y pasa a profundidad/calidad: negación explícita con "não" (portugués
+  la pospone igual que el italiano con "non", tema insinuado pero nunca explicado a fondo),
+  o ítems SRS bidireccionales en los drills `fill` de las 3 conjugaciones regulares.
+  Alternativa: Unidad 7 de portugués para adelantarse a italiano si el tiempo alcanza,
+  siguiendo currículo en espiral (ej. números 11-20, o preposiciones básicas de lugar).
+- Verificación end-to-end en navegador (Playwright) — sigue pendiente desde el ciclo 1.
+- Revisar antes de la próxima sesión si vale la pena traer contenido de portugués a los
+  niveles A2 (todo lo hecho en este loop, igual que italiano, es A1 puro).
