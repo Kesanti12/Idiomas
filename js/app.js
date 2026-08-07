@@ -53,8 +53,14 @@ function renderChooseLanguage() {
 
 // UI en el idioma del curso por defecto (botones, títulos, consignas) con una
 // traducción chica en español debajo para que nunca haya ambigüedad sobre qué hacer.
-function gloss(target, es) {
-  return `${target}<span class="gloss">${es}</span>`;
+// opts.audio agrega un botón de escuchar sobre el texto en el idioma del curso. No es
+// el default porque muchos textos de la UI van dentro de <button>/<a> clickeables — un
+// botón de audio anidado ahí haría que tocar 🔊 también dispare la acción del padre
+// (navegar, enviar respuesta). Se activa explícitamente vía uiSpeak() en los lugares
+// donde el texto no está dentro de un elemento clickeable (títulos, párrafos, labels).
+function gloss(target, es, opts) {
+  const audio = opts && opts.audio ? speakerBtn(target, currentCourse().speechLang) : '';
+  return `${target}${audio}<span class="gloss">${es}</span>`;
 }
 
 // Diccionario de textos fijos de la UI, por curso. Cada entrada es [texto-en-el-idioma,
@@ -157,6 +163,14 @@ function ui(key, ...args) {
   return gloss(pair[0], pair[1]);
 }
 
+// Igual que ui(), pero con botón de audio — para usar en títulos/párrafos/labels que
+// no están dentro de un elemento clickeable (ver comentario en gloss()).
+function uiSpeak(key, ...args) {
+  const entry = UI[selectedCourseCode][key];
+  const pair = typeof entry === 'function' ? entry(...args) : entry;
+  return gloss(pair[0], pair[1], { audio: true });
+}
+
 function uiRaw(key, ...args) {
   const entry = UI[selectedCourseCode][key];
   const pair = typeof entry === 'function' ? entry(...args) : entry;
@@ -174,13 +188,29 @@ function speakText(text, lang) {
 
 // data-speak/data-lang en vez de onclick inline: el diálogo tiene comillas simples
 // ("un po' di") que romperían un onclick="speakText('...')" armado a mano.
+//
+// Es un <span role="button">, no un <button>: ahora este botón aparece en TODA la app
+// (títulos, mensajes, tarjetas), incluyendo adentro de otros elementos ya interactivos
+// en algunos casos — un <button> anidado dentro de otro <button> es HTML inválido y el
+// navegador lo reordena de forma impredecible. Con tabindex + tratamiento de teclado
+// queda igual de accesible.
 function speakerBtn(text, lang) {
-  return `<button type="button" class="speaker-btn" data-speak="${text.replace(/"/g, '&quot;')}" data-lang="${lang}" aria-label="Ascolta la pronuncia">🔊</button>`;
+  return `<span role="button" tabindex="0" class="speaker-btn" data-speak="${text.replace(/"/g, '&quot;')}" data-lang="${lang}" aria-label="Ascolta la pronuncia">🔊</span>`;
 }
 
 document.addEventListener('click', e => {
   const btn = e.target.closest('.speaker-btn');
-  if (btn) speakText(btn.dataset.speak, btn.dataset.lang);
+  if (!btn) return;
+  e.stopPropagation(); // evita disparar el onclick de un botón/link ancestro
+  speakText(btn.dataset.speak, btn.dataset.lang);
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const btn = e.target.closest && e.target.closest('.speaker-btn');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  speakText(btn.dataset.speak, btn.dataset.lang);
 });
 
 // Fonética simple (no IPA) para hispanohablantes, buscada en el diccionario de la
@@ -215,7 +245,7 @@ const INSTRUCTIONS = {
 function instructionLine(kind) {
   const i = INSTRUCTIONS[selectedCourseCode][kind];
   if (!i) return '';
-  return `<p class="instruction">${gloss(i.target, i.es)}</p>`;
+  return `<p class="instruction">${gloss(i.target, i.es, { audio: true })}</p>`;
 }
 
 function go(screen, params) {
@@ -260,7 +290,7 @@ function renderHome() {
     const done = progress.completedLessons.includes(lesson.id);
     return `
     <div class="card">
-      <h3>${done ? '✅ ' : '📘 '}${lesson.title} <span class="cefr-badge">${lesson.cefr}</span></h3>
+      <h3>${done ? '✅ ' : '📘 '}${wordWithAudio(lesson, lesson.title)} <span class="cefr-badge">${lesson.cefr}</span></h3>
       <p class="gloss-block">${lesson.titleEs}</p>
       <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
       <button class="btn ${done ? 'secondary' : ''}" onclick="startLesson('${lesson.id}')">
@@ -271,15 +301,15 @@ function renderHome() {
 
   render(`
     <div class="top-bar">
-      <span>🔥 ${ui('streak', progress.streak)}</span>
+      <span>🔥 ${uiSpeak('streak', progress.streak)}</span>
       <span class="lang-switch" onclick="openLanguagePicker()" title="Cambiar idioma">${course.flag} 🌐</span>
     </div>
-    <h1>${uiRaw('greeting')}</h1>
-    <p>${ui('tagline')}</p>
+    <h1>${uiRaw('greeting')} ${speakerBtn(uiRaw('greeting'), course.speechLang)}</h1>
+    <p>${uiSpeak('tagline')}</p>
 
     <div class="card">
-      <h3>🔁 ${ui('reviewCardTitle')}</h3>
-      <p style="color:var(--text-dim); font-size:14px;">${ui('dueMsg', due)}</p>
+      <h3>🔁 ${uiSpeak('reviewCardTitle')}</h3>
+      <p style="color:var(--text-dim); font-size:14px;">${uiSpeak('dueMsg', due)}</p>
       <button class="btn ${due === 0 ? 'secondary' : ''}" ${due === 0 ? 'disabled' : ''} onclick="go('review')">
         ${ui('reviewBtn', due)}
       </button>
@@ -334,14 +364,14 @@ function backLink(step) {
 function renderDialogueStep(lesson) {
   render(`
     <div class="top-bar"><div class="top-bar-left">${exitLink()}</div><span class="cefr-badge">${lesson.cefr}</span></div>
-    <h2>${lesson.title}</h2>
+    <h2>${wordWithAudio(lesson, lesson.title)}</h2>
     <p class="gloss-block" style="margin-top:-8px;">${lesson.titleEs}</p>
-    <p style="color:var(--text-dim); font-size:14px;">${ui('dialogueHint')}</p>
+    <p style="color:var(--text-dim); font-size:14px;">${uiSpeak('dialogueHint')}</p>
     <div class="card">
       ${lesson.dialogue.map(d => `<div class="dialogue-line"><div class="speaker">${d.speaker}</div><div class="line">${wordWithAudio(lesson, d.line)}</div></div>`).join('')}
     </div>
     <div class="card">
-      <h3 style="font-size:15px;">${ui('newVocab')}</h3>
+      <h3 style="font-size:15px;">${uiSpeak('newVocab')}</h3>
       ${lesson.glossary.map(g => `<div class="glossary-item"><b>${wordWithAudio(lesson, g.target)}</b> — ${g.es}${g.note ? '<br><i>' + g.note + '</i>' : ''}</div>`).join('')}
     </div>
     <button class="btn" onclick="lessonState.step='grammar'; renderRoute()">${ui('nextGrammar')}</button>
@@ -371,7 +401,7 @@ function renderExerciseStep(lesson) {
     <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     <div class="card">
       ${instructionLine(ex.type)}
-      <h3>${ex.prompt}</h3>
+      <h3>${ex.prompt} ${speakerBtn(ex.prompt, currentCourse().speechLang)}</h3>
       <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" placeholder="${uiRaw('writeHere')}" ${lessonState.answered ? 'disabled' : ''}>
       <div id="feedback-slot"></div>
     </div>
@@ -391,7 +421,7 @@ function showExerciseFeedback(ex, correct, lesson) {
   const slot = document.getElementById('feedback-slot');
   const correctForm = ex.srsBack || ex.answer;
   slot.innerHTML = `<div class="feedback ${correct ? 'correct' : 'incorrect'}">
-    ${correct ? '✅ ' + ui('correct') : '❌ ' + ui('answerWas') + ' <b>' + wordWithAudio(lesson, correctForm) + '</b>'}
+    ${correct ? '✅ ' + uiSpeak('correct') : '❌ ' + uiSpeak('answerWas') + ' <b>' + wordWithAudio(lesson, correctForm) + '</b>'}
     <br>${ex.explanation}
   </div>`;
 }
@@ -438,8 +468,8 @@ function checkExercise(lessonId) {
 function renderLessonDone(lesson) {
   render(`
     <div class="card" style="text-align:center;">
-      <h2>🎉 ${ui('lessonCompleteTitle')}</h2>
-      <p>${ui('lessonCompleteMsg', lesson.exercises.length)}</p>
+      <h2>🎉 ${uiSpeak('lessonCompleteTitle')}</h2>
+      <p>${uiSpeak('lessonCompleteMsg', lesson.exercises.length)}</p>
       <button class="btn" onclick="go('home')">${ui('backHome')}</button>
     </div>
   `);
@@ -500,8 +530,8 @@ function renderReview() {
   if (reviewIndex >= reviewQueue.length) {
     render(`
       <div class="card" style="text-align:center;">
-        <h2>✅ ${ui('reviewDoneTitle')}</h2>
-        <p>${ui('reviewDoneMsg', reviewQueue.length)}</p>
+        <h2>✅ ${uiSpeak('reviewDoneTitle')}</h2>
+        <p>${uiSpeak('reviewDoneMsg', reviewQueue.length)}</p>
         <button class="btn" onclick="reviewQueue=null; go('home')">${ui('backHome')}</button>
       </div>
     `);
@@ -542,7 +572,7 @@ function showReviewFeedback(item, lesson, kind) {
   // del curso (kind !== 'recognize', donde la respuesta es la traducción al español).
   const backHtml = kind === 'recognize' ? item.back : wordWithAudio(lesson, item.back);
   slot.innerHTML = `<div class="feedback ${reviewCorrect ? 'correct' : 'incorrect'}">
-    ${reviewCorrect ? '✅ ' + ui('correct') : '❌ ' + ui('answerWas') + ' <b>' + backHtml + '</b>'}
+    ${reviewCorrect ? '✅ ' + uiSpeak('correct') : '❌ ' + uiSpeak('answerWas') + ' <b>' + backHtml + '</b>'}
   </div>`;
 
   const actions = document.getElementById('review-actions');
@@ -609,25 +639,25 @@ function renderProgress() {
 
   render(`
     <div class="top-bar"><a class="link" href="#home">← ${ui('home')}</a></div>
-    <h2>${ui('progressTitle')}</h2>
+    <h2>${uiSpeak('progressTitle')}</h2>
     <div class="stat-row">
-      <div class="stat"><div class="num">${progress.streak}</div><div class="label">${ui('streakLabel')}</div></div>
-      <div class="stat"><div class="num">${learned}</div><div class="label">${ui('learnedLabel')}</div></div>
+      <div class="stat"><div class="num">${progress.streak}</div><div class="label">${uiSpeak('streakLabel')}</div></div>
+      <div class="stat"><div class="num">${learned}</div><div class="label">${uiSpeak('learnedLabel')}</div></div>
       <div class="stat"><div class="num">${progress.xp}</div><div class="label">XP</div></div>
     </div>
     <div class="card">
-      <h3>${ui('cefrTitle')}</h3>
+      <h3>${uiSpeak('cefrTitle')}</h3>
       <p><span class="cefr-badge">A1</span></p>
-      ${currentCourse().lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${l.title} (${l.titleEs}): ${progress.completedLessons.includes(l.id) ? 'completa ✅' : ui('pending')}</p>`).join('')}
+      ${currentCourse().lessons.map(l => `<p style="font-size:14px; color:var(--text-dim);">${wordWithAudio(l, l.title)} (${l.titleEs}): ${progress.completedLessons.includes(l.id) ? 'completa ✅' : ui('pending')}</p>`).join('')}
     </div>
     <div class="card">
-      <h3>${ui('pendingReviewsTitle')}</h3>
-      <p>${dueToday > 0 ? ui('dueTodayCount', dueToday) : ui('allCaughtUp')}</p>
+      <h3>${uiSpeak('pendingReviewsTitle')}</h3>
+      <p>${dueToday > 0 ? uiSpeak('dueTodayCount', dueToday) : uiSpeak('allCaughtUp')}</p>
       ${calendar.length > 0 ? `
         <table>
           ${calendar.map(c => `<tr><td>${c.label}</td><td>${c.count} ${ui('itemsUnit')}</td></tr>`).join('')}
         </table>
-      ` : learned > 0 ? '' : `<p style="font-size:14px; color:var(--text-dim);">${ui('noItemsYet')}</p>`}
+      ` : learned > 0 ? '' : `<p style="font-size:14px; color:var(--text-dim);">${uiSpeak('noItemsYet')}</p>`}
     </div>
   `);
 }

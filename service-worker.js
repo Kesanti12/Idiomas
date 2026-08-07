@@ -1,4 +1,4 @@
-const CACHE_NAME = 'italiano-v5';
+const CACHE_NAME = 'italiano-v6';
 
 // App shell (HTML/CSS/JS): cambia seguido durante desarrollo activo. Network-first evita
 // el problema recurrente de servir una versión vieja cacheada sin ningún error visible —
