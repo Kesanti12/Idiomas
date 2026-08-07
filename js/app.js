@@ -286,16 +286,22 @@ function renderHome() {
   const progress = SRS.getProgress();
   const due = SRS.dueItems().length;
 
-  const lessonCards = course.lessons.map(lesson => {
+  // Camino serpenteante tipo Duolingo: nodos circulares alternando el desplazamiento
+  // horizontal en vez de la lista vertical de tarjetas de antes. firstPendingId marca la
+  // "próxima" lección (única con el aro de énfasis) para que quede claro por dónde seguir.
+  const pathOffsets = [0, 56, 0, -56];
+  const firstPendingId = (course.lessons.find(l => !progress.completedLessons.includes(l.id)) || {}).id;
+
+  const lessonNodes = course.lessons.map((lesson, i) => {
     const done = progress.completedLessons.includes(lesson.id);
+    const isCurrent = lesson.id === firstPendingId;
+    const offset = pathOffsets[i % pathOffsets.length];
     return `
-    <div class="card">
-      <h3>${done ? '✅ ' : '📘 '}${wordWithAudio(lesson, lesson.title)} <span class="cefr-badge">${lesson.cefr}</span></h3>
-      <p class="gloss-block">${lesson.titleEs}</p>
-      <p style="color:var(--text-dim); font-size:14px;">${lesson.descriptor}</p>
-      <button class="btn ${done ? 'secondary' : ''}" onclick="startLesson('${lesson.id}')">
-        ${done ? ui('lessonDoneBtn') : ui('lessonStartBtn')}
-      </button>
+    <div class="path-node" style="transform: translateX(${offset}px);" onclick="startLesson('${lesson.id}')">
+      <div class="path-circle ${done ? 'done' : ''} ${isCurrent ? 'current' : ''}" title="${lesson.titleEs}">
+        ${done ? '✅' : '⭐'}
+      </div>
+      <div class="path-label">${wordWithAudio(lesson, lesson.title)} <span class="cefr-badge">${lesson.cefr}</span></div>
     </div>`;
   }).join('');
 
@@ -318,7 +324,7 @@ function renderHome() {
       </button>
     </div>
 
-    ${lessonCards}
+    <div class="lesson-path">${lessonNodes}</div>
 
     <button class="btn secondary" onclick="go('progress')">${ui('myProgress')}</button>
   `);

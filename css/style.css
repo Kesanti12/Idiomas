@@ -130,6 +130,24 @@ td:first-child { color: var(--text-dim); }
 
 .cefr-badge { display: inline-block; background: var(--blue); color: white; font-size: 12px; font-weight: 800; padding: 4px 9px; border-radius: 8px; box-shadow: 0 2px 0 var(--blue-dark); }
 
+/* Camino de lecciones tipo Duolingo: nodos circulares en zigzag en vez de lista vertical. */
+.lesson-path { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 26px 0 18px; }
+.path-node { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; }
+.path-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; background: var(--green); color: white;
+  box-shadow: 0 6px 0 var(--green-dark);
+  transition: transform .05s, box-shadow .05s;
+}
+.path-node:active .path-circle { transform: translateY(6px); box-shadow: 0 0 0 var(--green-dark); }
+.path-circle.done { background: var(--card); border: 3px solid var(--green); color: var(--green); box-shadow: 0 6px 0 var(--border); }
+.path-node:active .path-circle.done { box-shadow: 0 0 0 var(--border); }
+.path-circle.current { box-shadow: 0 6px 0 var(--green-dark), 0 0 0 6px var(--green-soft); }
+.path-label { font-size: 13px; font-weight: 700; text-align: center; max-width: 150px; color: var(--text); }
+.path-label .cefr-badge { margin-top: 4px; }
+.path-label .speaker-btn { font-size: 12px; }
+
 a.link { color: var(--blue); text-decoration: none; font-size: 14px; font-weight: 700; }
 
 /* Inmersión: texto principal en italiano + traducción chica en español debajo. */
