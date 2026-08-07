@@ -1131,3 +1131,43 @@ ciclo 8), y **un método de verificación end-to-end sin node/Playwright documen
 reusable** (Edge headless + `--dump-dom`, ciclo 6). Portugués pasó de 2 a 12 lecciones —
 duplicó la cobertura de italiano y cubre más terreno gramatical explícito (negación,
 concordancia de género) que el curso más viejo del repositorio.
+
+### Ciclo 12 — 2026-08-07 ~14:36-14:41
+**Mejora elegida:** Unidad 13 A1 de portugués — "Meus pais" (posesivos meu/minha,
+seu/sua).
+
+**Por qué esta:** con ~8 minutos restantes antes del corte, se mantuvo el criterio de los
+ciclos 10-11 (lección acotada, sin tocar código de `srs.js`/`app.js`). Se explicita un
+punto gramatical que ya se venía usando implícitamente desde la Unidad 2 ("seu irmão",
+"sua irmã") sin nunca haberlo explicado — concordancia de posesivo con la cosa poseída
+(no con quien posee), mismo patrón ya visto con los colores (Unidad 10) y los saludos por
+momento del día (Unidad 12). Amplía además el vocabulario de familia (pai/mãe/pais) sobre
+la Unidad 2, que solo cubría hermanos.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u13_pais` (dialogue preguntando por los padres,
+  phonetics, glossary con nota sobre "moram" como repaso del patrón -ar ya conocido
+  —"morar" no se explica de cero, se ancla a "falar" de la Unidad 4—, tabla de posesivos,
+  5 ejercicios: 2 fill practicando meu/minha según el género + 3 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v17`.
+
+**Verificación:** balance de brackets en Python (0/0/0) + Edge headless (arnés temporal
+creado y borrado en este ciclo) — 0 errores de JS, tabla de posesivos con audio/fonética
+correctos.
+
+**Estado a esta altura:** portugués tiene **13 lecciones**, más del doble de las 6 de
+italiano. Con ~3 minutos restantes antes de las 14:44, no se arranca una lección más para
+no dejarla a medio verificar — el cron se autodetendrá solo en su próximo disparo según la
+lógica ya embebida en su prompt.
+
+**Resumen final de la sesión de loop (13:43→14:44, foco portugués), si este fue el
+último ciclo:** **13 lecciones nuevas de portugués** en 12 ciclos de 5 minutos —
+saludos×2 (presentación + momento del día), familia×2 (hermanos + padres/posesivos),
+edad/números 0-20, las 3 conjugaciones regulares completas (-ar/-er/-ir), negación,
+lugares/preposiciones, colores/concordancia de género, días de la semana. **1 bug de UX
+real encontrado y corregido antes de producción** (audio leyendo el idioma equivocado por
+columnas invertidas, ciclo 8). **Un método de verificación end-to-end sin
+node/Playwright** documentado y reusado en 6 ciclos seguidos (Edge headless +
+`--dump-dom`, desde el ciclo 6). Portugués pasó de 2 a 13 lecciones — más del doble de
+italiano — y cubre gramática explícita (negación, concordancia de género en adjetivos y
+posesivos) que ni el curso de italiano, más viejo, llegó a cubrir con lección propia.
