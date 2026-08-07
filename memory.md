@@ -690,3 +690,44 @@ Playwright en la próxima sesión interactiva que tenga node disponible.
   igual que en italiano, solo `translate` tiene bidireccionalidad.
 - Confirmar si hay algún entorno con node/Playwright accesible para retomar la
   verificación end-to-end automática en los próximos ciclos del loop.
+
+### Ciclo 2 — 2026-08-07 ~13:49-13:56
+**Mejora elegida:** Unidad 4 A1 de portugués — "Que línguas você fala?" (primer verbo
+regular en -ar: "falar"), el pendiente #1 dejado por el ciclo 1.
+
+**Por qué esta:** portugués tenía "ser" y "ter" (ambos irregulares) sin ningún contraste
+con un patrón *regular* todavía, mientras que italiano ya tenía las 3 conjugaciones
+regulares completas desde el ciclo 6 de la sesión de julio. "Falar" cumple exactamente el
+mismo rol pedagógico que tuvo "parlare" para italiano: en vez de sumar un cuarto verbo
+irregular aislado para memorizar, enseña una terminación (-ar) que generaliza a cientos de
+verbos (morar, estudar, escutar...) — alto apalancamiento con poco contenido nuevo. También
+suma la 4ª lección al pool de portugués (italiano llegó a este punto — 4 lecciones — en su
+ciclo 6).
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u4_falar` (dialogue sobre idiomas que se hablan,
+  phonetics, glossary con "Legal!" como cognado cultural de aprobación, tabla de
+  conjugación -ar completa contrastada explícitamente con "parlare" del italiano y con el
+  español "hablo/hablas/habla" en la explicación de gramática, 5 ejercicios: 3 fill de
+  conjugación + 2 translate bidireccional ES↔PT).
+- Sin cambios en `app.js`/`srs.js` — igual que en el ciclo 1, la arquitectura genérica
+  absorbe la lección sin tocar lógica.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v8` (cambió `content.js`).
+
+**Verificación:** mismo método que el ciclo 1 (no hay node/Playwright en este entorno) —
+check de balance de llaves/corchetes/paréntesis en Python respetando strings, balance
+final y mínimo en 0 para los tres delimitadores tras el edit. Se confirmaron a mano los 4
+IDs de lección de portugués, todos únicos (`pt_a1_u1_cumprimentos`, `pt_a1_u2_familia`,
+`pt_a1_u3_idade`, `pt_a1_u4_falar`). **Sigue pendiente la verificación end-to-end en
+navegador** (Playwright) en la próxima sesión interactiva.
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Portugués (4 lecciones) todavía no alcanza la cobertura de italiano (6) — considerar una
+  Unidad 5 con el segundo patrón regular (-er, ej. "comer"/"beber", paralelo a "prendere"
+  en italiano) o el shuffle round-robin ya se beneficia de más lecciones para mezclar.
+- Ítems SRS de portugués con dirección inversa en los drills `fill` de conjugación — sigue
+  igual que en italiano, solo `translate` tiene bidireccionalidad (no es un bug, es una
+  decisión de diseño ya documentada arriba: los drills de conjugación ya cubren las
+  personas relevantes, duplicarlos no añade señal — revisar si aplica igual a portugués).
+- Confirmar verificación end-to-end en navegador (Playwright) en cuanto haya un entorno con
+  node disponible — pendiente desde el ciclo 1.
