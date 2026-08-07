@@ -807,3 +807,53 @@ sigue pendiente (sin node/Playwright en este entorno no interactivo).
 - Verificación end-to-end en navegador (Playwright) — sigue pendiente desde el ciclo 1.
 - Revisar antes de la próxima sesión si vale la pena traer contenido de portugués a los
   niveles A2 (todo lo hecho en este loop, igual que italiano, es A1 puro).
+
+### Ciclo 5 — 2026-08-07 ~14:03-14:10
+**Mejora elegida:** Unidad 7 A1 de portugués — "Não, obrigada!" (negación explícita con
+"não").
+
+**Por qué esta:** con la paridad de cantidad ya lograda en el ciclo 4 (6 lecciones cada
+curso), el pendiente de mayor impacto dejó de ser "sumar una lección más" y pasó a un gap
+de calidad pedagógica real: CLAUDE.md principio #5 pide gramática explícita cuando ayuda,
+y la negación (algo que un usuario A1 necesita desde el primer día para poder decir "no")
+nunca tuvo lección propia ni siquiera en italiano — solo quedó insinuada en una nota de
+glosario de la Unidad 6 de italiano. Se priorizó por sobre "adelantarse con más contenido
+temático nuevo" porque cierra un hueco funcional real del curso, no solo agrega volumen.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u7_negacao` — refuerza los 5 verbos ya vistos
+  (ser, ter, falar, comer, assistir) negándolos en vez de introducir vocabulario nuevo
+  aislado (currículo en espiral, mismo criterio que las unidades anteriores de este loop).
+  Explica el patrón de doble "não" en respuestas negativas ("Você fala francês? Não, não
+  falo.") con nota explícita para que no se traduzca mal desde el español (que no dobla el
+  "no" de esa forma). 5 ejercicios: 2 fill (rellenar con "não" en distinta posición
+  gramatical) + 3 translate bidireccional.
+- Sin cambios en `app.js`/`srs.js` — se verificó además que el renderer genérico de tablas
+  de gramática (`renderGrammarStep` en `app.js:388`, `g.table.map(([p,f]) => ...)`) no
+  asume que la tabla sea de conjugación (pronombre→forma); acepta cualquier par de strings,
+  así que la tabla de ejemplos afirmativo→negativo de esta unidad se renderiza sin tocar
+  código. `wordWithAudio()` hace fallback gracioso si una frase de la tabla no tiene
+  entrada exacta en el diccionario `phonetics` (confirmado leyendo `phoneticFor`/
+  `wordWithAudio` en `app.js:225-227`), así que no hace falta fonética para cada frase de
+  ejemplo de la tabla, solo para las líneas de diálogo y vocabulario nuevo.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v11`.
+
+**Verificación:** mismo método que ciclos 1-4 (balance de llaves/corchetes/paréntesis en
+Python) — balance final y mínimo en 0. 7 IDs de lección de portugués, todos únicos.
+Verificación end-to-end en navegador sigue pendiente (sin node/Playwright en este entorno).
+
+**Estado a esta altura:** portugués ya tiene **7 lecciones, una más que las 6 de
+italiano** — la sesión cumplió y superó el objetivo inicial de "emparejar cobertura".
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Ítems SRS bidireccionales en los drills `fill` de conjugación (pendiente desde el ciclo
+  2, sigue sin resolverse — evaluar si de verdad aporta señal o es redundante como se
+  concluyó para italiano).
+- Con 7 lecciones ya activas, revisar si el `interleaveByLesson` (round-robin) sigue
+  comportándose bien con un número impar/mayor de grupos — no debería requerir cambios de
+  código (es genérico), pero no se verificó en navegador en este loop.
+- Verificación end-to-end en navegador (Playwright) — sigue pendiente desde el ciclo 1, es
+  el gap más importante de todo este loop: todo el contenido se verificó solo por balance
+  de sintaxis, no por comportamiento real en la app.
+- Si queda tiempo: números 11-20 o vocabulario de lugares/direcciones para portugués,
+  siguiendo el mismo patrón de espiral curricular.
