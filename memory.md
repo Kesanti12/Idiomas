@@ -917,3 +917,45 @@ commitea esta entrada de `memory.md`.
   node — no reemplaza a Playwright para flujos con interacción real, pero cubre
   "¿el JS tiene errores de sintaxis/runtime reales, y el DOM se arma como se espera?"
   mucho mejor que el check de balance de brackets solo.
+
+### Ciclo 7 — 2026-08-07 ~14:12-14:20
+**Mejora elegida:** Unidad 8 A1 de portugués — "Quantos anos ele tem?" (números 11-20).
+
+**Por qué esta:** retoma contenido nuevo ahora que el ciclo 6 cerró el gap de
+verificación. Números 11-20 extiende directamente los números 0-10 (Unidad 3) y reutiliza
+"ter ... anos" pero en tercera persona (hablar de la edad de otra persona, no solo la
+propia) — currículo en espiral otra vez, más un punto gramatical genuinamente nuevo (cómo
+el portugués arma 16-19 con "dez+e+unidad" en vez de fusionar la palabra como el español).
+Ninguno de los dos cursos (italiano tampoco) tenía números más allá del 0-10, así que esto
+amplía cobertura CEFR real, no solo repite el patrón de "un verbo más".
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u8_numeros2` (dialogue preguntando la edad de
+  hermanos/as usando números más altos, phonetics, glossary con "Uau!" como interjección
+  casi idéntica al español, tabla 11-20 con nota explícita del patrón "dez+e+unidad" para
+  16-19, 5 ejercicios: 1 fill reforzando "ter" + 4 translate bidireccional incluyendo un
+  número que NO sigue el patrón nuevo — "treze" — para que no se generalice mal la regla).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v12`.
+
+**Verificación (con el método de Edge headless documentado en el ciclo 6):** arnés
+temporal `_test_pt.html` (creado y borrado en este mismo ciclo, no quedó en el repo) que
+precarga `idiomas_course_v1='pt'`, llama `startLesson('pt_a1_u8_numeros2')` y fuerza
+`lessonState.step='grammar'`. `msedge.exe --headless=new --dump-dom` sobre
+`python -m http.server 8123`: **0 errores de JS** en el log de consola, la tabla de
+números 11-20 se renderiza completa con audio (`pt-BR`) y fonética correctos para las 10
+entradas. También se re-confirmó el balance de llaves/corchetes/paréntesis en Python sobre
+todo `content.js` (0/0/0) antes de la verificación en navegador.
+
+**Estado a esta altura:** portugués tiene **8 lecciones** (saludos/ser, familia/ter,
+edad-números 0-10/ter, -ar/falar, -er/comer, -ir/assistir, negación/não, números 11-20) —
+2 más que las 6 de italiano, y con al menos un punto de gramática (negación) que italiano
+ni siquiera cubrió con lección propia.
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Vocabulario de lugares/direcciones, o colores, para seguir ampliando cobertura léxica
+  A1 si el tiempo alcanza (loop vence 14:44).
+- Ítems SRS bidireccionales en drills `fill` de conjugación — sigue pendiente desde el
+  ciclo 2, no resuelto en ningún ciclo de este loop todavía.
+- Evaluar si con 8 lecciones ya conviene revisar el rendimiento/orden del
+  `interleaveByLesson` en una sesión con Playwright real (el headless de Edge confirma que
+  no rompe, pero no prueba el comportamiento interactivo del repaso).
