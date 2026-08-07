@@ -1327,3 +1327,57 @@ ciclo 1 salvo tachar lo hecho):**
 - Mascota/personaje — evaluar emoji grande como placeholder liviano.
 - Si en algún ciclo se prueba `--screenshot` de nuevo y funciona, documentarlo (podría ser
   un problema transitorio de recursos del sistema, no permanente).
+
+### Ciclo 3 — 2026-08-07 ~15:08-15:13
+**Mejora elegida:** camino serpenteante con nodos circulares en Home, reemplazando la lista
+vertical de tarjetas de lección.
+
+**Por qué esta:** era el pendiente #1 (por impacto) tanto del ciclo 1 como del ciclo 2 — el
+elemento más reconocible de las capturas de referencia de Duolingo (nodos tipo "isla" sobre
+un camino) y el que más "gap visual" cerraba de todo lo pendiente.
+
+**Qué se hizo:**
+- `js/app.js` (`renderHome`): las tarjetas verticales (`.card` por lección, con botón
+  "Empezar/Repasar") se reemplazaron por `.lesson-path` → una lista de `.path-node`, cada
+  uno con un desplazamiento horizontal alternado (`pathOffsets = [0, 56, 0, -56]px`, cíclico
+  por índice) para el efecto zigzag. Cada nodo es un círculo (`.path-circle`, 72px) con
+  ⭐ si está pendiente o ✅ si está completada, más un aro de énfasis extra (`.current`) en
+  la **primera lección no completada** (para que el usuario sepa "por acá seguís" sin
+  necesidad de leer texto). El título con audio + badge CEFR quedan como etiqueta debajo del
+  círculo. Todo el nodo (`div.path-node`) es clickeable y llama a `startLesson(id)` — ya no
+  hace falta un botón de texto separado.
+- `css/style.css`: `.lesson-path` (columna centrada, gap chico), `.path-circle` con el mismo
+  lenguaje de sombra "3D press" que `.btn` (`box-shadow` que colapsa a 0 y el nodo baja 6px
+  en `:active`, vía `.path-node:active .path-circle`), `.path-circle.done` con estilo
+  outline (fondo blanco, borde verde) en vez de relleno, `.path-circle.current` con
+  `box-shadow` doble (la sombra 3D + un halo `var(--green-soft)` de 6px) para destacarlo sin
+  animación (se evitó `@keyframes` de pulso por simpleza en el tiempo de un ciclo de 5 min).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v21`.
+
+**Decisión de diseño:** no se agregó lógica de "bloqueo" de lecciones futuras (Duolingo sí
+bloquea nodos no alcanzados) — la app nunca tuvo ese concepto y agregarlo es una decisión de
+producto (no solo visual) que no corresponde meter de paso en un ciclo de UX. Todas las
+lecciones siguen siendo clickeables como antes; el único indicador de progreso es el ícono
+(⭐/✅) y el aro en la próxima pendiente.
+
+**Verificación:** mismo patrón de arnés temporal (`_test_home3.html`, creado y borrado en
+este ciclo) + Edge headless `--dump-dom`. 0 errores de JS. Se confirmaron **6 nodos
+`.path-circle`** para el curso de italiano (coincide con las 6 lecciones existentes), el
+primero con clase `current`, el resto sin clase de estado (ninguna completada en una cuenta
+nueva) — y se inspeccionó el HTML de un nodo completo para confirmar que el título con audio
+(`data-speak`, `data-lang="it-IT"`) y el badge CEFR (`A1`) se renderizan correctamente
+dentro de `.path-label`. `--screenshot` headless no se reintentó (sigue documentado como
+roto en este entorno desde el ciclo 1).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Línea/conector visual entre los nodos del camino (hoy son círculos flotantes sin línea que
+  los una) — reforzaría la sensación de "camino" de la referencia. Se puede lograr con un
+  pseudo-elemento (`::before`) en `.path-node` que dibuje un segmento hacia el nodo anterior,
+  sin necesidad de JS ni SVG.
+- Animación de feedback correcto/incorrecto (shake al fallar, check animado al acertar) en
+  `.feedback` — sigue pendiente desde el ciclo 1.
+- Mascota/personaje — evaluar emoji grande como placeholder liviano, quizás junto al nodo
+  `current` del camino en vez de en el header.
+- Revisar que el zigzag (`translateX` de hasta 56px) no se corte en pantallas angostas (viewport
+  muy chico, <320px) — no se probó ese caso límite este ciclo, solo el ancho por defecto del
+  harness headless.
