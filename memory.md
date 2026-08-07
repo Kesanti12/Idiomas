@@ -959,3 +959,57 @@ ni siquiera cubrió con lección propia.
 - Evaluar si con 8 lecciones ya conviene revisar el rendimiento/orden del
   `interleaveByLesson` en una sesión con Playwright real (el headless de Edge confirma que
   no rompe, pero no prueba el comportamiento interactivo del repaso).
+
+### Ciclo 8 — 2026-08-07 ~14:17-14:25 (encontró y corrigió un bug real antes de commitear)
+**Mejora elegida:** Unidad 9 A1 de portugués — "Onde fica o banco?" (lugares y
+preposiciones básicas de ubicación).
+
+**Por qué esta:** siguiente pendiente de la lista por impacto (vocabulario de
+lugares/direcciones), con valor real de CEFR A1 ("puede preguntar y entender direcciones
+simples"). Introduce "fica" (no "está") para ubicación de lugares fijos — un contraste
+real con el español que vale la pena explicitar (principio #5 de CLAUDE.md), y
+contracciones de preposición+artículo (perto do/da), tema gramatical genuinamente nuevo
+para el curso de portugués.
+
+**Bug real encontrado por la verificación (no solo "no rompe", sino "está mal"):** al
+armar la tabla de gramática puse las columnas en el orden `[portugués, español]`
+(ej. `['perto de', 'cerca de']`), pero el renderer genérico `renderGrammarStep()` en
+`app.js:388` siempre pone el botón de audio (con `lang` del curso, acá `pt-BR`) sobre la
+**segunda** columna — la convención implícita en todas las unidades anteriores (1-8) es
+`[algo, forma_target]`. Con las columnas invertidas, el botón de audio iba a **leer texto
+en español con voz de portugués** — un bug de UX real, no cosmético, que el check de
+balance de brackets nunca podría haber detectado (es sintácticamente válido). Se encontró
+al inspeccionar la tabla renderizada por Edge headless (`--dump-dom`) antes del commit y
+notar que el `data-speak` del botón de audio decía "cerca de" en vez de "perto de". Se
+corrigió invirtiendo el orden a `[español, portugués]`, y se re-verificó que el audio y la
+fonética ahora coinciden con la columna correcta.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u9_lugares` (dialogue preguntando por el banco y
+  la farmacia, phonetics, glossary de 4 lugares —todos cognados directos con el español—,
+  tabla de preposiciones corregida tras el bug de arriba, 5 ejercicios: 2 fill + 3
+  translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v13`.
+
+**Verificación:** balance de brackets en Python (0/0/0) + Edge headless con el mismo
+arnés temporal de ciclos anteriores (`_test_pt.html`, creado y borrado en este ciclo) —
+0 errores de JS en ambas corridas (antes y después del fix), tabla de gramática confirmada
+visualmente correcta en la segunda corrida.
+
+**Lección para memoria futura:** al escribir `grammar.table` para cualquier lección
+nueva (de cualquier curso), **la segunda columna de cada par siempre debe ser la forma en
+el idioma que se está aprendiendo** — es la que recibe audio automáticamente. Revisar esto
+a simple vista no alcanza si el contenido "se ve bien"; conviene volver a correr la
+verificación de Edge headless y mirar el `data-speak` real del botón de audio, no solo que
+la tabla exista.
+
+**Estado a esta altura:** portugués tiene **9 lecciones**.
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Revisar las tablas de gramática de las Unidades 1-8 de este mismo loop (idade/números,
+  falar, comer, assistir, negación, números 11-20) para confirmar que ninguna quedó con el
+  mismo problema de columnas invertidas — se armaron todas con `[pronombre/número,
+  forma_target]`, que es el orden correcto, pero vale una pasada de confirmación rápida.
+- Colores, o ampliar el vocabulario de lugares (Unidad 9) con más ejemplos si el tiempo
+  alcanza.
+- Ítems SRS bidireccionales en drills `fill` — sigue pendiente, no resuelto en este loop.
