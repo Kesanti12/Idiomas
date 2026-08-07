@@ -601,3 +601,43 @@ visualmente a un solo curso.
   (o un ícono por idioma) para que la marca no favorezca a un curso sobre otro.
 - El campo `speechLang` de cada curso asume una sola variante (pt-BR, no pt-PT) — está
   bien documentado en el código pero no es configurable desde la UI.
+
+## Ciclo: Botón de audio en toda la app (no solo lecciones)
+
+Pedido del usuario: "quiero que todos los textos tengan la opción de escuchar como se
+dice, no solo en las lecciones sino en todo". Antes, `speakerBtn()` solo aparecía en
+diálogo/glosario/tabla de gramática/feedback de ejercicio — Home, Progreso y Repaso no
+tenían audio en absoluto (ni siquiera el saludo o los títulos de las tarjetas).
+
+**Decisión de diseño clave**: `speakerBtn()` pasó de `<button>` a `<span role="button"
+tabindex="0">`. Motivo: al extender el audio a toda la app, muchos textos con audio ahora
+podían terminar dentro de un `<button>`/`<a>` ya clickeable (ej. el título de una lección
+en su tarjeta de Home, que está dentro del `<button onclick="startLesson(...)">`). Un
+`<button>` anidado dentro de otro es HTML inválido y el navegador lo reordena de forma
+impredecible — con `<span role="button">` no hay ese problema. Se agregó manejo de
+teclado (Enter/Espacio) para no perder accesibilidad al dejar de ser un `<button>` real.
+
+**Dónde SÍ se agregó audio** (título/párrafo/label, nada clickeable): saludo y tagline de
+Home, título de la tarjeta de repaso y su mensaje, título de cada lección en su tarjeta,
+título de lección dentro de la lección (paso diálogo), "Vocabulario nuevo", consigna de
+cada ejercicio (`instructionLine`) y el prompt mismo, feedback de correcto/incorrecto
+(lección y repaso), título y mensaje de lección completa / repaso terminado, y todo
+Progreso (streak, ítems aprendidos, nivel CEFR, título de cada lección en la lista,
+repasos pendientes).
+
+**Dónde NO se agregó** (deliberado): dentro de botones/links reales — "Verifica",
+"Continuar", "Salir", "Atrás", "Empezar lección", "Ver mi progreso", los botones de
+Fácil/Bien/Difícil, etc. Ponerle audio ahí haría que tocar 🔊 también dispare la acción
+del botón padre (el click burbujea). Se agregó `event.stopPropagation()` en el handler
+de `.speaker-btn` como defensa adicional, pero la regla de fondo es "no lo pongas dentro
+de un elemento clickeable" — más simple y predecible que depender solo de stopPropagation.
+Se separó `ui()` (sin audio, para botones) de `uiSpeak()` (con audio, para todo lo demás)
+para que quede explícito en cada call site cuál corresponde.
+
+**Verificado con Playwright**: 11 botones de audio en Home, 12 en Progreso, audio en
+diálogo/gramática/prompt de ejercicio/instrucción de repaso/feedback; click en audio de
+una tarjeta de lección NO navega a la lección; click en audio de la instrucción de repaso
+NO envía la respuesta. Regresión completa de italiano (43 ítems, repaso, progreso) sigue
+en verde. 0 errores de consola.
+
+`service-worker.js` → `CACHE_NAME` a `italiano-v6` (cambiaron `app.js` y `style.css`).
