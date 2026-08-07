@@ -731,3 +731,39 @@ navegador** (Playwright) en la próxima sesión interactiva.
   personas relevantes, duplicarlos no añade señal — revisar si aplica igual a portugués).
 - Confirmar verificación end-to-end en navegador (Playwright) en cuanto haya un entorno con
   node disponible — pendiente desde el ciclo 1.
+
+### Ciclo 3 — 2026-08-07 ~13:53-14:00
+**Mejora elegida:** Unidad 5 A1 de portugués — "O que você quer comer?" (segundo verbo
+regular: "comer", patrón -er).
+
+**Por qué esta:** cierra el segundo patrón regular en portugués, exactamente el mismo rol
+que tuvo "prendere" (-ere) para italiano en su ciclo 7 — contraste explícito con -ar
+(falar, Unidad 4 de este mismo loop) en vez de contenido temático desconectado. Contexto
+de pedir comida (alta frecuencia de uso real), y el infinitivo "comer" es un cognado
+idéntico al español, lo cual reduce la carga cognitiva del ítem nuevo.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u5_comer` (dialogue pidiendo comida, phonetics,
+  glossary, tabla de conjugación -er contrastada explícitamente con -ar en la explicación
+  de gramática, 5 ejercicios: 3 fill de conjugación + 2 translate bidireccional ES↔PT).
+- Sin cambios en `app.js`/`srs.js`.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v9`.
+
+**Verificación:** mismo método que ciclos 1-2 (check de balance de llaves/corchetes/
+paréntesis en Python respetando strings) — balance final y mínimo en 0 tras el edit. Los 5
+IDs de lección de portugués son únicos (`pt_a1_u1_cumprimentos` … `pt_a1_u5_comer`).
+Verificación end-to-end en navegador sigue pendiente (sin node/Playwright en este entorno).
+
+**Estado del pool de portugués a esta altura:** 5 lecciones (saludos/ser, familia/ter,
+edad-números/ter, primer verbo regular -ar, segundo verbo regular -er) — mismo punto en el
+que estaba italiano tras su ciclo 8 (julio), a falta de la Unidad 6 con el tercer patrón
+-ir para emparejar cobertura completa con italiano (6 lecciones).
+
+**Pendiente para el próximo ciclo del loop (por impacto):**
+- Unidad 6 de portugués: tercer patrón regular -ir (ej. "abrir"/"assistir"), paralelo a
+  "dormire" en italiano — cerraría el trío -ar/-er/-ir y emparejaría la cobertura de
+  lecciones con italiano (6 y 6).
+- Ítems SRS bidireccionales en drills `fill` de conjugación — pendiente de evaluar, sigue
+  igual desde el ciclo 2.
+- Verificación end-to-end en navegador (Playwright) — pendiente desde el ciclo 1, sin
+  entorno con node disponible todavía.
