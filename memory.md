@@ -1475,3 +1475,93 @@ roto en este entorno desde el ciclo 1).
 - Revisar el caso límite de viewport angosto (<320px) para el zigzag del camino.
 - Si este resulta ser el último o anteúltimo ciclo de la sesión (se acerca 15:27), priorizar
   cerrar con un resumen prolijo de memory.md antes que arrancar algo nuevo sin margen.
+
+### Ciclo 6 — 2026-08-07 ~15:22-15:24
+**Mejora elegida:** conector visual del camino de lecciones — pero con un enfoque distinto
+al que se había descartado como riesgoso en el ciclo 5.
+
+**Por qué esta y por qué este enfoque:** con el reloj cerca del corte de las 15:27, no había
+margen para el cálculo diagonal exacto (ángulo/distancia entre offsets variables por altura
+de etiqueta) que el ciclo 5 había marcado como de "riesgo alto de verificar sin
+screenshots". En vez de eso: una **línea vertical punteada única, centrada en el contenedor
+`.lesson-path`**, detrás de todos los nodos (`z-index:0` vs. `z-index:1` de los nodos). Los
+círculos son opacos, así que tapan la línea donde se superponen — el resultado visual sigue
+leyéndose como "camino" (la referencia de Duolingo también tiene una guía vertical de fondo
+con nodos zigzagueando encima) pero sin ninguna dependencia de la posición horizontal exacta
+de cada nodo. Cero riesgo geométrico, 100% verificable con las herramientas disponibles.
+
+**Qué se hizo:**
+- `css/style.css`: `.lesson-path` pasa a `position:relative`; nuevo `::before` con
+  `repeating-linear-gradient` vertical (segmentos de 10px con 12px de espacio, efecto
+  punteado) centrado con `left:50%; margin-left:-3px`, `top`/`bottom` de 36px para no
+  sobresalir del primer/último nodo. `.path-node` pasa a `position:relative; z-index:1`
+  para quedar por encima de la línea.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v24`.
+- **No se tocó `js/app.js` este ciclo** — cambio 100% CSS, sin riesgo de romper lógica.
+
+**Verificación:** arnés temporal `_test_home6.html` (mismo patrón de los ciclos 2/3/5, con
+`<meta charset="UTF-8">`) + Edge headless `--dump-dom`. 0 errores de JS, `.lesson-path`
+presente y los 6 `.path-circle` de italiano siguen renderizando igual que en el ciclo 3 (el
+cambio no tocó su marcado, solo agregó un pseudo-elemento al contenedor). `--screenshot`
+sigue sin probarse de nuevo en esta sesión (roto desde el ciclo 1) — la verificación visual
+real de cómo se ve la línea detrás de los nodos queda pendiente de un entorno con soporte de
+captura de pantalla.
+
+## Resumen final de la sesión de UX (2026-08-07, 14:57→~15:23, 6 ciclos, cron `70ae7c9b`)
+
+**6 mejoras visuales implementadas, todas commiteadas y verificadas sin errores de JS:**
+1. Tema completo oscuro→claro estilo Duolingo (verde `#58cc02`, tarjetas con sombra "3D",
+   botones con efecto de presión).
+2. Header con chips de racha 🔥 y XP ⚡ (antes texto plano gris).
+3. Camino serpenteante con nodos circulares en zigzag reemplazando la lista vertical de
+   tarjetas de lección (el cambio más grande de la sesión).
+4. Animación de feedback correcto/incorrecto (pop/shake) en input y recuadro de feedback,
+   en ejercicios y en repaso.
+5. Mascota placeholder (🐺, lobo — deliberadamente distinto al búho de Duolingo) con globo
+   de diálogo.
+6. Conector punteado detrás del camino de lecciones.
+
+**Cómo se ve la app ahora vs. antes:** pasó de un tema oscuro tipo "app de utilidad" sin
+ningún elemento de gamificación visual, a un tema claro con la paleta y el lenguaje visual
+(sombras "3D press", píldoras, camino con nodos) que se reconoce como género "Duolingo-like"
+a primera vista, cerrando la mayoría de los elementos puntuales que el usuario señaló en sus
+capturas de referencia (nodos circulares ✅, racha/XP arriba ✅, botones grandes con sombra
+inferior ✅, feedback visual claro ✅, mascota ✅). Queda más cerca de la referencia que al
+empezar la sesión.
+
+**1 bug real encontrado y corregido en el proceso (ciclo 2):** un `title` de atributo roto
+por usar una función que devuelve HTML (`uiSpeak`) en vez de texto plano (`uiRaw`) —
+detectado con Edge headless antes de commitear, no llegó a producción.
+
+**Limitación de entorno documentada y reutilizada en toda la sesión:** `--screenshot` de
+Edge headless falla de forma consistente en esta máquina (crash del proceso de
+render/GPU incluso con `--disable-gpu`), así que **ninguna mejora de esta sesión fue
+verificada con una captura de pantalla real** — toda la verificación fue estructural
+(`--dump-dom` + grep de errores de consola + inspección del HTML renderizado). Esto es
+suficiente para confirmar "no rompí nada" pero **no** para confirmar que el resultado se ve
+bien en píxeles reales — eso queda pendiente de que el usuario lo revise en su celular o de
+un entorno con soporte de captura de pantalla headless funcional.
+
+**Qué falta para acercarse más a Duolingo (pendiente real para la próxima sesión de UX):**
+- Verificación visual real (screenshot o revisión manual del usuario) de las 6 mejoras —
+  nunca se vio un píxel renderizado en esta sesión, solo estructura.
+- El conector del camino (ciclo 6) usa una línea vertical simple, no la geometría diagonal
+  exacta entre nodos — si se quiere ese acabado más fiel a la referencia, hace falta
+  abordarlo con tiempo completo y, idealmente, con `--screenshot` funcionando.
+- Caso límite de viewport angosto (<320px) para el zigzag del camino — nunca se probó.
+- Tipografía: se sigue usando la pila de fuentes del sistema (`ui-rounded`/`-apple-system`);
+  no se evaluó una fuente redondeada real (ej. cargar una variable font local tipo Baloo/
+  Quicksand) que se vea "juguetona" en plataformas que no soportan `ui-rounded` (la mayoría
+  de Android/Windows no lo soportan, así que ahí la tipografía sigue siendo el system font
+  normal, no redondeada).
+- Iconografía de vidas/corazones (la referencia del usuario mostraba un ícono de corazón
+  además de racha/XP) — no implementado, la app no tiene concepto de "vidas" en su diseño
+  actual (es una decisión de producto, no solo visual, que no se tomó en esta sesión).
+- Progreso dentro de la lección (`.progress-bar-track`) no recibió ningún cambio visual en
+  esta sesión — sigue con el estilo simple del ciclo 1.
+
+**Cierre del loop:** con la hora en ~15:23-15:24 (todavía antes del corte de las 15:27), no
+se detiene el cron todavía — este resumen se deja preparado para que, si el próximo disparo
+(~15:27-15:29) ya cruza el corte, ese ciclo pueda cerrar rápido: confirmar que no hay una
+mejora nueva de bajo riesgo que valga la pena, y llamar a `CronList` + `CronDelete` sobre el
+job `70ae7c9b` sin necesidad de re-explorar toda la sesión desde cero.
