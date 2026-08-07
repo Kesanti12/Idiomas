@@ -1381,3 +1381,51 @@ roto en este entorno desde el ciclo 1).
 - Revisar que el zigzag (`translateX` de hasta 56px) no se corte en pantallas angostas (viewport
   muy chico, <320px) — no se probó ese caso límite este ciclo, solo el ancho por defecto del
   harness headless.
+
+### Ciclo 4 — 2026-08-07 ~15:12-15:18
+**Mejora elegida:** animación de feedback al acertar/fallar (pop al acertar, shake al
+fallar), en el recuadro `.feedback` y en el input de respuesta.
+
+**Por qué esta:** segundo pendiente en la lista desde el ciclo 1, y de menor riesgo
+estructural que el conector visual del camino (ese requiere tocar `::before` con posiciones
+relativas entre nodos consecutivos, más delicado). El principio #8 de `CLAUDE.md` pide
+"feedback inmediato y explicativo" — hasta ahora el feedback era correcto en contenido pero
+visualmente estático (solo cambio de color), sin la reacción inmediata que sí tiene
+Duolingo.
+
+**Qué se hizo:**
+- `css/style.css`: `@keyframes feedback-pop` (escala 0.92→1 + fade in) y `@keyframes
+  feedback-shake` (sacudida horizontal con 4 pasos de translateX decrecientes), aplicadas a
+  `.feedback.correct`/`.feedback.incorrect`. Nuevas clases `input-correct`/`input-incorrect`
+  para el `<input>` de respuesta (fondo y borde verde/rojo + la misma animación pop/shake).
+- `js/app.js`: el `<input>` de `renderExerciseStep` (ejercicios de lección) y el de
+  `renderReview` (pantalla de repaso) ahora reciben la clase `input-correct`/`input-incorrect`
+  según `lessonState.lastCorrect`/`reviewCorrect` cuando ya está respondido — antes el input
+  se quedaba con el mismo estilo neutro sin importar el resultado.
+
+**Verificación (y bug encontrado en el propio proceso, no en el código de producción):**
+arnés temporal `_test_ex4.html` que precarga el curso, llama a `startLesson()` y fuerza
+`lessonState.step='exercises'` + `answered=true` + `lastCorrect=false` para poder inspeccionar
+el estado "incorrecto" sin completar la lección a mano. La **primera corrida del arnés** dio
+`Uncaught SyntaxError: Invalid regular expression` en `content.js` (el regex de
+`normalizeAnswer` que quita acentos, `/[̀-ͯ]/g`) — pero **el bug estaba en el arnés, no en la
+app**: a diferencia de `index.html`, el harness no tenía `<meta charset="UTF-8">`, así que
+Edge interpretó `content.js` con una codificación equivocada (Windows-1252 en vez de UTF-8),
+corrompiendo el rango Unicode del regex. Se agregó el `<meta charset="UTF-8">` al harness y
+la segunda corrida dio **0 errores de JS**, con `id="answer-input" class="input-incorrect"`
+y `class="feedback incorrect"` confirmados en el DOM. **Lección para arneses futuros de este
+tipo (harness "completo" que reimplementa el `<head>` en vez de solo redirigir a
+`index.html`): siempre copiar el `<meta charset="UTF-8">` de `index.html`**, si no cualquier
+archivo con acentos/caracteres especiales puede fallar de forma engañosa (parece un bug del
+código de producción y no lo es).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v22`.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Línea/conector visual entre los nodos del camino de lecciones (ver ciclo 3) — sigue siendo
+  el pendiente más visible de la lista.
+- Mascota/personaje — evaluar emoji grande como placeholder liviano.
+- Revisar el caso límite de viewport angosto (<320px) para el zigzag del camino — sigue sin
+  probarse.
+- Si queda tiempo hacia el final de la sesión (cerca de 15:27), preferir un pendiente chico y
+  ya probado (como este ciclo) antes que arrancar el conector del camino a último momento sin
+  margen para verificarlo.
