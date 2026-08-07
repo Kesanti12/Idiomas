@@ -1171,3 +1171,47 @@ node/Playwright** documentado y reusado en 6 ciclos seguidos (Edge headless +
 `--dump-dom`, desde el ciclo 6). Portugués pasó de 2 a 13 lecciones — más del doble de
 italiano — y cubre gramática explícita (negación, concordancia de género en adjetivos y
 posesivos) que ni el curso de italiano, más viejo, llegó a cubrir con lección propia.
+
+### Ciclo 13 — 2026-08-07 ~14:41-14:45 (último ciclo — cierre del loop)
+**Mejora elegida:** Unidad 14 A1 de portugués — "Quanto custa?" (precios y decenas 20-100).
+
+**Por qué esta:** el disparo del cron llegó a las 14:41:24, todavía antes del corte de las
+14:44, así que se arrancó una lección más siguiendo el mismo criterio de acotar alcance
+(sin tocar `srs.js`/`app.js`). Amplía los números ya vistos (0-10 Unidad 3, 11-20 Unidad 8)
+a las decenas hasta 100, en el contexto práctico de preguntar precios — descriptor CEFR A1
+real ("puede preguntar/entender precios simples") — y reutiliza el patrón -ar ya conocido
+("custa", de "custar", mismo esquema que "falar").
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u14_precos` (dialogue preguntando el precio de un
+  libro y una camisa, phonetics, glossary, tabla de decenas 30-100, 5 ejercicios: 1 fill +
+  4 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v18`.
+
+**Verificación:** balance de brackets en Python (0/0/0) + Edge headless (arnés temporal
+creado y borrado en este ciclo) — 0 errores de JS, tabla de decenas completa con
+audio/fonética correctos, confirmado **antes** de cruzar la hora límite. El commit de
+código se hizo a las ~14:45, ya cruzado el límite, porque el trabajo se había arrancado y
+verificado por completo antes de las 14:44 — no tenía sentido descartar una lección ya
+terminada y probada solo por el reloj de pared durante el commit.
+
+**Cierre del loop:** con la hora ya en 14:45 (pasado el corte de las 14:44), este es el
+último ciclo. Se detiene el cron `339163eb` con `CronDelete` a continuación, según lo
+indicado en el prompt del propio job.
+
+**Resumen final de la sesión completa (13:43→14:45, foco portugués, 13 ciclos):**
+**14 lecciones nuevas de portugués** — saludos×2, familia×2 (hermanos + padres/posesivos),
+edad/números 0-100, las 3 conjugaciones regulares completas (-ar/-er/-ir), negación,
+lugares/preposiciones, colores/concordancia de género, días de la semana, precios/decenas.
+**1 bug de UX real encontrado y corregido antes de producción** (audio con idioma
+equivocado por columnas invertidas en una tabla de gramática, ciclo 8). **Un método de
+verificación end-to-end sin node/Playwright** (Edge headless + `--dump-dom` +
+`localStorage` preseteado + `startLesson()` forzado), documentado en el ciclo 6 y
+reutilizado en 7 de los 13 ciclos. Portugués pasó de **2 a 14 lecciones** — más del doble
+de las 6 de italiano — y cubre gramática explícita (negación, concordancia de género en
+adjetivos y posesivos) que el curso de italiano, más antiguo en este repositorio, nunca
+llegó a cubrir con lección propia. **Pendiente real para la próxima sesión:**
+bidireccionalidad de ítems SRS en los drills `fill` de conjugación (nunca abordado en este
+loop, requiere tocar `srs.js`/`app.js` con margen de tiempo completo) y verificación
+end-to-end con Playwright real (interacción de clicks/inputs, no solo `--dump-dom`) para
+las 14 lecciones nuevas.
