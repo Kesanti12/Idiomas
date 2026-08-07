@@ -1057,3 +1057,40 @@ este mismo repositorio.
   para las 14:44.
 - Verificación end-to-end completa con Playwright real (clicks/inputs, no solo dump-dom)
   sigue pendiente para una sesión futura con node disponible.
+
+### Ciclo 10 — 2026-08-07 ~14:27-14:34
+**Mejora elegida:** Unidad 11 A1 de portugués — "Que dia é hoje?" (los días de la semana).
+
+**Por qué esta y no la bidireccionalidad de SRS en `fill`:** con ~17 minutos restantes
+antes del corte de las 14:44, se priorizó una lección acotada y de bajo riesgo (vocabulario
+puro, sin cambios de código) por sobre abrir un cambio estructural en `srs.js`/`app.js`
+(bidireccionalidad de ítems `fill`) que quedaría a medio verificar si el tiempo se corta a
+mitad de camino — coherente con la nota del propio ciclo 9 de preferir cerrar algo completo
+antes que dejar algo a medias cerca del límite de tiempo.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u11_dias` (dialogue corto preguntando el día,
+  phonetics, glossary, tabla de los 7 días con el patrón numérico-ordinal explicado
+  explícitamente —"-feira" derivado de número, empezando a contar desde el domingo—,
+  contrastado con el español que no deriva los días de números, 5 ejercicios: 1 fill +
+  4 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v15`.
+
+**Verificación:** balance de brackets en Python (0/0/0) + Edge headless (mismo arnés
+temporal, creado y borrado en este ciclo) — 0 errores de JS, tabla de gramática con los 7
+días, audio (`pt-BR`) y fonética correctos en la columna target.
+
+**Estado a esta altura:** portugués tiene **11 lecciones** (casi el doble de las 6 de
+italiano), cubriendo saludos, familia, edad/números 0-20, las 3 conjugaciones regulares,
+negación, lugares/preposiciones, colores/concordancia de género, y días de la semana.
+
+**Pendiente para el próximo ciclo (si el loop sigue corriendo, vence 14:44):**
+- Ítems SRS bidireccionales en drills `fill` — sigue siendo el pendiente estructural más
+  importante no resuelto en todo este loop; requiere revisar `js/srs.js`/`app.js`, no solo
+  `content.js`, así que conviene abordarlo con margen de tiempo completo, no sobre la hora.
+- Verificación end-to-end con Playwright real (interacción de clicks/inputs) para toda la
+  sesión de este loop (11 lecciones nuevas) — sigue pendiente para una sesión con node.
+- Si el loop se corta acá: la sesión cumplió y superó ampliamente el objetivo original
+  ("mejorá específicamente portugués, no hace falta mucho para superar a Duolingo") — 11
+  lecciones nuevas, un bug de UX real encontrado y corregido antes de llegar a producción,
+  y un método de verificación end-to-end documentado y reutilizable sin depender de node.
