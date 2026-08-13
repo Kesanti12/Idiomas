@@ -1980,3 +1980,42 @@ del corte de las 15:33):**
   enseñó) siguen disponibles si se prefiere continuar esa línea.
 - Bidireccionalidad SRS en drills `fill` — 10 ciclos sin abordarse; con poco tiempo restante
   en la sesión, seguramente quede para una sesión futura dedicada.
+
+### Ciclo 11 — 2026-08-13 ~15:21-15:27
+**Mejora elegida:** Unidad 21 A1 de portugués — "Que roupa você vai usar?" (vocabulario de
+ropa).
+
+**Por qué esta:** siguiente hueco temático de la lista original del brief, y con margen para
+generar buen interleaving: en vez de presentar el vocabulario de ropa aislado, se combinó
+deliberadamente con dos gramáticas ya enseñadas — el futuro próximo "vou + infinitivo"
+(Unidad 15) y la concordancia de género de los colores (Unidad 10) — así la lección nueva
+funciona también como repaso espaciado de contenido anterior, no solo vocabulario suelto
+(principio #4 interleaving de CLAUDE.md).
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u21_roupa`. Diálogo sobre qué ropa va a usar cada
+  quien (reutiliza "camisa" de la Unidad 14 y los colores azul/preto/branco de la Unidad
+  10), glossary con 4 ítems nuevos (roupa, usar, calça, vestido), tabla de vocabulario
+  es/pt, 6 ejercicios (2 fill de concordancia de género con colores + 1 fill de "vou +
+  infinitivo" + 3 translate bidireccional, uno combinando ambos puntos gramaticales a la
+  vez: "vou usar um vestido branco").
+- `service-worker.js` → `CACHE_NAME` a `italiano-v37`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a1_u21_roupa')` +
+`step='grammar'` → 0 errores de JS, tabla de vocabulario renderizada correctamente (ropa,
+camisa, pantalón, vestido) con audio/fonética. Arnés temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **21 lecciones A1 + 4 lecciones A2** (25 en
+total) — más de 4x las 6 lecciones de italiano.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto, muy cerca del corte de las
+15:33):**
+- Huecos temáticos A1 sin cubrir: comida en detalle, transporte, la casa, el cuerpo,
+  comparativos.
+- A2: pretérito de "estar" o "fazer" siguen disponibles.
+- Bidireccionalidad SRS en drills `fill` — 11 ciclos sin abordarse, queda para una sesión
+  futura dedicada con más margen por ciclo.
+- Si el próximo disparo del cron ya cruza las 15:33, cerrar con el resumen final de la
+  sesión (11+ lecciones nuevas de portugués: verbos irregulares ir/poder/querer/ver/estar en
+  presente, pretérito regular completo -ar/-er/-ir, pretérito irregular ser-ir/ter, clima,
+  ropa — y 4 lecciones A2 nuevas, primeras de todo el proyecto).
