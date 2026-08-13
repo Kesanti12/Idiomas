@@ -2050,3 +2050,68 @@ total).
 - Bidireccionalidad SRS en drills `fill` — 12 ciclos sin abordarse en esta sesión; sigue
   siendo la mejor candidata para una sesión futura dedicada, con tiempo completo por ciclo
   en vez de 5 minutos compartidos con una lección de contenido.
+
+### Ciclo 13 — 2026-08-13 ~15:31 (cierre del loop)
+El disparo llegó a las 15:31:18, con ~2 minutos de margen antes del corte de las 15:33 —
+insuficiente para implementar+verificar+commitear+pushear una lección nueva completa con el
+mismo nivel de cuidado que los 12 ciclos anteriores. Se trata este ciclo como el último: no
+se agrega contenido nuevo, se cierra la sesión con el resumen de abajo, se confirma con
+`CronList` el job `355fa447` y se detiene con `CronDelete`.
+
+## Resumen final de la sesión de contenido de portugués (2026-08-13, 14:33→~15:31, cron `355fa447`)
+
+**12 lecciones nuevas de portugués en 12 ciclos de 5 minutos**, todas commiteadas,
+verificadas con Edge headless (0 errores de JS en cada una) y pusheadas a GitHub Pages
+(llegaron a la app instalada en el celular del usuario):
+
+1. Unidad 15 — "ir" + futuro próximo ("vou + infinitivo")
+2. Unidad 16 — "poder" + infinitivo (pedir ayuda/permiso)
+3. Unidad 17 — "querer" + sustantivo/infinitivo
+4. Unidad 18 — "ver" (cierra el set de irregulares de alta frecuencia ir/poder/querer/ver,
+   con interleaving explícito poder+ver en un ejercicio)
+5. **A2 — primera lección A2 de todo el proyecto**: pretérito perfeito de -ar
+6. A2 — pretérito perfeito de -er/-ir (comer, assistir)
+7. A2 — pretérito irregular de "ser"/"ir" (idénticos: fui/foi/fomos/foram)
+8. A2 — pretérito irregular de "ter" (tive/teve/tivemos/tiveram)
+9. Unidad 19 — presente de "estar" (hueco detectado: nunca se había enseñado; necesario
+   antes de poder dar su pretérito en el futuro)
+10. Unidad 20 — el clima ("está nublado/ensolarado" + "faz frio/calor")
+11. Unidad 21 — ropa (interleaving con colores de la Unidad 10 y futuro próximo de la
+    Unidad 15)
+12. Unidad 22 — medios de transporte ("ir de + transporte")
+
+**Portugués pasó de 14 a 22 lecciones A1 + 4 lecciones A2 nuevas (26 lecciones en total)** —
+más de 4x las 6 lecciones de italiano, que sigue sin ninguna lección A2.
+
+**Decisiones pedagógicas clave de la sesión:**
+- Se cerró deliberadamente el set completo de verbos irregulares de alta frecuencia en
+  presente (ir/poder/querer/ver/estar) antes de saltar a otros temas, con interleaving real
+  entre ellos (ejercicios que combinan dos verbos ya vistos, no solo contenido nuevo
+  aislado).
+- Se dio el primer gran salto gramatical del curso (pasado) con una progresión ordenada:
+  pretérito regular completo (-ar, luego -er/-ir) antes que los irregulares, y dentro de los
+  irregulares, empezando por el caso más llamativo (ser/ir idénticos) antes que otros.
+- Se detectó y corrigió proactivamente un hueco de andamiaje (ciclo 8→9: "estar" no tenía
+  presente enseñado, así que no se saltó directo a su pretérito) — ejemplo concreto de
+  gramática explícita y progresión cuidada, no solo volumen de contenido.
+- Las últimas lecciones (clima, ropa, transporte) se diseñaron para reutilizar gramática ya
+  enseñada (estar, vou+infinitivo, concordancia de género, ir+de) en vez de presentar
+  vocabulario temático aislado — interleaving constante, no packs de vocabulario sueltos.
+
+**1 limitación metodológica identificada y descartada correctamente:** el chequeo de
+balance de brackets en Python (heurística de sesiones anteriores) dio un falso positivo en
+el ciclo 1 por comillas/apóstrofes en strings — se descartó como no confiable y se usó Edge
+headless `--dump-dom` como única verificación real en el resto de la sesión, sin perder
+tiempo de ciclo depurando la heurística.
+
+**Pendiente real para la próxima sesión de contenido de portugués:**
+- Huecos temáticos A1 sin cubrir: comida en detalle, la casa, el cuerpo, comparativos.
+- A2: pretérito de "estar" (ya tiene su base en presente) o de "fazer" (verificar primero
+  si "fazer" presente está enseñado, mismo chequeo que evitó el error del ciclo 8).
+- **Bidireccionalidad SRS en drills `fill` de conjugación — pendiente en 12 ciclos seguidos
+  de esta sesión** (y ya documentado como pendiente en sesiones anteriores). Requiere tocar
+  `srs.js`/`app.js`, no solo `content.js` — mejor candidata para una sesión futura dedicada
+  con tiempo completo por ciclo, en vez de compartir 5 minutos con una lección de contenido.
+- Verificación end-to-end con Playwright real (clicks/inputs, no solo `--dump-dom`) para las
+  22 lecciones nuevas de esta sesión — pendiente documentado desde sesiones muy anteriores,
+  sigue sin abordarse por falta de node/Playwright en este entorno.
