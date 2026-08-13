@@ -1823,3 +1823,43 @@ eventos simples del pasado con cualquier verbo regular.
 - Bidireccionalidad SRS en drills `fill` — sigue pendiente, 6 ciclos sin abordarse; buena
   candidata si en algún ciclo restante no surge una lección de contenido clara y hay margen
   para trabajar en `srs.js`/`app.js` en vez de `content.js`.
+
+### Ciclo 7 — 2026-08-13 ~15:02-15:08
+**Mejora elegida:** tercera lección A2 de portugués — `pt_a2_u3_ser_ir_preterito`, "Como
+foi a festa?" (pretérito irregular de "ser" e "ir", idénticos).
+
+**Por qué esta:** siguiente paso lógico marcado en el pendiente del ciclo 6 (verbos
+irregulares en pretérito). Se eligió el par ser/ir primero, antes que estar/ter/fazer,
+porque es el caso más llamativo y de mayor valor pedagógico: dos verbos completamente
+distintos en presente colapsan a las mismas 4 formas en pretérito (fui/foi/fomos/foram).
+Este tipo de irregularidad "sorprendente" (no una excepción menor sino una fusión total)
+vale más la pena señalarla explícitamente temprano en A2 que dejar que el usuario la
+descubra por error — coincide con el principio #5 de CLAUDE.md (gramática explícita,
+no ocultar la regla).
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a2_u3_ser_ir_preterito`. Diálogo sobre una fiesta
+  (contexto donde ambos usos —"ser" para valorar, "ir" para el movimiento— aparecen
+  naturalmente), glossary con 3 ítems nuevos (festa, ótima, amigos), tabla de conjugación
+  única que sirve para ambos verbos, 6 ejercicios (3 fill alternando el uso "ser" y "ir" +
+  3 translate bidireccional, incluyendo una nota sobre la contracción "à" = a+a).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v33`.
+
+**Verificación:** Edge headless `--dump-dom` forzando
+`startLesson('pt_a2_u3_ser_ir_preterito')` + `step='grammar'` → 0 errores de JS, tabla de
+conjugación correcta (fui/foi/foi/fomos/foram/foram) con audio/fonética en las 6 filas.
+Arnés temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **18 lecciones A1 + 3 lecciones A2** (21 en
+total). A2 ya cubre: pretérito regular completo (-ar/-er/-ir, ciclos 5-6) + el primer verbo
+irregular de alta frecuencia en pretérito (ciclo 7).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- A2: seguir con más verbos irregulares en pretérito de alta frecuencia — "estar"
+  (estive/esteve/estivemos/estiveram, muy irregular) o "ter"/"fazer" son los siguientes
+  candidatos naturales.
+- Si se prefiere volver a A1: huecos temáticos siguen abiertos (clima, ropa, comida,
+  transporte, casa, cuerpo, comparativos).
+- Bidireccionalidad SRS en drills `fill` — 7 ciclos sin abordarse; si quedan pocos ciclos
+  antes del corte de las 15:33, mejor seguir con contenido (que sí entra en 5 min) que
+  arrancar un cambio de `srs.js` a medio terminar.
