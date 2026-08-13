@@ -194,7 +194,7 @@ const COURSES = {
       ],
       grammar: {
         title: '"Avere ... anni" para la edad, y los números 0-10',
-        explanation: 'Igual que en español decimos "tener X años" (no "ser X años"), en italiano se usa avere + número + anni — mismo patrón, transferencia directa desde el español (ya conocés avere de la Unidad 2). A diferencia del español, "anni" siempre va en plural, incluso con "un anno" pasa a plural desde "due anni" en adelante, igual que en español.',
+        explanation: 'Igual que en español decimos "tener X años" (no "ser X años"), en italiano se usa avere + número + anni — mismo patrón, transferencia directa desde el español (ya conoces avere de la Unidad 2). A diferencia del español, "anni" siempre va en plural, incluso con "un anno" pasa a plural desde "due anni" en adelante, igual que en español.',
         table: [
           ['0', 'zero'], ['1', 'uno'], ['2', 'due'], ['3', 'tre'], ['4', 'quattro'],
           ['5', 'cinque'], ['6', 'sei'], ['7', 'sette'], ['8', 'otto'], ['9', 'nove'], ['10', 'dieci'],
@@ -269,7 +269,7 @@ const COURSES = {
       ],
       grammar: {
         title: 'Verbos regulares en -are (ej. "parlare" = hablar)',
-        explanation: 'A diferencia de essere y avere (irregulares, Unidades 1 y 2 — hay que memorizar cada forma), "parlare" sigue un patrón regular que se repite en cientos de verbos italianos (mangiare=comer, guardare=mirar, ascoltare=escuchar...). Aprender esta terminación una sola vez multiplica el vocabulario que ya podés conjugar.',
+        explanation: 'A diferencia de essere y avere (irregulares, Unidades 1 y 2 — hay que memorizar cada forma), "parlare" sigue un patrón regular que se repite en cientos de verbos italianos (mangiare=comer, guardare=mirar, ascoltare=escuchar...). Aprender esta terminación una sola vez multiplica el vocabulario que ya puedes conjugar.',
         table: [
           ['io', 'parlo'], ['tu', 'parli'], ['lui/lei', 'parla'],
           ['noi', 'parliamo'], ['voi', 'parlate'], ['loro', 'parlano'],
@@ -337,7 +337,7 @@ const COURSES = {
         'prendere': 'pren-DE-re',
       },
       glossary: [
-        { target: 'Cosa prendi?', es: '¿Qué tomas/pedís?', note: 'Se usa así en bares y cafés, no solo literal "tomar".' },
+        { target: 'Cosa prendi?', es: '¿Qué tomas/pides?', note: 'Se usa así en bares y cafés, no solo literal "tomar".' },
         { target: 'Va bene', es: 'Está bien / dale', note: null },
       ],
       grammar: {
@@ -417,7 +417,7 @@ const COURSES = {
       ],
       grammar: {
         title: 'Verbos regulares en -ire (ej. "dormire" = dormir)',
-        explanation: 'Tercer y último patrón regular, después de -are (parlare) y -ere (prendere). La buena noticia: -ire comparte casi todas las terminaciones con -ere (io/tu/lui-lei/noi/loro son iguales) — la única diferencia es "voi": "-ete" en -ere (prendete) vs "-ite" en -ire (dormite). Con estos 3 patrones ya podés conjugar la mayoría de verbos regulares del italiano.',
+        explanation: 'Tercer y último patrón regular, después de -are (parlare) y -ere (prendere). La buena noticia: -ire comparte casi todas las terminaciones con -ere (io/tu/lui-lei/noi/loro son iguales) — la única diferencia es "voi": "-ete" en -ere (prendete) vs "-ite" en -ire (dormite). Con estos 3 patrones ya puedes conjugar la mayoría de verbos regulares del italiano.',
         table: [
           ['io', 'dormo'], ['tu', 'dormi'], ['lui/lei', 'dorme'],
           ['noi', 'dormiamo'], ['voi', 'dormite'], ['loro', 'dormono'],
@@ -649,7 +649,7 @@ const COURSES = {
         ],
         grammar: {
           title: '"Ter ... anos" para la edad, y los números 0-10',
-          explanation: 'Igual que en español decimos "tener X años" (no "ser X años"), en portugués se usa ter + número + anos — mismo patrón que en italiano (avere ... anni) y transferencia directa desde el español, ya conocés "ter" de la Unidad 2. Como en español, "um ano" es singular, pero desde "dois anos" en adelante "anos" va en plural.',
+          explanation: 'Igual que en español decimos "tener X años" (no "ser X años"), en portugués se usa ter + número + anos — mismo patrón que en italiano (avere ... anni) y transferencia directa desde el español, ya conoces "ter" de la Unidad 2. Como en español, "um ano" es singular, pero desde "dois anos" en adelante "anos" va en plural.',
           table: [
             ['0', 'zero'], ['1', 'um'], ['2', 'dois'], ['3', 'três'], ['4', 'quatro'],
             ['5', 'cinco'], ['6', 'seis'], ['7', 'sete'], ['8', 'oito'], ['9', 'nove'], ['10', 'dez'],
@@ -723,7 +723,7 @@ const COURSES = {
         ],
         grammar: {
           title: 'Verbos regulares en -ar (ej. "falar" = hablar)',
-          explanation: 'A diferencia de ser y ter (irregulares, Unidades 1 y 2 — hay que memorizar cada forma), "falar" sigue un patrón regular que se repite en cientos de verbos portugueses (morar=vivir, estudar=estudiar, escutar=escuchar...). Aprender esta terminación una sola vez multiplica el vocabulario que ya podés conjugar — mismo patrón que "parlare" en italiano, y muy cercano al español (hablo/hablas/habla → falo/fala/fala).',
+          explanation: 'A diferencia de ser y ter (irregulares, Unidades 1 y 2 — hay que memorizar cada forma), "falar" sigue un patrón regular que se repite en cientos de verbos portugueses (morar=vivir, estudar=estudiar, escutar=escuchar...). Aprender esta terminación una sola vez multiplica el vocabulario que ya puedes conjugar — mismo patrón que "parlare" en italiano, y muy cercano al español (hablo/hablas/habla → falo/fala/fala).',
           table: [
             ['eu', 'falo'], ['você', 'fala'], ['ele/ela', 'fala'],
             ['nós', 'falamos'], ['vocês', 'falam'], ['eles/elas', 'falam'],
@@ -868,7 +868,7 @@ const COURSES = {
         ],
         grammar: {
           title: 'Verbos regulares en -ir (ej. "assistir" = ver/mirar)',
-          explanation: 'Tercer y último patrón regular, después de -ar (falar, Unidad 4) y -er (comer, Unidad 5). Comparte "eu" (-o) con los otros dos, pero difiere en el resto: você/ele/ela → "-e" (como -er), nós → "-imos" (a diferencia de "-amos"/"-emos"), vocês/eles/elas → "-em" (como -er). Con estos 3 patrones (-ar/-er/-ir) ya podés conjugar la mayoría de los verbos regulares del portugués — mismo esquema que -are/-ere/-ire en italiano.',
+          explanation: 'Tercer y último patrón regular, después de -ar (falar, Unidad 4) y -er (comer, Unidad 5). Comparte "eu" (-o) con los otros dos, pero difiere en el resto: você/ele/ela → "-e" (como -er), nós → "-imos" (a diferencia de "-amos"/"-emos"), vocês/eles/elas → "-em" (como -er). Con estos 3 patrones (-ar/-er/-ir) ya puedes conjugar la mayoría de los verbos regulares del portugués — mismo esquema que -are/-ere/-ire en italiano.',
           table: [
             ['eu', 'assisto'], ['você', 'assiste'], ['ele/ela', 'assiste'],
             ['nós', 'assistimos'], ['vocês', 'assistem'], ['eles/elas', 'assistem'],

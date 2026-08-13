@@ -42,8 +42,8 @@ function renderChooseLanguage() {
   render(`
     <div style="text-align:center; margin-top:30px;">
       <h1>👋</h1>
-      <h2>¿Qué idioma querés aprender?</h2>
-      <p style="color:var(--text-dim); font-size:14px;">Elegí un curso para empezar. Podés cambiarlo después sin perder tu progreso.</p>
+      <h2>¿Qué idioma quieres aprender?</h2>
+      <p style="color:var(--text-dim); font-size:14px;">Elige un curso para empezar. Puedes cambiarlo después sin perder tu progreso.</p>
     </div>
     <div class="lang-picker">${cards}</div>
   `);
@@ -71,12 +71,12 @@ function gloss(target, es, opts) {
 const UI = {
   it: {
     greeting: ['Ciao! 👋', 'Ciao! 👋'],
-    tagline: ["Impara l'italiano sul serio: input reale, pratica attiva e ripasso spaziato.", 'Aprendé italiano de verdad: input real, práctica activa y repaso espaciado.'],
+    tagline: ["Impara l'italiano sul serio: input reale, pratica attiva e ripasso spaziato.", 'Aprende italiano de verdad: input real, práctica activa y repaso espaciado.'],
     streak: n => [`Serie: ${n} giorni`, `Racha: ${n} día(s)`],
     reviewCardTitle: ['Ripasso spaziato', 'Repaso espaciado'],
     dueMsg: n => n > 0
-      ? [`Hai ${n} elemento/i pronti da ripassare oggi.`, `Tenés ${n} ítem(s) listos para repasar hoy.`]
-      : ['Nessun ripasso in sospeso oggi. Torna domani.', 'No hay repasos pendientes hoy. Volvé mañana.'],
+      ? [`Hai ${n} elemento/i pronti da ripassare oggi.`, `Tienes ${n} ítem(s) listos para repasar hoy.`]
+      : ['Nessun ripasso in sospeso oggi. Torna domani.', 'No hay repasos pendientes hoy. Vuelve mañana.'],
     reviewBtn: n => [`Ripassa ora${n > 0 ? ' (' + n + ')' : ''}`, 'Repasar ahora'],
     lessonDoneBtn: ['Ripassa la lezione', 'Repasar la lección'],
     lessonStartBtn: ['Inizia la lezione', 'Empezar lección'],
@@ -114,12 +114,12 @@ const UI = {
   },
   pt: {
     greeting: ['Oi! 👋', '¡Hola! 👋'],
-    tagline: ['Aprenda português de verdade: input real, prática ativa e revisão espaçada.', 'Aprendé portugués de verdad: input real, práctica activa y repaso espaciado.'],
+    tagline: ['Aprenda português de verdade: input real, prática ativa e revisão espaçada.', 'Aprende portugués de verdad: input real, práctica activa y repaso espaciado.'],
     streak: n => [`Sequência: ${n} dias`, `Racha: ${n} día(s)`],
     reviewCardTitle: ['Revisão espaçada', 'Repaso espaciado'],
     dueMsg: n => n > 0
-      ? [`Você tem ${n} item(ns) pronto(s) para revisar hoje.`, `Tenés ${n} ítem(s) listos para repasar hoy.`]
-      : ['Nenhuma revisão pendente hoje. Volte amanhã.', 'No hay repasos pendientes hoy. Volvé mañana.'],
+      ? [`Você tem ${n} item(ns) pronto(s) para revisar hoje.`, `Tienes ${n} ítem(s) listos para repasar hoy.`]
+      : ['Nenhuma revisão pendente hoje. Volte amanhã.', 'No hay repasos pendientes hoy. Vuelve mañana.'],
     reviewBtn: n => [`Revisar agora${n > 0 ? ' (' + n + ')' : ''}`, 'Repasar ahora'],
     lessonDoneBtn: ['Revisar a lição', 'Repasar la lección'],
     lessonStartBtn: ['Começar a lição', 'Empezar lección'],
@@ -231,14 +231,14 @@ function wordWithAudio(lesson, text, extraClass) {
 // que el usuario veía la frase/hueco sin ninguna indicación de qué se esperaba responder.
 const INSTRUCTIONS = {
   it: {
-    fill: { target: 'Scrivi solo la parola mancante (non l\'intera frase).', es: 'Escribí solo la palabra que falta (no la frase entera).' },
-    translate: { target: 'Traduci in italiano.', es: 'Traducí al italiano.' },
-    recognize: { target: 'Cosa significa? Rispondi in spagnolo.', es: '¿Qué significa? Respondé en español.' },
+    fill: { target: 'Scrivi solo la parola mancante (non l\'intera frase).', es: 'Escribe solo la palabra que falta (no la frase entera).' },
+    translate: { target: 'Traduci in italiano.', es: 'Traduce al italiano.' },
+    recognize: { target: 'Cosa significa? Rispondi in spagnolo.', es: '¿Qué significa? Responde en español.' },
   },
   pt: {
-    fill: { target: 'Escreva apenas a palavra que falta (não a frase inteira).', es: 'Escribí solo la palabra que falta (no la frase entera).' },
-    translate: { target: 'Traduza para o português.', es: 'Traducí al portugués.' },
-    recognize: { target: 'O que significa? Responda em espanhol.', es: '¿Qué significa? Respondé en español.' },
+    fill: { target: 'Escreva apenas a palavra que falta (não a frase inteira).', es: 'Escribe solo la palabra que falta (no la frase entera).' },
+    translate: { target: 'Traduza para o português.', es: 'Traduce al portugués.' },
+    recognize: { target: 'O que significa? Responda em espanhol.', es: '¿Qué significa? Responde en español.' },
   },
 };
 
