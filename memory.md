@@ -1782,3 +1782,44 @@ la primera lección A2 de todo el proyecto (italiano sigue sin ninguna).
 - Si se prefiere volver a A1: huecos temáticos siguen abiertos (clima, ropa, comida,
   transporte, casa, cuerpo, comparativos).
 - Bidireccionalidad SRS en drills `fill` — sigue pendiente, 5 ciclos sin abordarse.
+
+### Ciclo 6 — 2026-08-13 ~14:58-15:04
+**Mejora elegida:** segunda lección A2 de portugués — `pt_a2_u2_preterito2`, "O que você
+comeu ontem?" (pretérito perfeito de -er e -ir).
+
+**Por qué esta:** completa de inmediato lo que el ciclo 5 dejó pendiente como opción #1 —
+los otros dos patrones regulares en pasado (-er/-ir), simétrico a como se enseñó el
+presente en las Unidades 4-6 (-ar/-er/-ir en lecciones separadas). Como -er e -ir comparten
+casi todas las terminaciones del pretérito (solo difieren en "você/ele/ela": -eu vs. -iu),
+se cubrieron ambos patrones en una sola lección usando dos verbos ya conocidos ("comer" de
+la Unidad 5 y "assistir" de la Unidad 6) en vez de forzar dos lecciones casi idénticas.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a2_u2_preterito2`. Diálogo con **cero vocabulario
+  nuevo** salvo "TV" (reutiliza comer, assistir, pizza, filme, bom — todos de unidades
+  anteriores), tabla de conjugación del pretérito de "comer", 6 ejercicios mezclando ambos
+  verbos (comer/assistir) para cubrir -er e -ir en los mismos 6 ejercicios. Uno de los
+  ejercicios recicla deliberadamente el false-friend "assistir" (Unidad 6: significa
+  ver/mirar, no "asistir" en español) ahora en pretérito — repaso espaciado real de un punto
+  de fricción ya señalado antes, no solo contenido nuevo aislado.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v32`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a2_u2_preterito2')`
++ `step='grammar'` → 0 errores de JS, tabla de conjugación de "comer" en pretérito correcta
+(comi/comeu/comeu/comemos/comeram/comeram) con audio/fonética en las 6 filas. Arnés
+temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **18 lecciones A1 + 2 lecciones A2** (20 en
+total). Los 3 patrones regulares (-ar/-er/-ir) ya están cubiertos tanto en presente como en
+pretérito — un usuario que termine A1+A2 hasta acá puede describir el presente Y contar
+eventos simples del pasado con cualquier verbo regular.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- A2: verbos irregulares en pretérito (ser/estar/ter/ir/fazer en pasado, distinto del
+  presente) — siguiente paso lógico para reforzar el pasado con los verbos de más alta
+  frecuencia, no solo los regulares.
+- Si se prefiere volver a A1: huecos temáticos siguen abiertos (clima, ropa, comida,
+  transporte, casa, cuerpo, comparativos).
+- Bidireccionalidad SRS en drills `fill` — sigue pendiente, 6 ciclos sin abordarse; buena
+  candidata si en algún ciclo restante no surge una lección de contenido clara y hay margen
+  para trabajar en `srs.js`/`app.js` en vez de `content.js`.
