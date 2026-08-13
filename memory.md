@@ -1710,3 +1710,37 @@ las 6 filas. Arnés temporal borrado, servidor cerrado.
   con tiempo dedicado (no encaja bien en un ciclo de 5 min junto con una lección nueva).
 - Con 17 lecciones A1 ya son casi 3x las 6 de italiano — considerar seriamente arrancar A2
   en los próximos 1-2 ciclos si no aparece un hueco A1 claramente más urgente.
+
+### Ciclo 4 — 2026-08-13 ~14:48-14:54
+**Mejora elegida:** Unidad 18 A1 de portugués — "Posso ver o cardápio?" (verbo irregular
+"ver").
+
+**Por qué esta:** cierra el set completo de verbos irregulares de alta frecuencia
+planificado desde el ciclo 1 (ir, poder, querer, ver). "Ver" es el más irregular de los
+cuatro (irregular en casi todas las formas, como "ir"), buen cierre de la serie por
+contraste de grado de irregularidad. Aprovechando que ya existía "poder" (Unidad 16), se
+diseñó un ejercicio que **combina ambos verbos en la misma frase** ("Posso ver o
+cardápio?") — interleaving real (principio #4 de CLAUDE.md), no solo lecciones aisladas en
+secuencia: el usuario repasa "poder" en el mismo momento en que aprende "ver".
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u18_ver` (diálogo pidiendo el menú en un
+  restaurante, phonetics, glossary con 2 ítems nuevos ["cardápio", "isso"], tabla de
+  conjugación completa de "ver", 6 ejercicios: 3 fill de conjugación + 3 translate
+  bidireccional, uno de ellos combinando "poder"+"ver").
+- `service-worker.js` → `CACHE_NAME` a `italiano-v30`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a1_u18_ver')` +
+`step='grammar'` → 0 errores de JS, tabla de conjugación correcta (vejo/vê/vê/vemos/veem/veem)
+con audio `pt-BR` y fonética en las 6 filas. Arnés temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **18 lecciones A1** — 3x las 6 de italiano.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- El set completo de verbos irregulares de alta frecuencia (ir/poder/querer/ver) ya está
+  cerrado. Huecos temáticos sin cubrir: clima, ropa, comida en detalle, transporte, la casa,
+  el cuerpo, comparativos.
+- Bidireccionalidad SRS en drills `fill` — sigue sin abordarse en toda la sesión (4 ciclos),
+  sigue siendo mejor candidato para una sesión futura con más margen de tiempo por ciclo.
+- Dado el volumen ya alcanzado (18 vs. 6), el próximo ciclo es un buen momento para evaluar
+  en serio arrancar A2 con su propio descriptor CEFR, en vez de seguir sumando A1 solamente.
