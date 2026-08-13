@@ -1673,3 +1673,40 @@ Arnés temporal borrado, servidor de prueba cerrado.
 - Bidireccionalidad SRS en drills `fill` — sigue sin abordarse, requiere tiempo dedicado en
   `srs.js`/`app.js`.
 - Considerar arrancar A2 si en un par de ciclos más A1 se siente suficientemente amplio.
+
+### Ciclo 3 — 2026-08-13 ~14:43-14:49
+**Mejora elegida:** Unidad 17 A1 de portugués — "O que você quer comer?" (verbo irregular
+"querer" + sustantivo/infinitivo).
+
+**Por qué esta:** completa el trío de verbos irregulares de alta frecuencia planificado
+desde el ciclo 1 (ir → ciclo 1, poder → ciclo 2, querer → este ciclo). Valor pedagógico
+extra respecto a simplemente "otro verbo más": cada uno de los tres es irregular en una
+**persona distinta** (ir: casi todas las formas; poder: solo "eu posso"; querer: solo
+"você/ele/ela quer") — el contraste ayuda a que el usuario internalice que la irregularidad
+se aprende forma por forma, no como una regla general, algo que Duolingo tiende a ocultar
+presentando cada verbo de forma aislada sin señalar el patrón entre ellos.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u17_querer` (diálogo pidiendo comida — pizza, ya
+  conocida desde la Unidad 5 "comer" —, phonetics, glossary con 2 ítems nuevos acotados
+  ["por favor", "duas" con nota de concordancia de género en números 1-2], tabla de
+  conjugación completa de "querer", 6 ejercicios: 3 fill de conjugación + 3 translate
+  bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v29`.
+- Vocabulario nuevo deliberadamente mínimo (2 ítems) porque el diálogo ya reutiliza "pizza"
+  (Unidad 5) y "também" (Unidad 12) — foco del input comprensible puesto 100% en la
+  conjugación de "querer", no diluido con vocabulario nuevo de relleno.
+
+**Verificación:** Edge headless `--dump-dom` (arnés con `<meta charset="UTF-8">`) forzando
+`startLesson('pt_a1_u17_querer')` + `step='grammar'` → 0 errores de JS, tabla de conjugación
+completa y correcta (quero/quer/quer/queremos/querem/querem) con audio `pt-BR` y fonética en
+las 6 filas. Arnés temporal borrado, servidor cerrado.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- El trío ir/poder/querer ya está cerrado — siguiente huecos temáticos sin cubrir: "ver"
+  (último irregular de alta frecuencia de la lista original), clima, ropa, comida en
+  detalle, transporte, la casa, el cuerpo, comparativos.
+- Bidireccionalidad SRS en drills `fill` — sigue pendiente, requiere tocar `srs.js`/`app.js`
+  con tiempo dedicado (no encaja bien en un ciclo de 5 min junto con una lección nueva).
+- Con 17 lecciones A1 ya son casi 3x las 6 de italiano — considerar seriamente arrancar A2
+  en los próximos 1-2 ciclos si no aparece un hueco A1 claramente más urgente.
