@@ -1578,3 +1578,61 @@ se detiene con `CronDelete`.
 este séptimo de cierre sin cambios de código), 6 mejoras visuales commiteadas — ver el
 resumen completo en el cierre del ciclo 6 arriba. Sin working tree sucio: cada ciclo dejó su
 propio commit de código + su propio commit de memory.md.
+
+## Sesión de loop de contenido de portugués (2026-08-13, ~14:33→~15:33, cron `355fa447` cada 5 min)
+
+**Objetivo de esta sesión:** el usuario pidió un loop de 1 hora enfocado 100% en contenido
+pedagógico de portugués — módulos/lecciones nuevas, ejercicios, cubrir huecos gramaticales o
+temáticos. No es un loop de UX (no tocar css/style.css ni la estructura visual salvo que un
+tipo de ejercicio nuevo lo requiera). Portugués arranca esta sesión con 14 lecciones A1
+(pt_a1_u1…pt_a1_u14, ver sesión de julio/agosto anterior en este mismo archivo).
+
+**Nota de estilo importante para esta sesión:** el usuario corrigió explícitamente (mismo día,
+antes de este loop) que el español debe usar **tuteo, nunca voseo** (tienes/puedes/escribe,
+no tenés/podés/escribí) — corrección guardada en memoria permanente del agente
+(`feedback_tuteo_no_voseo.md`). Todo el texto en español que se genere en este loop
+(explicaciones de gramática, notas, prompts) debe revisarse contra esto antes de commitear.
+También: la app ya está publicada en GitHub Pages (`https://kesanti12.github.io/Idiomas/`,
+remoto `origin` configurado) y instalada en el celular del usuario — cada ciclo que toque
+contenido debe hacer `git push` además de commit, para que los cambios lleguen al celular.
+
+### Ciclo 1 — 2026-08-13 ~14:33-14:40
+**Mejora elegida:** Unidad 15 A1 de portugués — "Aonde você vai?" (verbo irregular "ir" +
+futuro próximo "vou + infinitivo").
+
+**Por qué esta:** "ir" es uno de los verbos más frecuentes del portugués (frecuencia de uso
+real, principio #7 de CLAUDE.md) y, a diferencia de los verbos regulares ya cubiertos
+(-ar/-er/-ir, Unidades 4-6), es irregular como "ser"/"ter" (Unidades 1-2) — cierra ese trío
+de irregulares de alta frecuencia. Además desbloquea una estructura muy productiva (futuro
+próximo con "vou + infinitivo", paralelo directo al español "voy a + infinitivo" pero sin
+preposición) que el usuario va a poder reutilizar en conversación real de inmediato.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u15_ir` (diálogo sobre planes — ir al mercado,
+  trabajar, ir al cine —, phonetics, glossary con "aonde" vs. "onde", tabla de conjugación
+  completa de "ir", 6 ejercicios: 3 fill de conjugación [eu/você/nós] + 3 translate
+  bidireccional incluyendo la frase de futuro próximo "vou trabalhar").
+- `service-worker.js` → `CACHE_NAME` a `italiano-v27`.
+
+**Verificación:** el chequeo de balance de brackets en Python (heurística de sesiones
+anteriores) dio un falso positivo (desbalance de -1 a +2) por comillas/apóstrofes dentro de
+strings que la regex simple no maneja bien — **se descartó como no confiable** y se fue
+directo al método definitivo: Edge headless `--dump-dom` (con `<meta charset="UTF-8">` en el
+arnés, lección del ciclo 4 de la sesión de UX). Dos corridas: (1) curso `pt` cargado desde
+cero → 0 errores de JS, 15 nodos `.path-circle` en el camino de lecciones (14 previos + 1
+nuevo); (2) `startLesson('pt_a1_u15_ir')` forzado a `step='grammar'` → 0 errores, tabla de
+conjugación completa renderizada con audio `pt-BR` y fonética correctos en las 6 filas
+(eu/você/ele-ela/nós/vocês/eles-elas). Arneses temporales borrados al terminar.
+
+**Nota metodológica para próximos ciclos:** el chequeo de balance de brackets en Python ya
+dio falso positivo en esta sesión — no perder tiempo de ciclo depurándolo, ir directo a Edge
+headless `--dump-dom` como verificación principal (es la que de verdad importa).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Huecos temáticos A1 todavía no cubiertos: clima, ropa, comida en detalle, transporte, la
+  casa, el cuerpo, verbos irregulares de alta frecuencia restantes (poder, querer, ver),
+  comparativos.
+- Bidireccionalidad SRS en drills `fill` de conjugación — pendiente documentado desde
+  sesiones anteriores, nunca abordado (requiere tocar `srs.js`/`app.js`, no solo `content.js`).
+- Si A1 se siente razonablemente cubierto en algún ciclo posterior, evaluar arrancar
+  contenido A2 con su propio descriptor CEFR.
