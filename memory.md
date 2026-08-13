@@ -1944,3 +1944,39 @@ total).
 - Huecos temáticos A1 sin cubrir: clima, ropa, comida en detalle, transporte, la casa, el
   cuerpo, comparativos.
 - Bidireccionalidad SRS en drills `fill` — 9 ciclos sin abordarse.
+
+### Ciclo 10 — 2026-08-13 ~15:17-15:23
+**Mejora elegida:** Unidad 20 A1 de portugués — "Como está o tempo?" (el clima, con "estar"
++ adjetivo y "fazer" impersonal).
+
+**Por qué esta:** después de 9 ciclos seguidos de gramática verbal (verbos irregulares en
+presente y pretérito), se priorizó volver a un hueco temático puro del brief original — el
+clima nunca se había tocado en toda la sesión. Además funciona como repaso natural: "está
+nublado/ensolarado" reutiliza directamente "estar" (Unidad 19, recién enseñada) y "faz
+frio/calor" introduce la construcción impersonal de "fazer" con paralelo directo al español
+("hace frío/calor"), un punto de transferencia positiva muy claro para hispanohablantes.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u20_clima`. Diálogo comparando el clima en dos
+  lugares (nublado/frío vs. soleado/calor), glossary con 4 ítems nuevos (tempo, nublado,
+  ensolarado, diferença), tabla con las 4 expresiones fijas de clima, 6 ejercicios (3 fill —
+  dos con "faz" para remarcar que la forma no cambia nunca, uno con "está" repasando la
+  Unidad 19 — + 3 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v36`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a1_u20_clima')` +
+`step='grammar'` → 0 errores de JS, tabla de expresiones de clima renderizada correctamente
+(está nublado, está ensolarado, faz frio, faz calor) con audio en las 4 filas. Arnés
+temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **20 lecciones A1 + 4 lecciones A2** (24 en
+total).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto, quedan pocos ciclos antes
+del corte de las 15:33):**
+- Huecos temáticos A1 sin cubrir: ropa, comida en detalle, transporte, la casa, el cuerpo,
+  comparativos — buenos candidatos rápidos de implementar en lo que queda de sesión.
+- A2: pretérito de "estar" o de "fazer" (verificando primero si "fazer" presente ya se
+  enseñó) siguen disponibles si se prefiere continuar esa línea.
+- Bidireccionalidad SRS en drills `fill` — 10 ciclos sin abordarse; con poco tiempo restante
+  en la sesión, seguramente quede para una sesión futura dedicada.
