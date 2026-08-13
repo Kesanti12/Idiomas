@@ -1636,3 +1636,40 @@ headless `--dump-dom` como verificación principal (es la que de verdad importa)
   sesiones anteriores, nunca abordado (requiere tocar `srs.js`/`app.js`, no solo `content.js`).
 - Si A1 se siente razonablemente cubierto en algún ciclo posterior, evaluar arrancar
   contenido A2 con su propio descriptor CEFR.
+
+### Ciclo 2 — 2026-08-13 ~14:38-14:44
+**Mejora elegida:** Unidad 16 A1 de portugués — "Você pode me ajudar?" (verbo irregular
+"poder" + infinitivo, para pedir ayuda/permiso).
+
+**Por qué esta:** siguiente verbo irregular de alta frecuencia de la lista pendiente
+(después de "ir" en el ciclo 1) — "poder" es de los verbos más usados del portugués
+cotidiano y, a diferencia de "ir" (irregular en casi todas las formas), es un buen contraste
+pedagógico: irregular **solo en la primera persona** ("eu posso", no "podo"), el resto seguí
+el patrón -er ya conocido de "comer" (Unidad 5). Reforzar ese contraste (irregularidad total
+vs. parcial) ayuda a que el usuario no memorice todo de cero por fuerza bruta, sino que
+reconozca el patrón subyacente cuando existe.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u16_poder` (diálogo pidiendo permiso para sentarse y
+  después ayuda con algo, phonetics, glossary con 4 ítems nuevos — "com licença", "sentar",
+  "ajudar", "uma coisa" —, tabla de conjugación completa de "poder", 6 ejercicios: 3 fill de
+  conjugación [eu/você/nós] + 3 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v28`.
+- Vocabulario nuevo acotado a 4 ítems (com licença, sentar, ajudar, uma coisa) para no pasar
+  el umbral de ~95% comprensible del principio #2 de CLAUDE.md — el diálogo reutiliza
+  estructuras y palabras de unidades previas (claro, obrigado) en vez de introducir todo de
+  cero.
+
+**Verificación:** Edge headless `--dump-dom` (arnés con `<meta charset="UTF-8">`, mismo
+patrón del ciclo 1) forzando `startLesson('pt_a1_u16_poder')` + `step='grammar'` → 0 errores
+de JS, tabla de conjugación completa renderizada con audio `pt-BR` y fonética correctos en
+las 6 filas (eu/você/ele-ela/nós/vocês/eles-elas: posso/pode/pode/podemos/podem/podem).
+Arnés temporal borrado, servidor de prueba cerrado.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto, sin cambios de fondo):**
+- Huecos temáticos A1: clima, ropa, comida en detalle, transporte, la casa, el cuerpo,
+  "querer" y "ver" (últimos irregulares de alta frecuencia pendientes de la lista original),
+  comparativos.
+- Bidireccionalidad SRS en drills `fill` — sigue sin abordarse, requiere tiempo dedicado en
+  `srs.js`/`app.js`.
+- Considerar arrancar A2 si en un par de ciclos más A1 se siente suficientemente amplio.
