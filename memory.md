@@ -2019,3 +2019,34 @@ total) — más de 4x las 6 lecciones de italiano.
   sesión (11+ lecciones nuevas de portugués: verbos irregulares ir/poder/querer/ver/estar en
   presente, pretérito regular completo -ar/-er/-ir, pretérito irregular ser-ir/ter, clima,
   ropa — y 4 lecciones A2 nuevas, primeras de todo el proyecto).
+
+### Ciclo 12 — 2026-08-13 ~15:26-15:28
+**Mejora elegida:** Unidad 22 A1 de portugués — "Como você vai para o trabalho?" (medios de
+transporte, "ir de + transporte").
+
+**Por qué esta:** con muy poco margen antes del corte de las 15:33, se priorizó un hueco
+temático chico y de bajo riesgo (vocabulario + una sola construcción fija) en vez de arrancar
+algo más grande sin tiempo de terminarlo y verificarlo bien. "Ir de + transporte" además
+reutiliza directamente "ir" (Unidad 15) y "carro" (Unidad 10) — interleaving casi gratis — y
+señala explícitamente la excepción de preposición ("de" en vez de "en" como en español), un
+punto de fricción real para hispanohablantes.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u22_transporte`. Diálogo sobre cómo cada quien va al
+  trabajo, glossary con 3 ítems nuevos (ônibus, metrô, às vezes), tabla de vocabulario de
+  transporte, 6 ejercicios (3 fill practicando que la preposición "de" no cambia + 3
+  translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v38`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a1_u22_transporte')`
++ `step='grammar'` → 0 errores de JS. Arnés temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **22 lecciones A1 + 4 lecciones A2** (26 en
+total).
+
+**Pendiente para la próxima sesión de contenido:**
+- Huecos temáticos A1 sin cubrir: comida en detalle, la casa, el cuerpo, comparativos.
+- A2: pretérito de "estar" o "fazer" (verificar primero si "fazer" presente ya se enseñó).
+- Bidireccionalidad SRS en drills `fill` — 12 ciclos sin abordarse en esta sesión; sigue
+  siendo la mejor candidata para una sesión futura dedicada, con tiempo completo por ciclo
+  en vez de 5 minutos compartidos con una lección de contenido.
