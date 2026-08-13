@@ -1906,3 +1906,41 @@ ese andamiaje. Documentado acá para no repetir el mismo chequeo de nuevo.
 - Si se prefiere volver a A1: huecos temáticos siguen abiertos (clima, ropa, comida,
   transporte, casa, cuerpo, comparativos).
 - Bidireccionalidad SRS en drills `fill` — 8 ciclos sin abordarse.
+
+### Ciclo 9 — 2026-08-13 ~15:12-15:18
+**Mejora elegida:** Unidad 19 A1 de portugués — "Como você está?" (presente del verbo
+irregular "estar").
+
+**Por qué esta:** cierra directamente el hueco identificado en el ciclo 8 — "estar" nunca
+tuvo su presente enseñado explícitamente (la Unidad 9 usa deliberadamente "fica" para
+ubicación de lugares fijos). Sin esta base, cualquier pretérito de "estar" en un ciclo
+futuro construiría sobre el aire. Se le asignó `cefr: 'A1'` (no A2) porque el contenido en
+sí —conjugar un verbo básico en presente— es de dificultad A1, aunque se agregue después de
+varias lecciones A2 en el archivo; el nivel CEFR de una lección depende de su dificultad,
+no de su posición en la secuencia.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a1_u19_estar`. Diálogo sobre cómo está alguien
+  (saludo, cansancio, salud), glossary con 3 ítems nuevos (cansada/cansado, doente, que
+  pena), tabla de conjugación completa de "estar", 6 ejercicios (3 fill + 3 translate
+  bidireccional). La explicación de gramática señala explícitamente la frontera con "fica"
+  (Unidad 9) para que el usuario no confunda cuándo usar cada uno.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v35`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a1_u19_estar')` +
+`step='grammar'` → 0 errores de JS, tabla de conjugación correcta
+(estou/está/está/estamos/estão/estão) con audio/fonética en las 6 filas. Arnés temporal
+borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **19 lecciones A1 + 4 lecciones A2** (23 en
+total).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Con la base de "estar" ya lista, un pretérito de "estar" (estive/esteve/estivemos/
+  estiveram) en A2 ya es viable si se quiere seguir esa línea.
+- "Fazer" en pretérito (fiz/fez/fizemos/fizeram) — verificar primero si "fazer" tiene
+  presente enseñado antes de saltar directo al pasado (mismo chequeo que evitó el error del
+  ciclo 8).
+- Huecos temáticos A1 sin cubrir: clima, ropa, comida en detalle, transporte, la casa, el
+  cuerpo, comparativos.
+- Bidireccionalidad SRS en drills `fill` — 9 ciclos sin abordarse.
