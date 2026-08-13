@@ -1744,3 +1744,41 @@ con audio `pt-BR` y fonética en las 6 filas. Arnés temporal borrado, servidor 
   sigue siendo mejor candidato para una sesión futura con más margen de tiempo por ciclo.
 - Dado el volumen ya alcanzado (18 vs. 6), el próximo ciclo es un buen momento para evaluar
   en serio arrancar A2 con su propio descriptor CEFR, en vez de seguir sumando A1 solamente.
+
+### Ciclo 5 — 2026-08-13 ~14:53-14:59
+**Mejora elegida:** primera lección de nivel **A2** de portugués — `pt_a2_u1_preterito`,
+"Você trabalhou ontem?" (pretérito perfeito de verbos regulares en -ar).
+
+**Por qué esta y por qué ahora:** con 18 lecciones A1 (3x italiano) y los verbos irregulares
+de alta frecuencia ya cerrados (ciclos 1-4), seguir sumando solo vocabulario temático A1
+(clima, ropa, etc.) empezaba a rendir menos que dar el salto estructural más importante del
+curso: pasar de presente-únicamente a poder hablar del pasado. Es el primer gran salto
+gramatical de todo el curso (italiano incluido, que tampoco tiene pasado todavía) y abre la
+puerta a producción mucho más real (contar lo que uno hizo, no solo describir el presente).
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a2_u1_preterito`, **primera con `cefr: 'A2'`** en todo
+  el proyecto (italiano y portugués). Diálogo mínimo en vocabulario nuevo (reutiliza
+  "trabalhar" de la Unidad 16 y "falar" de la Unidad 4, solo agrega "ontem"), tabla de
+  conjugación del pretérito perfeito de -ar (trabalhei/trabalhou/trabalhamos/trabalharam,
+  paralelo directo a trabajé/trabajó/trabajamos/trabajaron en español), 6 ejercicios (3 fill
+  + 3 translate bidireccional).
+- `service-worker.js` → `CACHE_NAME` a `italiano-v31`.
+
+**Verificación:** Edge headless `--dump-dom` forzando `startLesson('pt_a2_u1_preterito')` +
+`step='grammar'` → 0 errores de JS, tabla de conjugación correcta con audio/fonética en las
+6 filas, y se confirmó además que el `.cefr-badge` renderiza **"A2"** correctamente — el
+sistema de niveles CEFR ya soportaba múltiples niveles sin ningún cambio de código (el campo
+`lesson.cefr` es de texto libre desde el principio), confirmando que no hacía falta tocar
+`js/app.js` para este salto de nivel.
+
+**Estado a esta altura:** portugués tiene **18 lecciones A1 + 1 lección A2** (19 en total) —
+la primera lección A2 de todo el proyecto (italiano sigue sin ninguna).
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- Seguir A2: verbos irregulares comunes en pretérito (ser/estar/ter/ir en pasado — distinto
+  del presente ya visto), o pretérito de -er/-ir para completar los 3 patrones en pasado
+  igual que se hizo en presente.
+- Si se prefiere volver a A1: huecos temáticos siguen abiertos (clima, ropa, comida,
+  transporte, casa, cuerpo, comparativos).
+- Bidireccionalidad SRS en drills `fill` — sigue pendiente, 5 ciclos sin abordarse.
