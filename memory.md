@@ -1863,3 +1863,46 @@ irregular de alta frecuencia en pretérito (ciclo 7).
 - Bidireccionalidad SRS en drills `fill` — 7 ciclos sin abordarse; si quedan pocos ciclos
   antes del corte de las 15:33, mejor seguir con contenido (que sí entra en 5 min) que
   arrancar un cambio de `srs.js` a medio terminar.
+
+### Ciclo 8 — 2026-08-13 ~15:07-15:13
+**Mejora elegida:** cuarta lección A2 de portugués — `pt_a2_u4_ter_preterito`, "Você teve
+um bom dia?" (pretérito irregular de "ter").
+
+**Por qué esta (y no "estar"):** el pendiente del ciclo 7 sugería "estar" como candidato,
+pero al revisar `content.js` se detectó que **"estar" en presente nunca se enseñó
+explícitamente** — la Unidad 9 (lugares) usa deliberadamente "fica" en vez de "está" para
+preguntar ubicación (uso auténtico brasileño), así que nunca hubo una tabla de conjugación
+de "estar". Introducir su pretérito sin haber dado el presente sería construir sobre una
+base que no existe. Se optó por "ter" en su lugar: ya tiene presente enseñado (Unidad 2),
+así que su pretérito es una extensión limpia sin huecos de andamiaje.
+
+**Qué se hizo:**
+- `js/content.js`: nueva lección `pt_a2_u4_ter_preterito`. Diálogo sobre cómo estuvo el día
+  (reutiliza "bom dia" de la Unidad 12), glossary con 3 ítems nuevos (problemas, trabalho,
+  tranquilo), tabla de conjugación del pretérito irregular de "ter" (raíz "tiv-"), 6
+  ejercicios (3 fill + 3 translate). El último ejercicio ("foi tranquilo") repasa
+  deliberadamente el pretérito de "ser" de la lección anterior — interleaving real, no solo
+  lecciones en secuencia aislada.
+- `service-worker.js` → `CACHE_NAME` a `italiano-v34`.
+
+**Verificación:** Edge headless `--dump-dom` forzando
+`startLesson('pt_a2_u4_ter_preterito')` + `step='grammar'` → 0 errores de JS, tabla de
+conjugación correcta (tive/teve/teve/tivemos/tiveram/tiveram) con audio/fonética en las 6
+filas. Arnés temporal borrado, servidor cerrado.
+
+**Estado a esta altura:** portugués tiene **18 lecciones A1 + 4 lecciones A2** (22 en
+total).
+
+**Nota para sesiones futuras (importante):** si se quiere seguir con "estar" en el futuro,
+primero hace falta una lección de **presente de "estar"** (uso para estados/ubicación
+temporal, ej. "estou bem", "estou cansado") antes de poder enseñar su pretérito — no saltear
+ese andamiaje. Documentado acá para no repetir el mismo chequeo de nuevo.
+
+**Pendiente para el próximo ciclo de esta sesión (por impacto):**
+- A2: introducir el **presente de "estar"** (hueco identificado este ciclo) sería un buen
+  siguiente paso antes de seguir sumando más pretéritos — cierra una base que faltaba.
+  Alternativa: "fazer" en pretérito (fiz/fez/fizemos/fizeram, ya tiene presente implícito
+  por alta frecuencia aunque no se confirmó si se enseñó explícitamente, revisar primero).
+- Si se prefiere volver a A1: huecos temáticos siguen abiertos (clima, ropa, comida,
+  transporte, casa, cuerpo, comparativos).
+- Bidireccionalidad SRS en drills `fill` — 8 ciclos sin abordarse.
